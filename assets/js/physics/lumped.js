@@ -6,23 +6,26 @@ import { cylinderHeat } from "./experiment-a.js";
 import { solveSensor } from "./experiment-b.js";
 
 // 실린더·히터 1-node: C dTs/dt = V·I - Qconv(Ts) - Qrad(Ts) - UA·(Ts - Ta)
-export function simulateCylinder({ V, I, ta, initial, capacity, ua, duration, model = "mcadams" }) {
+export function simulateCylinder({ V, I, ta, initial, capacity, ua, duration, model = "mcadams", dt = Math.min(0.5, duration / 1200) }) {
   const input = V * I;
-  const dt = Math.min(0.5, duration / 1200);
   const outputEvery = Math.max(1, Math.round((duration / dt) / 300));  // 그래프에 남길 점의 개수를 제한합니다
+
+  const derivative = value => {
+    const heat = cylinderHeat({ tsC: value, taC: ta, model });
+    return (input - heat.qConv - heat.qRad - ua * (value - ta)) / capacity;
+  };
 
   let temp = initial;
   const points = [{ t: 0, temp }];
   let step = 0;
 
   for (let t = 0; t < duration - 1e-9; t += dt) {
-    const derivative = value => {
-      const heat = cylinderHeat({ tsC: value, taC: ta, model });
-      return (input - heat.qConv - heat.qRad - ua * (value - ta)) / capacity;
-    };
-    temp = rk4Scalar(temp, dt, derivative);
+    // dt가 duration을 정확히 나누지 못하면 마지막 구간을 잘라 duration에 맞춘다.
+    // 그러지 않으면 마지막 점의 라벨과 실제 적분 시각이 어긋난다.
+    const h = Math.min(dt, duration - t);
+    temp = rk4Scalar(temp, h, derivative);
     step += 1;
-    if (step % outputEvery === 0 || t + dt >= duration) points.push({ t: Math.min(t + dt, duration), temp });
+    if (step % outputEvery === 0 || t + h >= duration - 1e-9) points.push({ t: t + h, temp });
   }
 
   const finalHeat = cylinderHeat({ tsC: temp, taC: ta, model });
