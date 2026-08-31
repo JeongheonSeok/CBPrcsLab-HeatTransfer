@@ -1,0 +1,10 @@
+# OMC 도구 상태
+.omc/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 생성물 (npm run verify로 다시 만듦)
+tools/reference.json
+node_modules/
