@@ -1,6 +1,8 @@
 /* 디자인 토큰과 기본 리셋 */
 :root {
   color-scheme: light;
+
+  /* 지면과 글자 */
   --bg: #f5f7f9;
   --surface: #ffffff;
   --surface-2: #f8fafb;
@@ -10,20 +12,45 @@
   --text: #17212b;
   --muted: #5d6b77;
   --muted-2: #7d8993;
-  --blue: #2f6fed;
-  --blue-soft: #eaf1ff;
-  --blue-line: #8eb2ff;
-  --heat: #e66b37;
-  --heat-soft: #fff0e8;
-  --radiation: #d94f5c;
-  --green: #25866e;
-  --green-soft: #e7f6f1;
-  --yellow: #ad7b14;
-  --yellow-soft: #fff7df;
-  --danger: #b6414d;
-  --shadow: 0 6px 20px rgba(26, 42, 56, 0.06);
-  --radius: 14px;
-  --sidebar: 236px;
+
+  /* UI 강조 — 버튼, 선택 상태, 포커스.
+     데이터 계열과 헷갈리지 않도록 청록 기운의 파랑을 쓴다. */
+  --accent: #1a6d94;
+  --accent-rgb: 26, 109, 148;   /* 알파를 섞어 쓸 때 */
+  --accent-ink: #13566f;      /* accent-soft 위에 올리는 글자 */
+  --accent-soft: #e4f0f6;
+  --accent-line: #a8cfe2;
+
+  /* 데이터 계열 — 물리량 전용. UI 요소에는 쓰지 않는다.
+     assets/js/core/chart.js의 SERIES_COLOR와 값이 같아야 하며,
+     tests/design-tokens.test.mjs가 이를 검사한다. */
+  --series-conv: #2f6fed;     /* 대류 */
+  --series-rad: #d94f5c;      /* 복사 */
+  --series-surface: #e66b37;  /* 표면 온도 */
+  --series-marker: #ad7b14;   /* 현재 조건 표시 */
+
+  /* 장치 도식의 흐름 표시. 값은 기존 그대로 옮겨 온 것이며 --series-*와 다르다.
+     도식에서는 공기 흐름이 파랑을 쓰고 있어 대류가 초록으로 밀려났다.
+     계획서 6절은 사이트 전체에서 같은 물리량에 같은 색을 요구하므로 정리가 필요하다. */
+  --flow-air: #4c8fea;
+  --flow-conv: #33a385;
+  --flow-rad: #dc6658;
+
+  /* 상태 */
+  --status-ok: #17674f;
+  --status-ok-soft: #e7f6f1;
+  --status-warn: #6f5518;
+  --status-warn-soft: #fff7df;
+
+  /* 형태 */
+  --radius-sm: 4px;           /* 입력, 배지 */
+  --radius-md: 6px;           /* 카드, 버튼 */
+  --radius-pill: 999px;       /* 칩 */
+  --shadow: 0 1px 2px rgba(26, 42, 56, 0.05);
+  --shadow-raised: 0 24px 80px rgba(20, 33, 45, 0.22);
+
+  /* 치수 */
+  --sidebar-w: 236px;
 }
 
 * { box-sizing: border-box; }
@@ -44,7 +71,7 @@ body {
 button, input, select, textarea { font: inherit; }
 button { color: inherit; }
 button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
-  outline: 3px solid rgba(47, 111, 237, 0.22);
+  outline: 3px solid rgba(var(--accent-rgb), 0.24);
   outline-offset: 2px;
 }
 

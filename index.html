@@ -370,7 +370,7 @@
             <div class="stack">
               <div class="metric-grid">
                 <div class="metric-card"><div class="metric-label">전기 입력</div><div class="metric-value" id="aPower">—</div><div class="metric-sub">Qin = VI</div></div>
-                <div class="metric-card blue"><div class="metric-label">자연대류</div><div class="metric-value" id="aConv">—</div><div class="metric-sub" id="aConvSub">h = —</div></div>
+                <div class="metric-card conv"><div class="metric-label">자연대류</div><div class="metric-value" id="aConv">—</div><div class="metric-sub" id="aConvSub">h = —</div></div>
                 <div class="metric-card rad"><div class="metric-label">복사</div><div class="metric-value" id="aRad">—</div><div class="metric-sub" id="aRadSub">hr = —</div></div>
                 <div class="metric-card warn"><div class="metric-label">에너지 수지 잔차</div><div class="metric-value" id="aResidual">—</div><div class="metric-sub">Qin − (Qc + Qr)</div></div>
               </div>
@@ -438,7 +438,7 @@
               <div class="metric-grid">
                 <div class="metric-card heat"><div class="metric-label">예측 센서 온도</div><div class="metric-value" id="bSensorTemp">—</div><div class="metric-sub" id="bSensorSub">선택 센서</div></div>
                 <div class="metric-card warn"><div class="metric-label">공기 온도 대비 오차</div><div class="metric-value" id="bError">—</div><div class="metric-sub">Tc − Tg</div></div>
-                <div class="metric-card blue"><div class="metric-label">대류 열전달 계수</div><div class="metric-value" id="bH">—</div><div class="metric-sub" id="bRe">Re = —</div></div>
+                <div class="metric-card conv"><div class="metric-label">대류 열전달 계수</div><div class="metric-value" id="bH">—</div><div class="metric-sub" id="bRe">Re = —</div></div>
                 <div class="metric-card"><div class="metric-label">비드 열수지</div><div class="metric-value" id="bHeat">—</div><div class="metric-sub">|Qrad| ≈ |Qconv|</div></div>
               </div>
 
@@ -513,7 +513,7 @@
             <div class="stack">
               <div class="metric-grid transient-metrics">
                 <div class="metric-card heat"><div class="metric-label" id="lumpedMetric1Label">최종 표면 온도</div><div class="metric-value" id="lumpedMetric1">—</div><div class="metric-sub" id="lumpedMetric1Sub">Tₛ(tend)</div></div>
-                <div class="metric-card blue"><div class="metric-label" id="lumpedMetric2Label">95% 도달 시간</div><div class="metric-value" id="lumpedMetric2">—</div><div class="metric-sub" id="lumpedMetric2Sub">동적 응답</div></div>
+                <div class="metric-card conv"><div class="metric-label" id="lumpedMetric2Label">95% 도달 시간</div><div class="metric-value" id="lumpedMetric2">—</div><div class="metric-sub" id="lumpedMetric2Sub">동적 응답</div></div>
                 <div class="metric-card rad"><div class="metric-label" id="lumpedMetric3Label">정상상태 복사</div><div class="metric-value" id="lumpedMetric3">—</div><div class="metric-sub" id="lumpedMetric3Sub">Qr(tend)</div></div>
                 <div class="metric-card"><div class="metric-label" id="lumpedMetric4Label">정상상태 대류</div><div class="metric-value" id="lumpedMetric4">—</div><div class="metric-sub" id="lumpedMetric4Sub">Qc(tend)</div></div>
               </div>
@@ -553,7 +553,7 @@
             </div>
 
             <div class="cfd-heat-grid">
-              <div class="metric-card blue"><div class="metric-label">CFD 대류 열전달량</div><div class="metric-value" id="cfdQConv">—</div><div class="metric-sub">표면 q″conv 적분</div></div>
+              <div class="metric-card conv"><div class="metric-label">CFD 대류 열전달량</div><div class="metric-value" id="cfdQConv">—</div><div class="metric-sub">표면 q″conv 적분</div></div>
               <div class="metric-card rad"><div class="metric-label">CFD 복사 열전달량</div><div class="metric-value" id="cfdQRad">—</div><div class="metric-sub" id="cfdRadMethod">복사 후처리</div></div>
               <div class="metric-card heat"><div class="metric-label">CFD 총 열전달량</div><div class="metric-value" id="cfdQTotal">—</div><div class="metric-sub">Qconv + Qrad</div></div>
               <div class="metric-card"><div class="metric-label">복사 기여율</div><div class="metric-value" id="cfdRadFraction">—</div><div class="metric-sub">Qrad / Qtotal</div></div>

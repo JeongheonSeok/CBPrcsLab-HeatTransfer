@@ -3,7 +3,7 @@
 .diagram-card { overflow: hidden; }
 .diagram-toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .toggle-button { padding: 6px 9px; color: var(--muted); font-size: 12px; font-weight: 700; }
-.toggle-button.active { color: #164fb8; border-color: #b8ceff; background: var(--blue-soft); }
+.toggle-button.active { color: var(--accent-ink); border-color: var(--accent-line); background: var(--accent-soft); }
 
 .apparatus-canvas {
   min-height: 555px;
@@ -20,13 +20,13 @@
 .diagram-caption { padding: 11px 17px 14px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
 
 .apparatus-part { cursor: pointer; }
-.apparatus-part .part-hit { fill: rgba(47, 111, 237, 0); stroke: transparent; stroke-width: 8; transition: 140ms ease; }
+.apparatus-part .part-hit { fill: rgba(var(--accent-rgb), 0); stroke: transparent; stroke-width: 8; transition: 140ms ease; }
 .apparatus-part:hover .part-hit, .apparatus-part.selected .part-hit, .apparatus-part:focus .part-hit {
-  fill: rgba(47, 111, 237, 0.06);
-  stroke: rgba(47, 111, 237, 0.72);
+  fill: rgba(var(--accent-rgb), 0.07);
+  stroke: rgba(var(--accent-rgb), 0.75);
   stroke-width: 3;
 }
-.apparatus-part:hover .part-label, .apparatus-part.selected .part-label { fill: #164fb8; font-weight: 800; }
+.apparatus-part:hover .part-label, .apparatus-part.selected .part-label { fill: var(--accent-ink); font-weight: 800; }
 .part-label { fill: #44525e; font-size: 14px; font-weight: 700; pointer-events: none; }
 .part-sub { fill: #7a8791; font-size: 12px; pointer-events: none; }
 .part-leader { stroke: #9aa8b3; stroke-width: 1.5; fill: none; pointer-events: none; }
@@ -34,14 +34,14 @@
 .flow-layer { transition: opacity 180ms ease; }
 .flow-layer.layer-hidden { opacity: 0; pointer-events: none; }
 .flow-path { fill: none; stroke-linecap: round; stroke-dasharray: 8 8; animation: moveDash 1.8s linear infinite; }
-.air-path { stroke: #4c8fea; stroke-width: 3; }
-.conv-path { stroke: #33a385; stroke-width: 3; }
-.rad-path { stroke: #dc6658; stroke-width: 2.5; }
+.air-path { stroke: var(--flow-air); stroke-width: 3; }
+.conv-path { stroke: var(--flow-conv); stroke-width: 3; }
+.rad-path { stroke: var(--flow-rad); stroke-width: 2.5; }
 @keyframes moveDash { to { stroke-dashoffset: -32; } }
 
 .info-card { display: flex; flex-direction: column; min-height: 100%; }
 .info-card .card-body { display: flex; flex-direction: column; gap: 16px; height: 100%; }
-.info-badge { width: fit-content; padding: 4px 8px; border-radius: 999px; color: #164fb8; background: var(--blue-soft); font-size: 12px; font-weight: 800; }
+.info-badge { width: fit-content; padding: 4px 8px; border-radius: var(--radius-pill); color: var(--accent-ink); background: var(--accent-soft); font-size: 12px; font-weight: 800; }
 .component-title { margin: 0; font-size: 22px; letter-spacing: -0.035em; }
 .component-summary { margin: 0; color: var(--muted); font-size: 14px; }
 .info-grid { margin: 0; display: grid; gap: 11px; }
@@ -54,20 +54,20 @@
 .component-chip {
   padding: 6px 9px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--muted);
   font-size: 12px;
   cursor: pointer;
 }
-.component-chip.active { color: #164fb8; border-color: #b8ceff; background: var(--blue-soft); font-weight: 800; }
+.component-chip.active { color: var(--accent-ink); border-color: var(--accent-line); background: var(--accent-soft); font-weight: 800; }
 
 .apparatus-note {
   margin-top: 16px;
   padding: 13px 15px;
-  border: 1px solid #d9e5ff;
-  border-radius: 11px;
-  background: #f5f8ff;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
   color: #35516f;
   font-size: 13px;
 }
