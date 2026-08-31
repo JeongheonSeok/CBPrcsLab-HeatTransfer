@@ -1,0 +1,4 @@
+/* 실험 A·B 화면 고유 요소 */
+.sensor-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.sensor-button { padding: 9px 6px; border: 1px solid var(--border); border-radius: 9px; background: #fff; color: var(--muted); font-size: 12px; font-weight: 700; cursor: pointer; }
+.sensor-button.active { border-color: #b8ceff; background: var(--blue-soft); color: #164fb8; }
