@@ -1,7 +1,7 @@
 // 실험 A 화면: 정상상태 계산 결과와 그래프
 
 import { $, clamp, numberValue, formatW } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawCrossing, SERIES_COLOR, SERIES_DASH } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawCrossing, labelEnds, SERIES_COLOR, SERIES_DASH } from "../core/chart.js";
 import { experimentASteady, cylinderHeat } from "../physics/experiment-a.js";
 
 // 화면 입력값을 물리 모델의 인자 형태로 변환
@@ -51,8 +51,11 @@ export function drawAChart() {
     drawCrossing(ctx, xMap(crossing.t), yMap(crossing.q), `radiation leads above ${crossing.t.toFixed(0)} °C`, h);
   }
 
-  // 계열 이름을 곡선 끝에 직접 붙인다. 범례로 눈을 왕복시키지 않는다.
-  labelSeries(ctx, values, xMap, yMap, w);
+  const last = values[values.length - 1];
+  labelEnds(ctx, [
+    { name: "Convection", color: SERIES_COLOR.conv, x: xMap(last.t), y: yMap(last.qc) },
+    { name: "Radiation", color: SERIES_COLOR.rad, x: xMap(last.t), y: yMap(last.qr) }
+  ]);
 
   drawVerticalMarker(ctx, xMap(clamp(input.tsC, minX, maxX)), h);
 }
@@ -78,18 +81,6 @@ function findCrossings(values) {
     }
   }
   return found;
-}
-
-/** 곡선 오른쪽 끝에 계열 이름을 붙인다. */
-function labelSeries(ctx, values, xMap, yMap, w) {
-  const last = values[values.length - 1];
-  ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
-  ctx.textAlign = "right";
-  for (const [value, color, name] of [[last.qc, SERIES_COLOR.conv, "Convection"], [last.qr, SERIES_COLOR.rad, "Radiation"]]) {
-    ctx.fillStyle = color;
-    ctx.fillText(name, xMap(last.t) - 3, yMap(value) - 5);
-  }
-  ctx.textAlign = "left";
 }
 
 /**

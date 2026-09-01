@@ -7,7 +7,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { SERIES_COLOR, SENSOR_COLOR } from "../assets/js/core/chart.js";
+import { SERIES_COLOR, SENSOR_COLOR, CHART_INK } from "../assets/js/core/chart.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cssFiles = (function collect(dir, out = []) {
@@ -49,6 +49,17 @@ describe("디자인 토큰 · 데이터 색의 단일 출처", () => {
       assert.ok(css, `base.css에 --${cssName}가 없음`);
       assert.equal(css.toLowerCase(), SERIES_COLOR[jsKey].toLowerCase(),
         `표는 CSS 색, 그래프는 JS 색을 쓰므로 두 값이 같아야 한다`);
+    });
+  }
+
+  // plate는 자기 토큰이 없다. 캔버스 뒤에 비치는 --well 과 같아야 하며
+  // 아래의 "글자 깔개가 그래프 배경과 같다"가 그것을 본다.
+  for (const jsKey of Object.keys(CHART_INK).filter(key => key !== "plate")) {
+    test(`--chart-${jsKey} 와 CHART_INK.${jsKey} 가 같다`, () => {
+      const css = token(`chart-${jsKey}`);
+      assert.ok(css, `tokens.css에 --chart-${jsKey}가 없음`);
+      assert.equal(css.toLowerCase(), CHART_INK[jsKey].toLowerCase(),
+        `그래프 크롬이 토큰 파일 밖으로 새면 대비 검사가 닿지 않는다`);
     });
   }
 
@@ -97,6 +108,26 @@ describe("디자인 토큰 · 대비", () => {
         assert.ok(r >= 3.0, `SENSOR_COLOR.${key} ${SENSOR_COLOR[key]} on ${bg}: ${r.toFixed(2)}:1`);
       }
     }
+  });
+
+  test("그래프 안의 글자가 본문 기준을 넘는다", () => {
+    // 눈금 숫자와 안내선 이름은 11px 글자이므로 4.5:1이다. 그래프 배경은 --well이다.
+    for (const bg of ["#ffffff", token("well")]) {
+      const r = contrast(CHART_INK.ink, bg);
+      assert.ok(r >= 4.5, `CHART_INK.ink ${CHART_INK.ink} on ${bg}: ${r.toFixed(2)}:1 (기준 4.5)`);
+    }
+    const mark = contrast(CHART_INK.mark, token("well"));
+    assert.ok(mark >= 4.5, `CHART_INK.mark: ${mark.toFixed(2)}:1 (기준 4.5)`);
+  });
+
+  test("글자 깔개가 그래프 배경과 같다", () => {
+    // 다르면 곡선 위 글자 뒤에 색이 다른 사각형이 보인다.
+    assert.equal(CHART_INK.plate.toLowerCase(), token("well").toLowerCase());
+  });
+
+  test("격자는 보이되 곡선을 가리지 않는다", () => {
+    const r = contrast(CHART_INK.grid, token("well"));
+    assert.ok(r >= 1.1 && r <= 1.6, `CHART_INK.grid: ${r.toFixed(2)}:1 (1.1~1.6 사이여야 한다)`);
   });
 
   test("회색체와 흑체가 서로 구분된다", () => {
@@ -165,8 +196,11 @@ describe("디자인 토큰 · 규칙 준수", () => {
     // --accent-rgb는 rgba(var(--accent-rgb), a) 형태라 별도로 찾는다.
     const all = [...base.matchAll(/^\s*--([a-z0-9-]+):/gm)].map(m => m[1]);
     const body = cssFiles.map(([, c]) => c).join("\n");
+    // --series-*와 --chart-*는 CSS에 안 나와도 JS 그래프가 쓴다.
+    // 위의 단일 출처 검사가 두 계열을 이미 지킨다.
     const unused = all.filter(name =>
-      !name.startsWith("series-") && !new RegExp(`var\\(--${name}[),\\s]`).test(body));
+      !name.startsWith("series-") && !name.startsWith("chart-")
+      && !new RegExp(`var\\(--${name}[),\\s]`).test(body));
     assert.deepEqual(unused, [], `쓰이지 않는 토큰: ${unused.join(", ")}`);
   });
 });

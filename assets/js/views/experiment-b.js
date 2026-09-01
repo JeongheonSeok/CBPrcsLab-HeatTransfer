@@ -1,7 +1,7 @@
 // 실험 B 화면: 선택한 열전쌍의 측정 온도·오차와 유속별 비교 그래프
 
 import { $, $$, numberValue, formatSmallHeat, syncQuickSet } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, SERIES_COLOR, sensorStyle } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, labelEnds, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR, sensorStyle } from "../core/chart.js";
 import { solveSensor } from "../physics/experiment-b.js";
 
 const SENSOR_NAMES = ["T6", "T7", "T8"];
@@ -54,20 +54,19 @@ export function drawBChart() {
     drawLine(ctx, series[name].map(item => [xMap(item.velocity), yMap(item.temperature)]),
       style[name].color, style[name].width, style[name].dash));
 
-  // 공기 온도선이 무엇인지 그래프 안에서 바로 읽히게 한다.
-  ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
-  ctx.fillStyle = SERIES_COLOR.guide;
-  ctx.fillText("Air temperature", 50, yMap(conditions.gasC) - 5);
-  ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
-  ctx.textAlign = "right";
-  SENSOR_NAMES.forEach(name => {
-    const last = series[name][series[name].length - 1];
-    ctx.fillStyle = style[name].color;
-    ctx.fillText(name, xMap(last.velocity) - 3, yMap(last.temperature) - 5);
-  });
-  ctx.textAlign = "left";
+  // 두 안내선은 모두 학생이 입력한 조건이다. 유입 공기 온도와 현재 유속.
+  // 측정 결과가 아니므로 계열 색이 아니라 조건 표시색을 쓴다.
+  drawHorizontalGuide(ctx, yMap(conditions.gasC), w, SERIES_COLOR.marker, [2, 5], 1);
   drawVerticalMarker(ctx, xMap(conditions.velocity), h);
-  drawHorizontalGuide(ctx, yMap(conditions.gasC), w, SERIES_COLOR.guide, [2, 5], 1);
+
+  // 안내선이 무엇인지 그래프 안에서 바로 읽히게 한다. 글자는 크롬 색이라야 대비가 선다.
+  ctx.font = CHART_FONT;
+  labelOnPlot(ctx, "Air temperature", 50, yMap(conditions.gasC) - 5, CHART_INK.ink);
+
+  labelEnds(ctx, SENSOR_NAMES.map(name => {
+    const last = series[name][series[name].length - 1];
+    return { name, color: style[name].color, x: xMap(last.velocity), y: yMap(last.temperature) };
+  }));
 }
 
 export function updateB() {

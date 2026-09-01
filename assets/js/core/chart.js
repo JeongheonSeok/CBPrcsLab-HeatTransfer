@@ -6,9 +6,16 @@ export const SERIES_COLOR = {
   conv: "#2f6fed",
   rad: "#d94f5c",
   surface: "#e66b37",
-  marker: "#ad7b14",
-  guide: "#aeb8c0"
+  marker: "#ad7b14"     // 학생이 입력한 조건을 가리키는 선. 측정값이 아니다
 };
+
+// 그래프 크롬. 데이터가 아니라 눈금과 표시다.
+// assets/css/tokens.css의 --chart-* 와 값이 같아야 하며 테스트가 검사한다.
+// plate는 캔버스 뒤에 비치는 --well 과 같아야 한다. 글자를 곡선 위에 얹을 때 깔개로 쓴다.
+export const CHART_INK = { ink: "#5c6a76", grid: "#dbe2e8", mark: "#46525e", plate: "#f4f7f9" };
+
+// 그래프 안에서 서체를 섞지 않는다. 축 숫자와 계열 이름이 달라 보이면 안 된다.
+export const CHART_FONT = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
 
 // 표시 크기와 devicePixelRatio에 맞춤. 화면이 숨겨져 크기를 못 재면 null
 export function setupCanvas(canvas) {
@@ -37,9 +44,9 @@ export function makeScales(w, h, xRange, yRange) {
 export function drawAxes(ctx, w, h, xLabel, yLabel, xTicks, yTicks, xMap, yMap) {
   const { left, right, top, bottom } = PLOT_MARGIN;
   ctx.clearRect(0, 0, w, h);
-  ctx.font = "11px system-ui";
-  ctx.fillStyle = "#74818c";
-  ctx.strokeStyle = "#e4e9ed";
+  ctx.font = CHART_FONT;
+  ctx.fillStyle = CHART_INK.ink;
+  ctx.strokeStyle = CHART_INK.grid;
   ctx.lineWidth = 1;
   yTicks.forEach(value => {
     const y = yMap(value);
@@ -89,8 +96,8 @@ export function sensorStyle({ epsilon, d }) {
 
 /** 두 곡선이 만나는 지점을 표시한다. 어느 쪽이 언제 우세해지는지가 읽히도록. */
 export function drawCrossing(ctx, x, y, label, h) {
-  const { top, bottom } = PLOT_MARGIN;
-  ctx.strokeStyle = "#8996a2";
+  const { left, right, top, bottom } = PLOT_MARGIN;
+  ctx.strokeStyle = CHART_INK.mark;
   ctx.lineWidth = 1;
   ctx.setLineDash([2, 3]);
   ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, h - bottom); ctx.stroke();
@@ -99,13 +106,40 @@ export function drawCrossing(ctx, x, y, label, h) {
   ctx.beginPath();
   ctx.arc(x, y, 3.5, 0, Math.PI * 2);
   ctx.fillStyle = "#fff"; ctx.fill();
-  ctx.strokeStyle = "#54606c"; ctx.lineWidth = 1.6; ctx.stroke();
+  ctx.strokeStyle = CHART_INK.mark; ctx.lineWidth = 1.6; ctx.stroke();
 
-  ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
-  ctx.fillStyle = "#54606c";
-  const tw = ctx.measureText(label).width;
+  // 계열 이름은 곡선 끝인 오른쪽 위에 붙으므로, 교차 설명은 아래쪽에 둔다.
+  // 그러지 않으면 셋이 같은 모서리에서 겹친다.
+  ctx.font = CHART_FONT;
+  ctx.fillStyle = CHART_INK.mark;
+  const width = ctx.canvas.clientWidth;
+  const fitsRight = x + 7 + ctx.measureText(label).width <= width - right;
+  ctx.textAlign = fitsRight ? "left" : "right";
+  ctx.fillText(label, fitsRight ? x + 7 : Math.max(x - 7, left), h - bottom - 7);
   ctx.textAlign = "left";
-  ctx.fillText(label, Math.min(x + 7, ctx.canvas.clientWidth - tw - 6), top + 12);
+}
+
+// 곡선 위에 글자를 얹으면 선과 겹쳐 읽히지 않는다. 배경색 깔개를 먼저 깐다.
+export function labelOnPlot(ctx, text, x, y, color, align = "left") {
+  const width = ctx.measureText(text).width;
+  ctx.fillStyle = CHART_INK.plate;
+  ctx.fillRect((align === "right" ? x - width : x) - 3, y - 9, width + 6, 12);
+  ctx.fillStyle = color;
+  ctx.textAlign = align;
+  ctx.fillText(text, x, y);
+  ctx.textAlign = "left";
+}
+
+// 곡선 오른쪽 끝에 계열 이름을 붙인다. 범례로 눈을 왕복시키지 않기 위해서다.
+// 곡선이 서로 가까우면 이름표끼리 겹치므로 최소 간격을 두고 아래로 밀어낸다.
+export function labelEnds(ctx, items) {
+  ctx.font = CHART_FONT;
+  let lastY = -Infinity;
+  [...items].sort((a, b) => a.y - b.y).forEach(item => {
+    const y = Math.max(item.y - 5, lastY + 12);
+    lastY = y;
+    labelOnPlot(ctx, item.name, item.x - 3, y, item.color, "right");
+  });
 }
 
 export function drawVerticalMarker(ctx, x, h, stroke = SERIES_COLOR.marker) {

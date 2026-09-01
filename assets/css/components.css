@@ -181,7 +181,8 @@ dialog::backdrop { background: rgba(18, 40, 63, .4); }
 .card--planned { border-style: dashed; box-shadow: none; background: none; }
 
 /* 카드를 나란히 놓는다. 세로로만 쌓으면 화면이 길어지고 관계가 안 보인다. */
-.card-grid { display: grid; gap: var(--sp-3); }
+/* 내용이 짧은 카드가 긴 카드의 높이를 따라가면 아래가 크게 빈다 */
+.card-grid { display: grid; align-items: start; gap: var(--sp-3); }
 .card-grid.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .card-grid.wide-left { grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr); }
 @media (max-width: 1080px) { .card-grid.two, .card-grid.wide-left { grid-template-columns: 1fr; } }
