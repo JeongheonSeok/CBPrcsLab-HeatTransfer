@@ -3,7 +3,7 @@
 
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -28,6 +28,32 @@ const attrValues = name =>
   new Set([...html.matchAll(new RegExp(`\\bdata-${name}="([^"]+)"`, "g"))].map(m => m[1]));
 const classCount = cls =>
   [...html.matchAll(new RegExp(`class="[^"]*\\b${cls}\\b`, "g"))].length;
+
+describe("마크업 계약 · 자산", () => {
+  // index.html이 가리키는 파일이 하나라도 없으면 화면이 통째로 무너진다.
+  // CSS 경로가 잘못돼 스타일이 전부 빠진 채 배포된 적이 있어 검사로 남긴다.
+  test("참조하는 CSS와 JS가 모두 존재한다", () => {
+    const refs = [...html.matchAll(/(?:href|src)="((?!https?:)[^"#]+)"/g)].map(m => m[1]);
+    const missing = refs.filter(ref => !existsSync(join(ROOT, ref)));
+    assert.deepEqual(missing, [], `index.html이 없는 파일을 가리킴:\n  ${missing.join("\n  ")}`);
+    assert.ok(refs.length >= 5, "스타일시트가 연결되지 않았다");
+  });
+
+  test("스타일시트가 올바른 순서로 연결된다", () => {
+    // 토큰이 먼저 와야 나머지가 var()를 해석할 수 있다.
+    const sheets = [...html.matchAll(/href="assets\/css\/([a-z-]+)\.css"/g)].map(m => m[1]);
+    assert.ok(sheets.indexOf("tokens") < sheets.indexOf("base"), "tokens.css가 base.css보다 먼저여야 함");
+    assert.ok(sheets.indexOf("base") < sheets.indexOf("components"), "base.css가 components.css보다 먼저여야 함");
+  });
+
+  test("fonts.css가 참조하는 폰트 파일이 모두 존재한다", () => {
+    const css = readFileSync(join(ROOT, "assets/css/fonts.css"), "utf8");
+    const files = [...new Set([...css.matchAll(/url\(\.\.\/fonts\/([^)]+)\)/g)].map(m => m[1]))];
+    const missing = files.filter(f => !existsSync(join(ROOT, "assets/fonts", f)));
+    assert.deepEqual(missing, [], `없는 폰트 파일: ${missing.join(", ")}`);
+    assert.ok(files.length > 0, "@font-face가 하나도 없다");
+  });
+});
 
 describe("마크업 계약 · id", () => {
   test("JS가 부르는 id가 전부 존재한다", () => {
