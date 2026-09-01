@@ -11,3 +11,6 @@ node_modules/
 
 # impeccable 감사 기록과 로컬 캐시
 .impeccable/
+
+# 교안과 개인 보고서 — 이름과 학번이 들어 있고 저작권도 남의 것이다
+*.pdf

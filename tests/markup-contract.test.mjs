@@ -211,8 +211,9 @@ describe("마크업 계약 · 입력 요소", () => {
     }
   });
 
-  test("실험 A·B의 빠른 선택 버튼이 존재한다", () => {
-    assert.ok(classCount("a-voltage") >= 3, "실험 A 전압 버튼");
+  test("실험 B의 유속 빠른 선택 버튼이 교안의 조건을 덮는다", () => {
+    // 교안이 정한 0.2, 0.4, 0.8, 1.6 m/s 네 조건이다.
+    // 실험 A에는 같은 버튼을 두지 않는다. 전압만 바꾸면 전류·온도와 짝이 맞지 않는다.
     assert.ok(classCount("b-velocity") >= 4, "실험 B 유속 버튼");
   });
 
@@ -241,7 +242,7 @@ describe("마크업 계약 · 클래스 이름", () => {
 
   // 이벤트를 걸기 위한 표식일 뿐 모양을 담당하지 않는 클래스
   const hooks = new Set([
-    "a-voltage", "b-velocity", "sensor-button", "dataset-button", "lumped-mode",
+    "b-velocity", "sensor-button", "dataset-button", "lumped-mode",
     "apparatus-mode", "toggle-layer", "selected", "is-hidden", "layer-hidden"
   ]);
 

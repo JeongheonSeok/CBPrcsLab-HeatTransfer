@@ -1,6 +1,6 @@
 // 실험 A 화면: 정상상태 계산 결과와 그래프
 
-import { $, $$, clamp, numberValue, formatW, syncQuickSet } from "../core/dom.js";
+import { $, clamp, numberValue, formatW } from "../core/dom.js";
 import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawCrossing, SERIES_COLOR, SERIES_DASH } from "../core/chart.js";
 import { experimentASteady, cylinderHeat } from "../physics/experiment-a.js";
 
@@ -152,7 +152,6 @@ export function updateA() {
   $("#aConvSub").textContent = `h = ${result.hConv.toFixed(2)} W·m⁻²·K⁻¹`;
   $("#aRadSub").textContent = `hr = ${result.hRad.toFixed(2)} W·m⁻²·K⁻¹`;
 
-  syncQuickSet(".a-voltage", input.V);
   showSplit(input, result);
 
   if (result.model === "morgan") {
@@ -172,12 +171,6 @@ function setAdvanced(open) {
 export function initExperimentAView() {
   ["#aVoltage", "#aCurrent", "#aAirTemp", "#aSurfaceTemp", "#aModel", "#aK", "#aNu", "#aPr"]
     .forEach(id => $(id).addEventListener("input", updateA));
-
-  // 선택 표시는 updateA가 값에서 다시 계산하므로 여기서는 값만 바꾼다.
-  $$(".a-voltage").forEach(button => button.addEventListener("click", () => {
-    $("#aVoltage").value = button.dataset.value;
-    updateA();
-  }));
 
   $("#aAdvancedToggle").addEventListener("click", () => setAdvanced($("#aAdvanced").hidden));
 
