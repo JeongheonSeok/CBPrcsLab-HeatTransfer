@@ -1,0 +1,90 @@
+<div class="conditions">
+  <div class="group">
+    <div class="input"><label for="aVoltage">Voltage</label>
+      <div class="with-unit"><input id="aVoltage" type="number" value="11" min="0" step="0.1"><span class="unit">V</span></div></div>
+    <div class="input"><label for="aCurrent">Current</label>
+      <div class="with-unit"><input id="aCurrent" type="number" value="0.25" min="0" step="0.01"><span class="unit">A</span></div></div>
+  </div>
+  <span class="divider"></span>
+  <div class="group">
+    <div class="input"><label for="aAirTemp">Air T8</label>
+      <div class="with-unit"><input id="aAirTemp" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
+    <div class="input"><label for="aSurfaceTemp">Surface T10</label>
+      <div class="with-unit"><input id="aSurfaceTemp" type="number" value="90" step="0.1"><span class="unit">°C</span></div></div>
+  </div>
+  <span class="divider"></span>
+  <div class="input wide"><label for="aModel">Correlation</label>
+    <select id="aModel"><option value="mcadams">McAdams</option><option value="morgan">Morgan</option></select></div>
+  <span class="spacer"></span>
+  <div class="input free"><label>Quick set</label>
+    <div class="btn-row">
+      <button class="btn a-voltage" data-value="5" type="button">5 V</button>
+      <button class="btn a-voltage is-active" data-value="11" type="button">11 V</button>
+      <button class="btn a-voltage" data-value="17" type="button">17 V</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="card">
+    <header><h2>Where the supplied power goes</h2><span class="badge">Course model</span></header>
+    <div class="card-body">
+      <div class="answer">
+        <span class="figure" id="aPower">—</span>
+        <span class="caption">of electrical power enters the cylinder. The model accounts for part of it as convection and radiation; the rest is not described by these two terms.</span>
+      </div>
+
+      <div class="split-bar" id="aStackBar">
+        <i class="seg-conv" id="aConvBar" style="width:0"></i><i class="seg-rad" id="aRadBar" style="width:0"></i><i class="seg-etc" id="aLossBar" style="width:0"></i>
+      </div>
+
+      <div class="keys">
+        <div><span class="key seg-conv"></span><span class="name">Convection</span><span class="val conv" id="aConv">—</span><span class="pct" id="aConvPct">—</span><span class="note-inline" id="aConvSub">h = —</span></div>
+        <div><span class="key seg-rad"></span><span class="name">Radiation</span><span class="val rad" id="aRad">—</span><span class="pct" id="aRadPct">—</span><span class="note-inline" id="aRadSub">hr = —</span></div>
+        <div><span class="key seg-etc"></span><span class="name">Unmodelled</span><span class="val" id="aResidual">—</span><span class="pct" id="aLossPct">—</span></div>
+      </div>
+
+      <p class="caution" id="aOverflowNote" hidden>The hatched part sits above the supplied power: the two terms already add up to more than went in. Check the surface temperature, the emissivity, and which correlation you picked.</p>
+
+      <p class="formula">
+        <math><mrow><msub><mi>Q</mi><mtext>in</mtext></msub><mo>=</mo><mi>V</mi><mi>I</mi><mo>=</mo>
+        <msub><mi>Q</mi><mtext>conv</mtext></msub><mo>+</mo><msub><mi>Q</mi><mtext>rad</mtext></msub><mo>+</mo>
+        <msub><mi>Q</mi><mtext>unmodelled</mtext></msub></mrow></math>
+      </p>
+    </div>
+  </div>
+
+  <div class="card-grid wide-left">
+  <div class="card">
+    <header><h2>How the split changes with surface temperature</h2></header>
+    <div class="card-body">
+      <div class="chart-frame"><canvas class="chart" id="aChart"></canvas></div>
+      <div class="legend">
+        <span><i style="border-color: var(--series-conv)"></i>Convection</span>
+        <span><i class="dashed" style="border-color: var(--series-rad)"></i>Radiation</span>
+        <span><i class="dotted" style="border-color: var(--series-marker)"></i>Your T10</span>
+      </div>
+      <p class="assumption">Radiation grows with <math><msup><mi>T</mi><mn>4</mn></msup></math> while convection grows roughly with <math><msup><mrow><mo>Δ</mo><mi>T</mi></mrow><mn>1.25</mn></msup></math>, so radiation eventually overtakes it. The marked temperature is where that happens for the current air temperature and emissivity.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <header><h2>What this assumed</h2><span class="sub">read before trusting the numbers</span></header>
+    <div class="card-body">
+      <p class="assumption" id="aWarning">—</p>
+      <p class="assumption">Cylinder diameter, heated length, emissivity and view factor are <strong>placeholder values</strong> until the rig is measured. They scale every number above.</p>
+      <div><button class="btn btn--quiet" id="aAdvancedToggle" type="button">Air properties for Morgan</button></div>
+      <div id="aAdvanced" hidden>
+        <div class="values">
+          <div class="input"><label for="aK">k</label><div class="with-unit"><input id="aK" type="number" value="0.027" step="0.001"><span class="unit">W/mK</span></div></div>
+          <div class="input"><label for="aNu">ν</label><div class="with-unit"><input id="aNu" type="number" value="0.0000175" step="0.0000001"><span class="unit">m²/s</span></div></div>
+          <div class="input"><label for="aPr">Pr</label><div class="with-unit"><input id="aPr" type="number" value="0.707" step="0.001"><span class="unit">—</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+</div>
+      

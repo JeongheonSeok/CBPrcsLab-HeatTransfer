@@ -1,10 +1,13 @@
-// 사이드바 메뉴 렌더링과 화면 전환. 화면별 갱신 함수는 main.js가 등록
+// 사이드바 메뉴와 화면 전환.
+//
+// 화면 마크업은 assets/views/<id>.html에 따로 있고 처음 열 때 한 번만 불러온다.
+// 그래서 화면 하나를 맡은 사람은 자기 파일만 건드리면 되고, 서로 충돌하지 않는다.
 
 import { $, $$ } from "./dom.js";
 import { VIEWS, DEFAULT_VIEW } from "../data/views.js";
 
-// 화면이 활성화될 때 실행할 콜백. main.js가 주입
 let onActivate = {};
+const loaded = new Set();
 
 function renderNav() {
   const list = $("#navList");
@@ -20,45 +23,70 @@ function renderNav() {
  * 아직 만들지 않은 화면은 지어낸 내용 대신 무엇이 들어올지 적는다.
  * 협업하는 사람이 어디까지 되어 있는지 화면만 보고 알 수 있어야 한다.
  */
-function renderPlaceholder(view) {
-  const section = document.getElementById(view.id);
-  if (!section || section.dataset.placeholder === "done") return;
-  section.dataset.placeholder = "done";
-  section.innerHTML = `
+function planPlaceholder(view) {
+  return `
     <div class="content">
       <div class="card card--planned">
         <header><h2>${view.title}</h2><span class="badge badge--warn">Not built yet</span></header>
-        <div class="card-body">
-          <p class="assumption">${view.plan}</p>
-        </div>
+        <div class="card-body"><p class="assumption">${view.plan}</p></div>
       </div>
     </div>`;
 }
 
-export function switchView(viewId, updateHash = true) {
+/** 화면 전용 CSS가 있으면 그 화면을 처음 열 때 붙인다. 없으면 조용히 넘어간다. */
+function loadViewStyles(id) {
+  const href = `assets/css/views/${id}.css`;
+  if (document.querySelector(`link[href="${href}"]`)) return;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = href;
+  document.head.append(link);
+}
+
+async function loadView(view) {
+  if (loaded.has(view.id)) return;
+  loaded.add(view.id);
+  const section = document.getElementById(view.id);
+  if (!section) return;
+
+  if (view.status === "planned") {
+    section.innerHTML = planPlaceholder(view);
+    return;
+  }
+  loadViewStyles(view.id);
+  const response = await fetch(`assets/views/${view.id}.html`);
+  if (!response.ok) {
+    section.innerHTML = `<div class="content"><p class="caution">Could not load assets/views/${view.id}.html (${response.status}).</p></div>`;
+    return;
+  }
+  section.innerHTML = `<div class="content">${await response.text()}</div>`;
+  if (onActivate[view.id]?.mount) onActivate[view.id].mount();
+}
+
+export async function switchView(viewId, updateHash = true) {
   const view = VIEWS.find(item => item.id === viewId) ?? VIEWS.find(item => item.id === DEFAULT_VIEW);
   const target = view.id;
+
+  await loadView(view);
 
   $$(".view").forEach(section => section.classList.toggle("is-active", section.id === target));
   $$(".nav-item").forEach(button => {
     const active = button.dataset.view === target;
     button.classList.toggle("is-active", active);
-    // 이 사이드바는 화면 안의 탭이 아니라 페이지 이동이므로 aria-current가 맞다.
-    // role="tab"은 화살표 키 이동까지 구현해야 올바르다.
+    // 화면 안의 탭이 아니라 페이지 이동이므로 aria-current가 맞다.
     if (active) button.setAttribute("aria-current", "page");
     else button.removeAttribute("aria-current");
   });
 
   $("#pageTitle").textContent = view.title;
-  if (view.status === "planned") renderPlaceholder(view);
   if (updateHash) history.replaceState(null, "", `#${target}`);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  // 화면이 보이기 전에는 캔버스 크기가 0이므로 표시 직후에 다시 그림
-  if (onActivate[target]) setTimeout(onActivate[target], 40);
+  window.scrollTo({ top: 0 });
+  // 화면이 보이기 전에는 캔버스 크기가 0이므로 표시 직후에 다시 그린다.
+  if (onActivate[target]?.redraw) setTimeout(onActivate[target].redraw, 40);
 }
 
-export function initRouter(activationHandlers = {}) {
-  onActivate = activationHandlers;
+export function initRouter(handlers = {}) {
+  onActivate = handlers;
   renderNav();
   $$(".nav-item").forEach(button =>
     button.addEventListener("click", () => switchView(button.dataset.view)));

@@ -15,7 +15,16 @@ import { VIEWS, DEFAULT_VIEW } from "../assets/js/data/views.js";
 const isReady = id => VIEWS.find(v => v.id === id)?.status === "ready";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const html = readFileSync(join(ROOT, "index.html"), "utf8");
+const shell = readFileSync(join(ROOT, "index.html"), "utf8");
+
+/** 화면 마크업은 assets/views/<id>.html에 따로 있다. 계약은 그 둘을 합친 것에 대해 성립한다. */
+const viewMarkup = Object.fromEntries(
+  VIEWS.filter(v => v.status === "ready").map(v => {
+    const file = join(ROOT, "assets", "views", `${v.id}.html`);
+    return [v.id, existsSync(file) ? readFileSync(file, "utf8") : null];
+  })
+);
+const html = shell + "\n" + Object.values(viewMarkup).filter(Boolean).join("\n");
 
 const jsSources = (function collect(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -36,7 +45,7 @@ describe("마크업 계약 · 자산", () => {
   // index.html이 가리키는 파일이 하나라도 없으면 화면이 통째로 무너진다.
   // CSS 경로가 잘못돼 스타일이 전부 빠진 채 배포된 적이 있어 검사로 남긴다.
   test("참조하는 CSS와 JS가 모두 존재한다", () => {
-    const refs = [...html.matchAll(/(?:href|src)="((?!https?:)[^"#]+)"/g)].map(m => m[1]);
+    const refs = [...shell.matchAll(/(?:href|src)="((?!https?:)[^"#]+)"/g)].map(m => m[1]);
     const missing = refs.filter(ref => !existsSync(join(ROOT, ref)));
     assert.deepEqual(missing, [], `index.html이 없는 파일을 가리킴:\n  ${missing.join("\n  ")}`);
     assert.ok(refs.length >= 5, "스타일시트가 연결되지 않았다");
@@ -44,7 +53,7 @@ describe("마크업 계약 · 자산", () => {
 
   test("스타일시트가 올바른 순서로 연결된다", () => {
     // 토큰이 먼저 와야 나머지가 var()를 해석할 수 있다.
-    const sheets = [...html.matchAll(/href="assets\/css\/([a-z-]+)\.css"/g)].map(m => m[1]);
+    const sheets = [...shell.matchAll(/href="assets\/css\/([a-z-]+)\.css"/g)].map(m => m[1]);
     assert.ok(sheets.indexOf("tokens") < sheets.indexOf("base"), "tokens.css가 base.css보다 먼저여야 함");
     assert.ok(sheets.indexOf("base") < sheets.indexOf("components"), "base.css가 components.css보다 먼저여야 함");
   });
@@ -87,7 +96,7 @@ describe("마크업 계약 · id", () => {
 });
 
 describe("마크업 계약 · 화면 전환", () => {
-  const sections = [...html.matchAll(/<section class="view[^"]*"\s+id="([^"]+)"/g)].map(m => m[1]);
+  const sections = [...shell.matchAll(/<section class="view[^"]*"\s+id="([^"]+)"/g)].map(m => m[1]);
 
   test("레지스트리의 모든 화면이 마크업에 있다", () => {
     for (const view of VIEWS) {
@@ -116,12 +125,24 @@ describe("마크업 계약 · 화면 전환", () => {
     }
   });
 
-  test("planned 화면은 마크업이 비어 있다", () => {
+  test("ready 화면은 마크업 파일이 있다", () => {
+    for (const view of VIEWS.filter(v => v.status === "ready")) {
+      assert.ok(viewMarkup[view.id], `"${view.id}"는 ready인데 assets/views/${view.id}.html이 없다`);
+    }
+  });
+
+  test("index.html의 화면 자리는 모두 비어 있다", () => {
+    // 마크업은 화면 파일에만 있어야 한다. 껍데기에 남아 있으면 두 곳을 고치게 된다.
+    for (const m of shell.matchAll(/<section class="view[^"]*" id="([^"]+)">([\s\S]*?)<\/section>/g)) {
+      assert.equal(m[2].trim(), "", `index.html의 #${m[1]}에 마크업이 남아 있다`);
+    }
+  });
+
+  test("planned 화면은 마크업 파일이 없다", () => {
     // 내용이 남아 있으면 자리표시가 그 위에 덧그려져 옛 화면이 잠깐 보인다.
     for (const view of VIEWS.filter(v => v.status === "planned")) {
-      const m = html.match(new RegExp(`<section class="view[^"]*" id="${view.id}">([\\s\\S]*?)</section>`));
-      assert.ok(m, `#${view.id} 화면이 없음`);
-      assert.equal(m[1].trim(), "", `#${view.id}는 planned인데 마크업이 남아 있다`);
+      assert.ok(!existsSync(join(ROOT, "assets", "views", `${view.id}.html`)),
+        `"${view.id}"는 planned인데 화면 파일이 있다. status를 ready로 바꿔라`);
     }
   });
 
@@ -135,7 +156,7 @@ describe("마크업 계약 · 화면 전환", () => {
   });
 
   test("처음 열릴 때 활성 화면이 하나다", () => {
-    assert.equal(classCount("view is-active"), 1, "활성 화면은 하나여야 함");
+    assert.equal([...shell.matchAll(/class="view is-active"/g)].length, 1, "활성 화면은 하나여야 함");
   });
 
   test("메뉴를 그릴 자리가 있다", () => {
