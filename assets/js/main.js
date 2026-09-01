@@ -6,7 +6,7 @@ import { initApparatusView } from "./views/apparatus.js";
 import { initExperimentAView, drawAChart } from "./views/experiment-a.js";
 import { initExperimentBView, drawBChart } from "./views/experiment-b.js";
 import { initTransientView, updateLumped, drawLumpedChart } from "./views/transient.js";
-import { initFieldViewer, resizeFieldCanvas, updateCfdSummary, drawCfdComparison } from "./views/field-viewer.js";
+import { initFieldViewer, resizeFieldCanvas, updateCfdSummary } from "./views/field-viewer.js";
 import { initDataView } from "./views/data-table.js";
 
 initAssumptionDialog();
@@ -30,5 +30,4 @@ window.addEventListener("resize", () => {
   drawBChart();
   drawLumpedChart();
   resizeFieldCanvas();
-  drawCfdComparison();
 });

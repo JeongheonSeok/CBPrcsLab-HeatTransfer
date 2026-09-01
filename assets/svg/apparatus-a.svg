@@ -1,0 +1,91 @@
+<svg class="apparatus-diagram" data-apparatus="A" viewBox="0 0 760 520" role="img" aria-label="Experiment A apparatus, interactive diagram">
+                  <defs>
+                    <linearGradient id="ductA" x1="0" x2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset="0.5" stop-color="#ffffff"/><stop offset="1" stop-color="#e9eef2"/></linearGradient>
+                    <linearGradient id="pipeWallA" x1="0" x2="1"><stop offset="0" stop-color="#aeb9c1"/><stop offset="0.18" stop-color="#dbe2e7"/><stop offset="0.5" stop-color="#eef2f5"/><stop offset="0.82" stop-color="#d2dae0"/><stop offset="1" stop-color="#9eabb5"/></linearGradient>
+                    <linearGradient id="tubeMetalA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f4f6"/><stop offset="0.45" stop-color="#b8c2c9"/><stop offset="0.55" stop-color="#9ba8b2"/><stop offset="1" stop-color="#e5eaed"/></linearGradient>
+                    <linearGradient id="heaterGradientA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6b477"/><stop offset="0.55" stop-color="#eb7545"/><stop offset="1" stop-color="#c94739"/></linearGradient>
+                    <marker id="arrowAirA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#4c8fea"/></marker>
+                    <marker id="arrowConvA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#33a385"/></marker>
+                    <marker id="arrowRadA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#dc6658"/></marker>
+                  </defs>
+
+                  <!-- 관벽의 두께가 보이도록 단면으로 그린다 -->
+                  <rect x="238" y="34" width="284" height="413" rx="66" fill="url(#pipeWallA)" stroke="#8998a3" stroke-width="2.5"/>
+                  <rect x="266" y="48" width="228" height="385" rx="48" fill="url(#ductA)" stroke="#b2bec7" stroke-width="2"/>
+                  <path d="M266 92h228M266 386h228" stroke="#d5dce1" stroke-width="1"/>
+                  <path d="M252 62v356M508 62v356" stroke="rgba(255,255,255,.68)" stroke-width="2"/>
+
+                  <g class="flow-layer" data-layer-group="air">
+                    <path class="flow-path air-path" d="M322 408 C300 360 327 318 316 270 C306 225 319 185 316 91" marker-end="url(#arrowAirA)"/>
+                    <path class="flow-path air-path" d="M440 408 C466 357 436 318 449 268 C461 222 444 179 450 90" marker-end="url(#arrowAirA)" style="animation-delay:-.8s"/>
+                  </g>
+
+                  <g class="flow-layer" data-layer-group="convection">
+                    <path class="flow-path conv-path" d="M329 185 C304 150 315 119 341 96" marker-end="url(#arrowConvA)"/>
+                    <path class="flow-path conv-path" d="M430 185 C456 151 444 119 419 96" marker-end="url(#arrowConvA)" style="animation-delay:-.5s"/>
+                  </g>
+
+                  <g class="flow-layer" data-layer-group="radiation">
+                    <path class="flow-path rad-path" d="M322 178 L267 139" marker-end="url(#arrowRadA)"/>
+                    <path class="flow-path rad-path" d="M380 158 L380 88" marker-end="url(#arrowRadA)" style="animation-delay:-.4s"/>
+                    <path class="flow-path rad-path" d="M438 178 L493 139" marker-end="url(#arrowRadA)" style="animation-delay:-.8s"/>
+                  </g>
+
+                  <g class="apparatus-part" data-part="a-duct" tabindex="0" role="button" aria-label="Duct">
+                    <rect class="part-hit" x="232" y="28" width="296" height="425" rx="70"/>
+                    <path d="M232 72 C210 70 199 72 177 72" class="part-leader"/>
+                    <text x="92" y="68" class="part-label">Vertical pipe</text>
+                    <text x="92" y="86" class="part-sub">Duct wall and flow path</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="a-heater" tabindex="0" role="button" aria-label="Heated cylinder and support tube">
+                    <rect class="part-hit" x="192" y="150" width="376" height="70" rx="30"/>
+                    <!-- 회색은 관벽 밖 지지관, 주황은 관 내부의 가열 구간 -->
+                    <rect x="202" y="160" width="356" height="50" rx="25" fill="url(#tubeMetalA)" stroke="#7f8d97" stroke-width="2"/>
+                    <ellipse cx="222" cy="185" rx="20" ry="25" fill="#d8e0e5" stroke="#8f9da7" stroke-width="1.5"/>
+                    <ellipse cx="538" cy="185" rx="20" ry="25" fill="#aeb9c1" stroke="#7f8d97" stroke-width="1.5"/>
+                    <rect x="294" y="164" width="172" height="42" rx="21" fill="url(#heaterGradientA)" stroke="#b44b37" stroke-width="2"/>
+                    <ellipse cx="315" cy="185" rx="19" ry="21" fill="#f3a66a"/>
+                    <rect x="248" y="157" width="16" height="56" rx="6" fill="#87959f" opacity=".82"/>
+                    <rect x="496" y="157" width="16" height="56" rx="6" fill="#87959f" opacity=".82"/>
+                    <path d="M560 185 C570 185 576 185 588 185" class="part-leader"/>
+                    <text x="598" y="181" class="part-label">Heated cylinder</text>
+                    <text x="598" y="199" class="part-sub">Heated zone + support tube</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="a-t10" tabindex="0" role="button" aria-label="T10 surface temperature sensor">
+                    <circle class="part-hit" cx="381" cy="164" r="20"/>
+                    <circle cx="381" cy="164" r="7" fill="#fff" stroke="#c44539" stroke-width="3"/>
+                    <path d="M381 157 C381 125 413 113 449 113" class="part-leader"/>
+                    <text x="459" y="109" class="part-label">T10</text>
+                    <text x="459" y="127" class="part-sub">Surface temperature</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="a-t8" tabindex="0" role="button" aria-label="T8 air temperature sensor">
+                    <circle class="part-hit" cx="427" cy="313" r="24"/>
+                    <path d="M427 313 v-43 h36" stroke="#52616d" stroke-width="3" fill="none"/>
+                    <circle cx="427" cy="313" r="7" fill="#fff" stroke="#2f6fed" stroke-width="3"/>
+                    <path d="M451 313 C510 313 529 313 557 313" class="part-leader"/>
+                    <text x="568" y="309" class="part-label">T8</text>
+                    <text x="568" y="327" class="part-sub">Duct air temperature</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="a-throttle" tabindex="0" role="button" aria-label="Throttle plate">
+                    <rect class="part-hit" x="329" y="385" width="102" height="40" rx="12"/>
+                    <path d="M334 402 h92" stroke="#667681" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M380 387 v30" stroke="#667681" stroke-width="3"/>
+                    <path d="M329 406 C273 411 243 411 199 411" class="part-leader"/>
+                    <text x="84" y="407" class="part-label">Throttle plate</text>
+                    <text x="84" y="425" class="part-sub">Throttles the air inlet</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="a-fan" tabindex="0" role="button" aria-label="Fan">
+                    <rect class="part-hit" x="280" y="430" width="200" height="72" rx="16"/>
+                    <rect x="294" y="444" width="172" height="44" rx="10" fill="#dce4e9" stroke="#9aa8b3"/>
+                    <circle cx="380" cy="466" r="17" fill="#fff" stroke="#8c9aa5" stroke-width="2"/>
+                    <path d="M380 450 q19 16 0 32 q-19-16 0-32z" fill="#8f9da8"/>
+                    <path d="M475 466 C520 466 539 466 557 466" class="part-leader"/>
+                    <text x="568" y="462" class="part-label">Fan</text>
+                    <text x="568" y="480" class="part-sub">Off in Experiment A</text>
+                  </g>
+                </svg>

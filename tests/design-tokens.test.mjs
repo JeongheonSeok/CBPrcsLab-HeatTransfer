@@ -19,7 +19,7 @@ const cssFiles = (function collect(dir, out = []) {
   return out;
 })(join(ROOT, "assets", "css"));
 
-const base = cssFiles.find(([name]) => name.endsWith("base.css"))[1];
+const base = cssFiles.find(([name]) => name.endsWith("tokens.css"))[1];
 const token = name => base.match(new RegExp(`--${name}:\\s*([^;]+);`))?.[1].trim();
 
 /** 상대 휘도 (WCAG). */
@@ -120,7 +120,7 @@ describe("디자인 토큰 · 규칙 준수", () => {
     const seriesHex = Object.values(SERIES_COLOR).map(v => v.toLowerCase());
     const offenders = [];
     for (const [name, css] of cssFiles) {
-      if (name.endsWith("base.css")) continue;   // 토큰 정의부는 예외
+      if (name.endsWith("tokens.css")) continue;   // 토큰 정의부는 예외
       css.split("\n").forEach((line, i) => {
         for (const hex of seriesHex) {
           if (line.toLowerCase().includes(hex)) offenders.push(`${name}:${i + 1}  ${line.trim().slice(0, 70)}`);

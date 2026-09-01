@@ -48,7 +48,7 @@ export function drawAChart() {
   // 상온 근처의 첫 교차는 ΔT가 작아 생기는 것이라 표시하지 않는다.
   const crossing = findCrossings(values).find(c => c.radiationTakesOver && c.t > input.taC + 20);
   if (crossing) {
-    drawCrossing(ctx, xMap(crossing.t), yMap(crossing.q), `복사 우세  ${crossing.t.toFixed(0)} °C~`, h);
+    drawCrossing(ctx, xMap(crossing.t), yMap(crossing.q), `radiation leads above ${crossing.t.toFixed(0)} °C`, h);
   }
 
   // 계열 이름을 곡선 끝에 직접 붙인다. 범례로 눈을 왕복시키지 않는다.
@@ -85,7 +85,7 @@ function labelSeries(ctx, values, xMap, yMap, w) {
   const last = values[values.length - 1];
   ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
   ctx.textAlign = "right";
-  for (const [value, color, name] of [[last.qc, SERIES_COLOR.conv, "대류"], [last.qr, SERIES_COLOR.rad, "복사"]]) {
+  for (const [value, color, name] of [[last.qc, SERIES_COLOR.conv, "Convection"], [last.qr, SERIES_COLOR.rad, "Radiation"]]) {
     ctx.fillStyle = color;
     ctx.fillText(name, xMap(last.t) - 3, yMap(value) - 5);
   }
@@ -125,9 +125,9 @@ export function updateA() {
   $("#aOverflowNote").hidden = !over;
 
   if (result.model === "morgan") {
-    $("#aWarning").textContent = `Morgan 계산: Ra = ${result.ra ? result.ra.toExponential(2) : "0"}. 입력한 k, ν, Pr를 사용합니다.${result.extrapolated ? " 현재 Ra는 교안 표 범위 밖입니다." : ""}`;
+    $("#aWarning").textContent = `Morgan correlation, Ra = ${result.ra ? result.ra.toExponential(2) : "0"}, using the k, ν and Pr you entered.${result.extrapolated ? " This Ra falls outside the table in the course notes." : ""}`;
   } else {
-    $("#aWarning").textContent = "McAdams 단순 경험식을 사용합니다. 입력값은 UI 작동을 확인하기 위한 예시입니다.";
+    $("#aWarning").textContent = "McAdams simple correlation. Cylinder dimensions and emissivity are still placeholder values.";
   }
   drawAChart();
 }

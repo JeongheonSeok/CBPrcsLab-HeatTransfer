@@ -69,31 +69,30 @@ export function drawLumpedChart() {
 
 function updateAPanel() {
   const sim = simulateCylinder(readAInputs());
-  $("#lumpedMetric1Label").textContent = "최종 표면 온도";
+  $("#lumpedMetric1Label").textContent = "Final surface temp";
   $("#lumpedMetric1").innerHTML = `${sim.finalTemp.toFixed(1)} <small>°C</small>`;
   $("#lumpedMetric1Sub").textContent = "Tₛ(tend)";
-  $("#lumpedMetric2Label").textContent = "95% 도달 시간";
+  $("#lumpedMetric2Label").textContent = "Time to 95%";
   $("#lumpedMetric2").innerHTML = `${sim.t95.toFixed(0)} <small>s</small>`;
-  $("#lumpedMetric2Sub").textContent = "최종 온도 변화량 기준";
-  $("#lumpedMetric3Label").textContent = "최종 복사 열전달";
+  $("#lumpedMetric2Sub").textContent = "of the total rise";
+  $("#lumpedMetric3Label").textContent = "Radiation at end";
   $("#lumpedMetric3").innerHTML = formatW(sim.qRad);
   $("#lumpedMetric3Sub").textContent = "Qr(tend)";
-  $("#lumpedMetric4Label").textContent = "최종 대류 열전달";
+  $("#lumpedMetric4Label").textContent = "Convection at end";
   $("#lumpedMetric4").innerHTML = formatW(sim.qConv);
   $("#lumpedMetric4Sub").textContent = "Qc(tend)";
-  $("#lumpedChartTitle").textContent = "실험 A · 실린더 평균 온도 응답";
-  $("#lumpedChartSub").textContent = "전력 입력 이후 Tₛ(t)의 변화";
+  $("#lumpedChartTitle").textContent = "Cylinder mean temperature";
   $("#lumpedLegend").innerHTML =
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.surface}"></i>실린더 평균 온도</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.conv}"></i>공기 온도</span>`;
-  $("#lumpedNote").textContent = "유효 열용량과 추가 열손실 계수는 교안에 제시되지 않으므로 실제 T8·T10 시간 기록으로 보정해야 합니다.";
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.surface}"></i>Cylinder mean</span>` +
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.conv}"></i>Air temperature</span>`;
+  $("#lumpedNote").textContent = "Effective heat capacity and extra loss are not in the course notes and have not been fitted to measurements. Treat the time axis as indicative only.";
 }
 
 function updateBPanel() {
   const sim = simulateSensors(readBInputs());
   const [s6, s7, s8] = sim.sensors;
-  [["#lumpedMetric1Label", "T6 평형 온도"], ["#lumpedMetric2Label", "T7 평형 온도"],
-   ["#lumpedMetric3Label", "T8 평형 온도"], ["#lumpedMetric4Label", "가장 긴 시간상수"]]
+  [["#lumpedMetric1Label", "T6 equilibrium"], ["#lumpedMetric2Label", "T7 equilibrium"],
+   ["#lumpedMetric3Label", "T8 equilibrium"], ["#lumpedMetric4Label", "Slowest time constant"]]
     .forEach(([id, value]) => { $(id).textContent = value; });
   $("#lumpedMetric1").innerHTML = `${s6.equilibrium.toFixed(1)} <small>°C</small>`;
   $("#lumpedMetric2").innerHTML = `${s7.equilibrium.toFixed(1)} <small>°C</small>`;
@@ -102,15 +101,14 @@ function updateBPanel() {
   $("#lumpedMetric1Sub").textContent = `τ = ${s6.tau.toFixed(2)} s`;
   $("#lumpedMetric2Sub").textContent = `τ = ${s7.tau.toFixed(2)} s`;
   $("#lumpedMetric3Sub").textContent = `τ = ${s8.tau.toFixed(2)} s`;
-  $("#lumpedMetric4Sub").textContent = "비드 열용량 영향";
-  $("#lumpedChartTitle").textContent = "실험 B · 열전쌍 비드 온도 응답";
-  $("#lumpedChartSub").textContent = "T6·T7·T8의 평형 온도와 응답 속도 비교";
+  $("#lumpedMetric4Sub").textContent = "set by bead heat capacity";
+  $("#lumpedChartTitle").textContent = "Thermocouple bead response";
   $("#lumpedLegend").innerHTML =
     `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T6}"></i>T6</span>` +
     `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T7}"></i>T7</span>` +
     `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T8}"></i>T8</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.marker}"></i>공기 온도</span>`;
-  $("#lumpedNote").textContent = "센서 재료 물성은 교육용 예시이며 전선 전도는 포함하지 않았습니다. 실제 응답 곡선으로 보정하는 구성이 필요합니다.";
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.marker}"></i>Air temperature</span>`;
+  $("#lumpedNote").textContent = "Bead material properties are placeholder values and wire conduction is not modelled, so the response is faster than the real sensor.";
 }
 
 export function updateLumped() {

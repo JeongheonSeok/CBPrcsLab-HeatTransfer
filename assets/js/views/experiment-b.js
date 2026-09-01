@@ -56,7 +56,7 @@ export function drawBChart() {
   // 공기 온도선이 무엇인지 그래프 안에서 바로 읽히게 한다.
   ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
   ctx.fillStyle = SERIES_COLOR.guide;
-  ctx.fillText("공기 온도", 50, yMap(conditions.gasC) - 5);
+  ctx.fillText("Air temperature", 50, yMap(conditions.gasC) - 5);
   ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
   ctx.textAlign = "right";
   SENSOR_NAMES.forEach(name => {

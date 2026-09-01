@@ -1,0 +1,95 @@
+/* 디자인 토큰. 값을 바꿀 일이 생기면 이 파일만 본다.
+   UI 색과 데이터 색을 이름부터 나눈다. 물리량 색은 UI 요소에 쓰지 않는다. */
+
+:root {
+  color-scheme: light;
+
+  /* 지면 */
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --surface-2: #f7f9fa;
+  --surface-3: #edf1f4;
+  --border: #dbe2e8;
+  --border-soft: #e8edf1;
+
+  /* 글자 */
+  --text: #16202a;
+  --text-2: #45525e;
+  --muted: #5c6a76;
+  --muted-2: #7e8b96;
+
+  /* 앱 프레임 — 사이드바를 어둡게 해 화면에 뼈대를 준다.
+     헤더는 밝게 둬 화면 제목이 본문의 일부로 읽히게 한다. */
+  --frame: #12283f;
+  --frame-ink: #dbe6ef;
+  --frame-ink-2: #91a7bb;
+  --frame-line: rgba(255, 255, 255, 0.09);
+  --frame-accent: #6fb6d8;
+
+  /* UI 강조 — 데이터 파랑과 헷갈리지 않도록 청록 기운의 파랑 */
+  --accent: #1a6d94;
+  --accent-hover: #155a7c;
+  --accent-ink: #13566f;
+  --accent-soft: #e4f0f6;
+  --accent-line: #a8cfe2;
+  --accent-rgb: 26, 109, 148;
+
+  /* 데이터 계열 — 물리량 전용.
+     assets/js/core/chart.js의 SERIES_COLOR와 값이 같아야 하며 테스트가 검사한다. */
+  --series-conv: #2f6fed;      /* 대류 */
+  --series-rad: #d94f5c;       /* 복사 */
+  --series-surface: #e66b37;   /* 표면 온도 */
+  --series-marker: #ad7b14;    /* 현재 조건 */
+  --series-muted: #8a98a4;     /* 회색체 센서 */
+  --series-residual: #93a1ad;  /* 모델 밖 열량 — 오류가 아니므로 중립색 */
+
+  /* 장치 도식의 흐름 표시. --series-*와 값이 다르다.
+     도식에서 공기 흐름이 파랑을 쓰고 있어 대류가 초록으로 밀려나 있다.
+     같은 물리량에 같은 색을 쓰라는 계획서 6절을 아직 만족하지 못한 상태다. */
+  --flow-air: #4c8fea;
+  --flow-conv: #33a385;
+  --flow-rad: #dc6658;
+
+  /* 상태 */
+  --status-ok: #17674f;
+  --status-ok-soft: #e7f6f1;
+  --status-warn: #6f5518;
+  --status-warn-soft: #fff7df;
+
+  /* 타입 — IBM Plex는 x-높이가 작아 같은 px에서 더 작게 보인다 */
+  --font-sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-base: 14px;
+  --fs-lg: 17px;
+  --fs-num: 23px;
+
+  /* 굵기 — 400은 기본값이라 토큰을 두지 않는다.
+     600 위로는 올라가지 않는다. 굵기로 강조하는 화면은 계측 도구로 안 읽힌다. */
+  --fw-medium: 500;
+  --fw-semi: 600;
+
+  /* 간격 — 4px 배수 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 32px;
+
+  /* 형태 */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+  --shadow: 0 1px 2px rgba(26, 42, 56, 0.05);
+  --shadow-raised: 0 24px 80px rgba(20, 33, 45, 0.22);
+
+  /* 치수 */
+  --sidebar-w: 224px;
+  --header-h: 52px;
+  --content-max: 1320px;
+}

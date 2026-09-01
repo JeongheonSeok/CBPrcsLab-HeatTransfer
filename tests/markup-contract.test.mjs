@@ -48,7 +48,7 @@ describe("마크업 계약 · id", () => {
 });
 
 describe("마크업 계약 · 화면 전환", () => {
-  const sections = [...html.matchAll(/class="view[^"]*"\s+id="([^"]+)"/g)].map(m => m[1]);
+  const sections = [...html.matchAll(/<section class="view[^"]*"\s+id="([^"]+)"/g)].map(m => m[1]);
 
   test("레지스트리의 모든 화면이 마크업에 있다", () => {
     for (const view of VIEWS) {
@@ -82,7 +82,7 @@ describe("마크업 계약 · 화면 전환", () => {
   });
 
   test("처음 열릴 때 활성 화면이 하나다", () => {
-    assert.equal(classCount("view active"), 1, "활성 화면은 하나여야 함");
+    assert.equal(classCount("view is-active"), 1, "활성 화면은 하나여야 함");
   });
 
   test("메뉴를 그릴 자리가 있다", () => {

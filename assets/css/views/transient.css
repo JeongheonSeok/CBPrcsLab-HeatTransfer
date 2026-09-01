@@ -1,7 +1,0 @@
-/* 시간 변화(Lumped model) 화면 */
-.transient-layout { display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: var(--sp-4); align-items: start; }
-.mode-panel-hidden { display: none !important; }
-.compact-segment { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
-.compact-segment button { width: 100%; }
-.transient-metrics .metric-value { font-size: var(--fs-num); }
-.chart-note { margin-top: 9px; color: var(--muted); font-size: var(--fs-sm); }

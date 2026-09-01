@@ -1,0 +1,114 @@
+<svg class="apparatus-diagram is-hidden" data-apparatus="B" viewBox="0 0 760 520" role="img" aria-label="Experiment B apparatus, interactive diagram">
+                  <defs>
+                    <linearGradient id="ductB" x1="0" x2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset="0.5" stop-color="#ffffff"/><stop offset="1" stop-color="#e9eef2"/></linearGradient>
+                    <marker id="arrowAirB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#4c8fea"/></marker>
+                    <marker id="arrowConvB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#33a385"/></marker>
+                    <marker id="arrowRadB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#dc6658"/></marker>
+                  </defs>
+
+                  <rect x="270" y="42" width="220" height="397" rx="50" fill="url(#ductB)" stroke="#aebbc5" stroke-width="2"/>
+                  <rect x="260" y="105" width="18" height="180" rx="8" fill="#e66b37" opacity="0.82"/>
+                  <rect x="482" y="105" width="18" height="180" rx="8" fill="#e66b37" opacity="0.82"/>
+                  <rect x="278" y="94" width="204" height="20" rx="8" fill="#d9e0e5" stroke="#aab6bf"/>
+
+                  <g class="flow-layer" data-layer-group="air">
+                    <path class="flow-path air-path" d="M325 414 C315 357 326 320 321 278 C316 230 325 182 322 79" marker-end="url(#arrowAirB)"/>
+                    <path class="flow-path air-path" d="M437 414 C448 358 436 320 443 278 C450 229 438 178 442 79" marker-end="url(#arrowAirB)" style="animation-delay:-.7s"/>
+                  </g>
+
+                  <g class="flow-layer" data-layer-group="convection">
+                    <path class="flow-path conv-path" d="M352 180 C338 166 337 148 345 135" marker-end="url(#arrowConvB)"/>
+                    <path class="flow-path conv-path" d="M354 217 C339 203 339 185 346 170" marker-end="url(#arrowConvB)" style="animation-delay:-.5s"/>
+                    <path class="flow-path conv-path" d="M357 258 C338 241 339 221 348 202" marker-end="url(#arrowConvB)" style="animation-delay:-.9s"/>
+                  </g>
+
+                  <g class="flow-layer" data-layer-group="radiation">
+                    <path class="flow-path rad-path" d="M286 157 L345 180" marker-end="url(#arrowRadB)"/>
+                    <path class="flow-path rad-path" d="M474 199 L412 217" marker-end="url(#arrowRadB)" style="animation-delay:-.4s"/>
+                    <path class="flow-path rad-path" d="M286 250 L347 258" marker-end="url(#arrowRadB)" style="animation-delay:-.8s"/>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-duct" tabindex="0" role="button" aria-label="Duct">
+                    <rect class="part-hit" x="264" y="36" width="232" height="409" rx="56"/>
+                    <path d="M264 65 C219 65 199 65 177 65" class="part-leader"/>
+                    <text x="102" y="61" class="part-label">Duct</text>
+                    <text x="102" y="79" class="part-sub">Vertical duct</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-heater-wall" tabindex="0" role="button" aria-label="Heated outer wall">
+                    <rect class="part-hit" x="249" y="96" width="262" height="200" rx="18"/>
+                    <path d="M508 144 C545 144 555 144 574 144" class="part-leader"/>
+                    <text x="584" y="140" class="part-label">Heated wall</text>
+                    <text x="584" y="158" class="part-sub">Electric band heater</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-t10" tabindex="0" role="button" aria-label="T10 outer wall temperature sensor">
+                    <circle class="part-hit" cx="491" cy="122" r="21"/>
+                    <circle cx="491" cy="122" r="7" fill="#fff" stroke="#c44539" stroke-width="3"/>
+                    <path d="M511 122 C548 116 558 116 574 116" class="part-leader"/>
+                    <text x="584" y="112" class="part-label">T10</text>
+                    <text x="584" y="130" class="part-sub">Heated wall temperature</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-t6" tabindex="0" role="button" aria-label="T6 small grey body bead">
+                    <circle class="part-hit" cx="380" cy="180" r="20"/>
+                    <line x1="380" y1="180" x2="524" y2="180" stroke="#596873" stroke-width="2"/>
+                    <circle cx="380" cy="180" r="5" fill="#9aa5ae" stroke="#66747e"/>
+                    <path d="M524 180 C546 180 557 180 574 180" class="part-leader"/>
+                    <text x="584" y="176" class="part-label">T6</text>
+                    <text x="584" y="194" class="part-sub">Small grey body · 0.5 mm</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-t7" tabindex="0" role="button" aria-label="T7 small black body bead">
+                    <circle class="part-hit" cx="380" cy="217" r="20"/>
+                    <line x1="380" y1="217" x2="524" y2="217" stroke="#596873" stroke-width="2"/>
+                    <circle cx="380" cy="217" r="5" fill="#222b32"/>
+                    <path d="M524 217 C546 217 557 217 574 217" class="part-leader"/>
+                    <text x="584" y="213" class="part-label">T7</text>
+                    <text x="584" y="231" class="part-sub">Small black body · 0.5 mm</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-t8" tabindex="0" role="button" aria-label="T8 large black body bead">
+                    <circle class="part-hit" cx="380" cy="258" r="25"/>
+                    <line x1="380" y1="258" x2="524" y2="258" stroke="#596873" stroke-width="2"/>
+                    <circle cx="380" cy="258" r="11" fill="#222b32"/>
+                    <path d="M524 258 C546 258 557 258 574 258" class="part-leader"/>
+                    <text x="584" y="254" class="part-label">T8</text>
+                    <text x="584" y="272" class="part-sub">Large black body · 3 mm</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-shield" tabindex="0" role="button" aria-label="Shield">
+                    <rect class="part-hit" x="278" y="85" width="204" height="42" rx="12"/>
+                    <path d="M276 101 C226 102 208 102 177 102" class="part-leader"/>
+                    <text x="102" y="98" class="part-label">Shield</text>
+                    <text x="102" y="116" class="part-sub">Upper shield</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-t5" tabindex="0" role="button" aria-label="T5 inlet air temperature sensor">
+                    <circle class="part-hit" cx="426" cy="342" r="23"/>
+                    <path d="M426 342 v-42 h36" stroke="#52616d" stroke-width="3" fill="none"/>
+                    <circle cx="426" cy="342" r="7" fill="#fff" stroke="#2f6fed" stroke-width="3"/>
+                    <path d="M449 342 C512 342 542 342 574 342" class="part-leader"/>
+                    <text x="584" y="338" class="part-label">T5</text>
+                    <text x="584" y="356" class="part-sub">Inlet air temperature</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-anemometer" tabindex="0" role="button" aria-label="Anemometer">
+                    <rect class="part-hit" x="334" y="368" width="92" height="41" rx="12"/>
+                    <path d="M339 387 h82" stroke="#65747f" stroke-width="3"/>
+                    <path d="M380 374 v27M365 380 l30 14M395 380 l-30 14" stroke="#65747f" stroke-width="2"/>
+                    <path d="M334 390 C273 390 225 390 177 390" class="part-leader"/>
+                    <text x="82" y="386" class="part-label">Anemometer</text>
+                    <text x="82" y="404" class="part-sub">Measures air velocity</text>
+                  </g>
+
+                  <g class="apparatus-part" data-part="b-fan" tabindex="0" role="button" aria-label="Fan">
+                    <rect class="part-hit" x="280" y="430" width="200" height="72" rx="16"/>
+                    <rect x="294" y="444" width="172" height="44" rx="10" fill="#dce4e9" stroke="#9aa8b3"/>
+                    <circle cx="380" cy="466" r="17" fill="#fff" stroke="#8c9aa5" stroke-width="2"/>
+                    <path d="M380 450 q19 16 0 32 q-19-16 0-32z" fill="#8f9da8"/>
+                    <path d="M280 466 C232 466 210 466 177 466" class="part-leader"/>
+                    <text x="109" y="462" class="part-label">Fan</text>
+                    <text x="109" y="480" class="part-sub">Sets forced convection</text>
+                  </g>
+                </svg>

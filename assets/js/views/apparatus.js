@@ -40,11 +40,8 @@ function switchApparatus(mode) {
   $$(".apparatus-mode").forEach(button => button.classList.toggle("active", button.dataset.mode === mode));
   $$(".apparatus-diagram").forEach(svg => svg.classList.toggle("is-hidden", svg.dataset.apparatus !== mode));
   $("#apparatusHeading").textContent = mode === "A"
-    ? "실험 A · Combined Convection and Radiation"
-    : "실험 B · Radiation Errors in Temperature Measurement";
-  $("#apparatusSubheading").textContent = mode === "A"
-    ? "수평 가열 실린더와 자연대류"
-    : "가열 외벽, 세 종류의 열전쌍과 강제대류";
+    ? "Experiment A · Combined convection and radiation"
+    : "Experiment B · Radiation errors in temperature measurement";
   renderComponentList(mode);
   selectPart(mode === "A" ? "a-t10" : "b-t7");
   updateFlowLayers();

@@ -24,7 +24,7 @@ function exportCsv() {
   const table = $(".data-table");
   const rows = [...table.rows].map(row =>
     [...row.cells].map(cell => `"${cell.textContent.trim().replaceAll('"', '""')}"`).join(","));
-  // 엑셀에서 한글이 깨지지 않도록 BOM을 붙임
+  // 엑셀이 UTF-8로 열도록 BOM을 붙임
   const blob = new Blob(["﻿" + rows.join("\n")], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
@@ -32,7 +32,7 @@ function exportCsv() {
   anchor.download = `heat-transfer-experiment-${dataset}.csv`;
   anchor.click();
   URL.revokeObjectURL(url);
-  showToast("CSV 파일을 만들었습니다");
+  showToast("CSV exported");
 }
 
 export function initDataView() {
@@ -42,8 +42,8 @@ export function initDataView() {
     renderDataTable(false);
   }));
 
-  $("#fillExample").addEventListener("click", () => { renderDataTable(true); showToast("예시값을 채웠습니다"); });
-  $("#clearData").addEventListener("click", () => { renderDataTable(false); showToast("입력값을 지웠습니다"); });
+  $("#fillExample").addEventListener("click", () => { renderDataTable(true); showToast("Example values filled in"); });
+  $("#clearData").addEventListener("click", () => { renderDataTable(false); showToast("Cleared"); });
   $("#exportCsv").addEventListener("click", exportCsv);
 
   renderDataTable(false);

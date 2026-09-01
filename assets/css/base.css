@@ -1,114 +1,33 @@
-/* 디자인 토큰과 기본 리셋 */
-:root {
-  color-scheme: light;
-
-  /* 지면과 글자 */
-  --bg: #f5f7f9;
-  --surface: #ffffff;
-  --surface-2: #f8fafb;
-  --surface-3: #eef2f5;
-  --border: #dce3e8;
-  --border-strong: #cbd5dc;
-  --text: #17212b;
-  --muted: #5d6b77;
-  --muted-2: #7d8993;
-
-  /* UI 강조 — 버튼, 선택 상태, 포커스.
-     데이터 계열과 헷갈리지 않도록 청록 기운의 파랑을 쓴다. */
-  --accent: #1a6d94;
-  --accent-rgb: 26, 109, 148;   /* 알파를 섞어 쓸 때 */
-  --accent-hover: #155a7c;
-
-  /* 앱 프레임 — 사이드바를 어둡게 해 화면에 뼈대를 준다.
-     헤더는 밝게 둬서 화면 제목과 배지가 본문의 일부로 읽히게 한다. */
-  --frame: #12283f;
-  --frame-ink: #dbe6ef;
-  --frame-ink-2: #91a7bb;
-  --frame-line: rgba(255, 255, 255, 0.09);
-  --frame-accent: #6fb6d8;
-  --accent-ink: #13566f;      /* accent-soft 위에 올리는 글자 */
-  --accent-soft: #e4f0f6;
-  --accent-line: #a8cfe2;
-
-  /* 데이터 계열 — 물리량 전용. UI 요소에는 쓰지 않는다.
-     assets/js/core/chart.js의 SERIES_COLOR와 값이 같아야 하며,
-     tests/design-tokens.test.mjs가 이를 검사한다. */
-  --series-conv: #2f6fed;     /* 대류 */
-  --series-rad: #d94f5c;      /* 복사 */
-  --series-surface: #e66b37;  /* 표면 온도 */
-  --series-marker: #ad7b14;   /* 현재 조건 표시 */
-  --series-muted: #8a98a4;    /* 회색체 센서 T6 */
-
-  /* 장치 도식의 흐름 표시. 값은 기존 그대로 옮겨 온 것이며 --series-*와 다르다.
-     도식에서는 공기 흐름이 파랑을 쓰고 있어 대류가 초록으로 밀려났다.
-     계획서 6절은 사이트 전체에서 같은 물리량에 같은 색을 요구하므로 정리가 필요하다. */
-  --flow-air: #4c8fea;
-  --flow-conv: #33a385;
-  --flow-rad: #dc6658;
-
-  /* 상태 */
-  --status-ok: #17674f;
-  --status-ok-soft: #e7f6f1;
-  --status-warn: #6f5518;
-  --status-warn-soft: #fff7df;
-
-  /* 타입 — IBM Plex는 x-높이가 작아 같은 px에서 더 작게 보인다 */
-  --font-sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
-
-  --fs-xs: 11px;      /* 라벨, 각주 */
-  --fs-sm: 12px;      /* 칩, 배지, 표 */
-  --fs-md: 13px;      /* 버튼, 입력 */
-  --fs-base: 14px;    /* 본문 */
-  --fs-lg: 17px;      /* 카드 제목 */
-  --fs-xl: 22px;      /* 화면 제목 */
-  --fs-num: 23px;     /* 큰 수치 */
-
-  /* 굵기 — 400은 기본값이라 토큰을 두지 않는다.
-     800은 쓰지 않는다. 굵기로 강조하는 화면은 계측 도구로 안 읽힌다. */
-  --fw-medium: 500;
-  --fw-semi: 600;
-  --fw-bold: 700;     /* 화면 제목에만 */
-
-  /* 간격 — 4px 배수 */
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
-  --sp-6: 24px;
-  --sp-7: 32px;
-
-  /* 형태 */
-  --radius-sm: 4px;           /* 입력, 배지 */
-  --radius-md: 6px;           /* 카드, 버튼 */
-  --radius-pill: 999px;       /* 칩 */
-  --shadow: 0 1px 2px rgba(26, 42, 56, 0.05);
-  --shadow-raised: 0 24px 80px rgba(20, 33, 45, 0.22);
-
-  /* 치수 */
-  --sidebar-w: 232px;
-  --header-h: 52px;
-}
+/* 리셋과 기본 타이포그래피 */
 
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
-  min-width: 320px;
-  color: var(--text);
   background: var(--bg);
+  color: var(--text);
   font-family: var(--font-sans);
   font-size: var(--fs-base);
-  line-height: 1.55;
-  letter-spacing: -0.01em;
-  word-break: keep-all;
-  overflow-wrap: break-word;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-button, input, select, textarea { font: inherit; }
-button { color: inherit; }
-button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
-  outline: 3px solid rgba(var(--accent-rgb), 0.24);
+h1, h2, h3, h4 { margin: 0; font-weight: var(--fw-semi); line-height: 1.35; }
+h1 { font-size: var(--fs-lg); }
+h2 { font-size: var(--fs-lg); }
+h3 { font-size: var(--fs-base); }
+p { margin: 0; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
+/* 측정값은 자릿수가 맞아야 읽힌다 */
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+math { font-family: var(--font-sans); }
