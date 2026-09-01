@@ -7,7 +7,7 @@ export const SERIES_COLOR = {
   rad: "#d94f5c",
   surface: "#e66b37",
   marker: "#ad7b14",
-  muted: "#8a98a4",
+  muted: "#8a98a4",  // T6 회색체
   guide: "#aeb8c0"
 };
 
@@ -57,7 +57,7 @@ export function drawAxes(ctx, w, h, xLabel, yLabel, xTicks, yTicks, xMap, yMap) 
   ctx.textAlign = "left";
 }
 
-export function drawLine(ctx, points, stroke, width = 2.2) {
+export function drawLine(ctx, points, stroke, width = 2.2, dash = []) {
   if (!points.length) return;
   ctx.beginPath();
   points.forEach((point, index) => index ? ctx.lineTo(point[0], point[1]) : ctx.moveTo(point[0], point[1]));
@@ -65,7 +65,33 @@ export function drawLine(ctx, points, stroke, width = 2.2) {
   ctx.lineWidth = width;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
+  ctx.setLineDash(dash);
   ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+/** 색을 못 읽는 사람도 계열을 구분할 수 있도록 선 종류를 함께 쓴다. */
+export const SERIES_DASH = { solid: [], dashed: [7, 4], dotted: [2, 3] };
+
+/** 두 곡선이 만나는 지점을 표시한다. 어느 쪽이 언제 우세해지는지가 읽히도록. */
+export function drawCrossing(ctx, x, y, label, h) {
+  const { top, bottom } = PLOT_MARGIN;
+  ctx.strokeStyle = "#8996a2";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 3]);
+  ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, h - bottom); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.beginPath();
+  ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+  ctx.fillStyle = "#fff"; ctx.fill();
+  ctx.strokeStyle = "#54606c"; ctx.lineWidth = 1.6; ctx.stroke();
+
+  ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+  ctx.fillStyle = "#54606c";
+  const tw = ctx.measureText(label).width;
+  ctx.textAlign = "left";
+  ctx.fillText(label, Math.min(x + 7, ctx.canvas.clientWidth - tw - 6), top + 12);
 }
 
 export function drawVerticalMarker(ctx, x, h, stroke = SERIES_COLOR.marker) {

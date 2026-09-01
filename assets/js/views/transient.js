@@ -84,8 +84,8 @@ function updateAPanel() {
   $("#lumpedChartTitle").textContent = "실험 A · 실린더 평균 온도 응답";
   $("#lumpedChartSub").textContent = "전력 입력 이후 Tₛ(t)의 변화";
   $("#lumpedLegend").innerHTML =
-    `<span class="legend-item"><i class="legend-swatch" style="background:${SERIES_COLOR.surface}"></i>실린더 평균 온도</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="background:${SERIES_COLOR.conv}"></i>공기 온도</span>`;
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.surface}"></i>실린더 평균 온도</span>` +
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.conv}"></i>공기 온도</span>`;
   $("#lumpedNote").textContent = "유효 열용량과 추가 열손실 계수는 교안에 제시되지 않으므로 실제 T8·T10 시간 기록으로 보정해야 합니다.";
 }
 
@@ -106,10 +106,10 @@ function updateBPanel() {
   $("#lumpedChartTitle").textContent = "실험 B · 열전쌍 비드 온도 응답";
   $("#lumpedChartSub").textContent = "T6·T7·T8의 평형 온도와 응답 속도 비교";
   $("#lumpedLegend").innerHTML =
-    `<span class="legend-item"><i class="legend-swatch" style="background:${SENSOR_COLOR.T6}"></i>T6</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="background:${SENSOR_COLOR.T7}"></i>T7</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="background:${SENSOR_COLOR.T8}"></i>T8</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="background:${SERIES_COLOR.marker}"></i>공기 온도</span>`;
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T6}"></i>T6</span>` +
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T7}"></i>T7</span>` +
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T8}"></i>T8</span>` +
+    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.marker}"></i>공기 온도</span>`;
   $("#lumpedNote").textContent = "센서 재료 물성은 교육용 예시이며 전선 전도는 포함하지 않았습니다. 실제 응답 곡선으로 보정하는 구성이 필요합니다.";
 }
 

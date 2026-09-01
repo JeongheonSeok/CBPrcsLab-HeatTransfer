@@ -1,11 +1,13 @@
 // 실험 B 화면: 선택한 열전쌍의 측정 온도·오차와 유속별 비교 그래프
 
 import { $, $$, numberValue, formatSmallHeat } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, SERIES_COLOR } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, SERIES_COLOR, SERIES_DASH } from "../core/chart.js";
 import { solveSensor } from "../physics/experiment-b.js";
 
 const SENSOR_NAMES = ["T6", "T7", "T8"];
 const SENSOR_COLOR = { T6: SERIES_COLOR.muted, T7: SERIES_COLOR.conv, T8: SERIES_COLOR.rad };
+// 색만으로 계열을 구분하지 않는다 (계획서 6절). 선 종류를 함께 쓴다.
+const SENSOR_DASH = { T6: SERIES_DASH.dotted, T7: SERIES_DASH.solid, T8: SERIES_DASH.dashed };
 
 let selectedSensor = "T7";
 
@@ -48,7 +50,21 @@ export function drawBChart() {
   drawAxes(ctx, w, h, "U (m/s)", "T (°C)", [0.2, 0.8, 1.6],
     [+minY.toFixed(0), +((minY + maxY) / 2).toFixed(0), +maxY.toFixed(0)], xMap, yMap);
   SENSOR_NAMES.forEach(name =>
-    drawLine(ctx, series[name].map(item => [xMap(item.velocity), yMap(item.temperature)]), SENSOR_COLOR[name]));
+    drawLine(ctx, series[name].map(item => [xMap(item.velocity), yMap(item.temperature)]),
+      SENSOR_COLOR[name], 2.2, SENSOR_DASH[name]));
+
+  // 공기 온도선이 무엇인지 그래프 안에서 바로 읽히게 한다.
+  ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
+  ctx.fillStyle = SERIES_COLOR.guide;
+  ctx.fillText("공기 온도", 50, yMap(conditions.gasC) - 5);
+  ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
+  ctx.textAlign = "right";
+  SENSOR_NAMES.forEach(name => {
+    const last = series[name][series[name].length - 1];
+    ctx.fillStyle = SENSOR_COLOR[name];
+    ctx.fillText(name, xMap(last.velocity) - 3, yMap(last.temperature) - 5);
+  });
+  ctx.textAlign = "left";
   drawVerticalMarker(ctx, xMap(conditions.velocity), h);
   drawHorizontalGuide(ctx, yMap(conditions.gasC), w, SERIES_COLOR.guide, [2, 5], 1);
 }

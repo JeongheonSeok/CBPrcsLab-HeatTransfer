@@ -40,7 +40,8 @@ describe("디자인 토큰 · 데이터 색의 단일 출처", () => {
     ["series-conv", "conv"],
     ["series-rad", "rad"],
     ["series-surface", "surface"],
-    ["series-marker", "marker"]
+    ["series-marker", "marker"],
+    ["series-muted", "muted"]
   ];
 
   for (const [cssName, jsKey] of pairs) {

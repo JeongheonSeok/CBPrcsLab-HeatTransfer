@@ -131,7 +131,9 @@ details.advanced .form-grid { margin-top: 12px; }
 canvas.chart { width: 100%; height: 290px; display: block; }
 .chart-legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: 8px; color: var(--muted); font-size: var(--fs-sm); }
 .legend-item { display: inline-flex; align-items: center; gap: var(--sp-1); }
-.legend-swatch { width: 14px; height: 3px; border-radius: var(--radius-pill); }
+.legend-swatch { width: 16px; height: 0; border-top: 3px solid; border-radius: var(--radius-pill); }
+.legend-swatch.dashed { border-top-style: dashed; border-top-width: 3px; }
+.legend-swatch.dotted { border-top-style: dotted; border-top-width: 3px; }
 
 /* 결과 출처 배지 */
 .data-source-badge { display: inline-flex; align-items: center; gap: var(--sp-1); padding: var(--sp-1) var(--sp-2); border-radius: var(--radius-pill); background: var(--surface-3); color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semi); }

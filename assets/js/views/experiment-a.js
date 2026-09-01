@@ -1,7 +1,7 @@
 // 실험 A 화면: 정상상태 계산 결과와 그래프
 
 import { $, $$, clamp, numberValue, formatW } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, SERIES_COLOR } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawCrossing, SERIES_COLOR, SERIES_DASH } from "../core/chart.js";
 import { experimentASteady, cylinderHeat } from "../physics/experiment-a.js";
 
 // 화면 입력값을 물리 모델의 인자 형태로 변환
@@ -41,9 +41,55 @@ export function drawAChart() {
   drawAxes(ctx, w, h, "Tₛ (°C)", "Q (W)",
     [minX, Math.round((minX + maxX) / 2), maxX],
     [0, +(maxY / 2).toFixed(1), +maxY.toFixed(1)], xMap, yMap);
-  drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qc)]), SERIES_COLOR.conv);
-  drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qr)]), SERIES_COLOR.rad);
+  drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qc)]), SERIES_COLOR.conv, 2.2, SERIES_DASH.solid);
+  drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qr)]), SERIES_COLOR.rad, 2.2, SERIES_DASH.dashed);
+
+  // 복사가 대류를 다시 앞지르는 온도만 표시한다. 실험 A가 가르치려는 지점이다.
+  // 상온 근처의 첫 교차는 ΔT가 작아 생기는 것이라 표시하지 않는다.
+  const crossing = findCrossings(values).find(c => c.radiationTakesOver && c.t > input.taC + 20);
+  if (crossing) {
+    drawCrossing(ctx, xMap(crossing.t), yMap(crossing.q), `복사 우세  ${crossing.t.toFixed(0)} °C~`, h);
+  }
+
+  // 계열 이름을 곡선 끝에 직접 붙인다. 범례로 눈을 왕복시키지 않는다.
+  labelSeries(ctx, values, xMap, yMap, w);
+
   drawVerticalMarker(ctx, xMap(clamp(input.tsC, minX, maxX)), h);
+}
+
+/**
+ * 대류와 복사가 뒤바뀌는 온도를 모두 찾는다.
+ * 교차는 두 번 일어난다. ΔT가 작을 때는 복사가 앞서고, 중간 구간은 대류가,
+ * 온도가 더 오르면 T⁴ 때문에 복사가 다시 앞선다. 실험 조건은 가운데 구간에 있다.
+ */
+function findCrossings(values) {
+  const found = [];
+  for (let i = 1; i < values.length; i += 1) {
+    const a = values[i - 1], b = values[i];
+    const da = a.qr - a.qc, db = b.qr - b.qc;
+    if (da * db < 0) {
+      const u = da / (da - db);
+      found.push({
+        t: a.t + (b.t - a.t) * u,
+        q: a.qc + (b.qc - a.qc) * u,
+        // 복사가 위로 올라서는 교차인지
+        radiationTakesOver: db > 0
+      });
+    }
+  }
+  return found;
+}
+
+/** 곡선 오른쪽 끝에 계열 이름을 붙인다. */
+function labelSeries(ctx, values, xMap, yMap, w) {
+  const last = values[values.length - 1];
+  ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
+  ctx.textAlign = "right";
+  for (const [value, color, name] of [[last.qc, SERIES_COLOR.conv, "대류"], [last.qr, SERIES_COLOR.rad, "복사"]]) {
+    ctx.fillStyle = color;
+    ctx.fillText(name, xMap(last.t) - 3, yMap(value) - 5);
+  }
+  ctx.textAlign = "left";
 }
 
 export function updateA() {
