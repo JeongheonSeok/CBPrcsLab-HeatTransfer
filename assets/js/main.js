@@ -22,6 +22,8 @@ const handlers = Object.fromEntries(Object.entries(SCREENS).filter(([id]) => rea
 
 initAssumptionDialog();
 initRouter(handlers);
+// boot.js가 이 표시를 보고, 시작 이후의 오류는 로드 실패로 알리지 않는다.
+document.documentElement.dataset.appReady = "true";
 
 let resizeFrame = null;
 window.addEventListener("resize", () => {

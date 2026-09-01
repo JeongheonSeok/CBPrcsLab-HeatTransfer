@@ -1,8 +1,22 @@
 // 실험 B 화면: 선택한 열전쌍의 측정 온도·오차와 유속별 비교 그래프
 
-import { $, $$, numberValue, formatSmallHeat, syncQuickSet } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, labelEnds, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR, sensorStyle } from "../core/chart.js";
+import { $, $$, numberValue, syncQuickSet } from "../core/dom.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, labelEnds, labelOnPlot, CHART_INK, CHART_FONT, PLOT_MARGIN, SERIES_COLOR, sensorStyle } from "../core/chart.js";
 import { solveSensor } from "../physics/experiment-b.js";
+import { toK } from "../physics/constants.js";
+import { bisect } from "../core/numeric.js";
+
+// 복사 오차를 무시할 수 있는 최소 유속. 교안 B의 예비·결과 항목이다.
+// 기준은 오차가 기체 절대온도의 1% 아래로 내려가는 지점이고, 오차는 유속에 대해
+// 단조 감소하므로 이분법으로 바로 풀린다. 리그 최대인 1.6 m/s를 넘는 값도 그대로 알린다.
+const SEARCH_MAX = 60;
+function criticalVelocity(name, conditions) {
+  const limit = toK(conditions.gasC) / 100;
+  const excess = velocity => solveSensor(name, { ...conditions, velocity }).error - limit;
+  if (excess(0) <= 0) return 0;
+  if (excess(SEARCH_MAX) > 0) return null;
+  return bisect(excess, 0, SEARCH_MAX);
+}
 
 const SENSOR_NAMES = ["T6", "T7", "T8"];
 
@@ -63,6 +77,14 @@ export function drawBChart() {
   ctx.font = CHART_FONT;
   labelOnPlot(ctx, "Air temperature", 50, yMap(conditions.gasC) - 5, CHART_INK.ink);
 
+  // 선택한 센서가 1% 기준을 넘어서는 지점. 리그 범위 안일 때만 그린다.
+  const critical = criticalVelocity(selectedSensor, conditions);
+  if (critical !== null && critical > minX && critical < maxX) {
+    drawVerticalMarker(ctx, xMap(critical), h, CHART_INK.mark);
+    labelOnPlot(ctx, `${selectedSensor} within 1% above ${critical.toFixed(2)} m/s`,
+      xMap(critical) + 6, PLOT_MARGIN.top + 12, CHART_INK.mark);
+  }
+
   labelEnds(ctx, SENSOR_NAMES.map(name => {
     const last = series[name][series[name].length - 1];
     return { name, color: style[name].color, x: xMap(last.velocity), y: yMap(last.temperature) };
@@ -78,15 +100,16 @@ export function updateB() {
   $("#bSensorTemp").innerHTML = `${result.tcC.toFixed(2)} <small>°C</small>`;
   $("#bSensorSub").textContent = `${result.name} · ε=${result.epsilon.toFixed(2)} · d=${(result.d * 1000).toFixed(1)} mm`;
   $("#bError").innerHTML = `${result.error >= 0 ? "+" : ""}${result.error.toFixed(2)} <small>°C</small>`;
+  $("#bHr").innerHTML = `${result.hRad.toFixed(1)} <small>W/m²K</small>`;
   $("#bH").innerHTML = `${result.h.toFixed(1)} <small>W/m²K</small>`;
   $("#bRe").textContent = `Re = ${result.re.toFixed(1)} · Nu = ${result.Nu.toFixed(2)}`;
-  $("#bHeat").innerHTML = formatSmallHeat(Math.abs(result.qRad)).replace(/\s([a-zA-Zµ]+)$/, " <small>$1</small>");
-  $("#bRadValue").textContent = formatSmallHeat(result.qRad);
-  $("#bConvValue").textContent = formatSmallHeat(result.qConv);
+  $("#bRatio").textContent = (result.hRad / result.h).toFixed(3);
 
-  const maxQ = Math.max(Math.abs(result.qRad), Math.abs(result.qConv), 1e-15);
-  $("#bRadBar").style.width = `${Math.abs(result.qRad) / maxQ * 100}%`;
-  $("#bConvBar").style.width = `${Math.abs(result.qConv) / maxQ * 100}%`;
+  const critical = criticalVelocity(selectedSensor, conditions);
+  $("#bCritical").innerHTML = critical === null
+    ? `&gt; ${SEARCH_MAX} <small>m/s</small>`
+    : `${critical.toFixed(2)} <small>m/s</small>`;
+
   drawBChart();
 }
 

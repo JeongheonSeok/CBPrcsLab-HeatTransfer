@@ -48,21 +48,18 @@
   <div class="card">
     <header><h2>Why: radiation in balances convection out</h2></header>
     <div class="card-body">
-      <div class="split-bar">
-        <i class="seg-rad" id="bRadBar" style="width:0"></i><i class="seg-conv" id="bConvBar" style="width:0"></i>
-      </div>
-      <div class="keys">
-        <div><span class="key seg-rad"></span><span class="name">Radiation gained from the wall</span><span class="val rad" id="bRadValue">—</span></div>
-        <div><span class="key seg-conv"></span><span class="name">Convection lost to the air</span><span class="val conv" id="bConvValue">—</span></div>
-      </div>
+      <p class="caption">At steady state the two flows are equal by definition, so their sizes say
+        nothing. What sets the error is the <em>ratio</em> of the two coefficients.</p>
       <div class="values">
+        <div><span class="k">Radiation coefficient</span><span class="v rad" id="bHr">—</span></div>
         <div><span class="k">Convection coefficient</span><span class="v conv" id="bH">—</span><span class="n" id="bRe">—</span></div>
-        <div><span class="k">Radiation at balance</span><span class="v" id="bHeat">—</span></div>
+        <div><span class="k">H<sub>r</sub> / H<sub>c</sub></span><span class="v" id="bRatio">—</span><span class="n">multiplies T<sub>s</sub> − T<sub>c</sub></span></div>
+        <div><span class="k">Error below 1% of T<sub>g</sub> above</span><span class="v" id="bCritical">—</span><span class="n">rig reaches 1.6 m/s</span></div>
       </div>
       <p class="formula">
-        <math><mrow><mi>ε</mi><mi>σ</mi><mi>F</mi><mi>A</mi><mo>(</mo><msubsup><mi>T</mi><mi>s</mi><mn>4</mn></msubsup><mo>−</mo>
-        <msubsup><mi>T</mi><mi>c</mi><mn>4</mn></msubsup><mo>)</mo><mo>=</mo><mi>h</mi><mi>A</mi><mo>(</mo>
-        <msub><mi>T</mi><mi>c</mi></msub><mo>−</mo><msub><mi>T</mi><mi>g</mi></msub><mo>)</mo></mrow></math>
+        <math><mrow><msub><mi>T</mi><mi>c</mi></msub><mo>−</mo><msub><mi>T</mi><mi>g</mi></msub><mo>=</mo>
+        <mfrac><msub><mi>H</mi><mi>r</mi></msub><msub><mi>H</mi><mi>c</mi></msub></mfrac>
+        <mo>(</mo><msub><mi>T</mi><mi>s</mi></msub><mo>−</mo><msub><mi>T</mi><mi>c</mi></msub><mo>)</mo></mrow></math>
       </p>
     </div>
   </div>

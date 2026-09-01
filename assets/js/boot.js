@@ -28,6 +28,7 @@
   // 모듈의 파싱 오류와 import 실패는 둘 다 error 이벤트를 남긴다.
   // capture 단계라야 <script> 요소에서 나는 것까지 잡힌다.
   window.addEventListener("error", function (event) {
+    if (document.documentElement.dataset.appReady) return;   // 시작한 뒤의 오류는 다른 문제다
     var target = event.target;
     var fromScript = target && target !== window && target.tagName === "SCRIPT";
     if (target && target !== window && !fromScript) return;   // 이미지 하나 실패는 무시

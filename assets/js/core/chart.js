@@ -19,6 +19,7 @@ export const CHART_FONT = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
 
 // 표시 크기와 devicePixelRatio에 맞춤. 화면이 숨겨져 크기를 못 재면 null
 export function setupCanvas(canvas) {
+  if (!canvas) return null;          // 아직 열지 않은 화면에는 캔버스가 없다
   const rect = canvas.getBoundingClientRect();
   if (rect.width < 10 || rect.height < 10) return null;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
