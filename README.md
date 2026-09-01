@@ -41,14 +41,18 @@ Python's built-in tooling.
 ## Scripts
 
 ```bash
-npm start              # serve on http://localhost:8000
+npm start              # serve on http://localhost:8000 (no-cache, see below)
 npm test               # property tests for the physics models
 npm run verify         # cross-check the models against an independent SciPy implementation
 npm run verify:python  # same check using python3 instead of uv
 ```
 
-`npm start` is only a shortcut for `python3 -m http.server 8000` — run that directly
-if you would rather not install Node.
+`npm start` runs `tools/serve.py`, a fifteen-line standard-library server whose only
+difference from `python3 -m http.server` is that it sends `Cache-Control: no-store`.
+Without it the browser will happily serve one ES module from cache and another from
+disk; the import then fails and the whole page renders blank. Plain
+`python3 -m http.server 8000` works too, as long as you reload with Ctrl+Shift+R
+after editing anything under `assets/js/`.
 
 The app uses ES modules, so it has to be served over HTTP either way. Opening
 `index.html` straight from the file system will show a blank page.

@@ -12,6 +12,8 @@
 <link rel="stylesheet" href="assets/css/app.css" />
 <link rel="stylesheet" href="assets/css/components.css" />
 
+<!-- boot.js는 일반 스크립트다. 모듈이 깨지면 모듈 안에서는 그것을 알릴 수 없다. -->
+<script src="assets/js/boot.js"></script>
 <script type="module" src="assets/js/main.js"></script>
 </head>
 <body>
@@ -33,7 +35,7 @@
 
   <main>
     <header class="topbar">
-      <h1 id="pageTitle">Apparatus</h1>
+      <h1 id="pageTitle"></h1>
       <span class="spacer"></span>
       <span class="badge">SNU CBE</span>
       <button class="btn" id="openAssumptions" type="button">Models &amp; assumptions</button>
