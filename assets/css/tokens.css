@@ -5,18 +5,19 @@
   color-scheme: light;
 
   /* 지면 */
-  --bg: #eceff3;
+  --bg: #eef1f5;
   --surface: #ffffff;
   --surface-2: #f7f9fa;
   --surface-3: #edf1f4;
-  --border: #dbe2e8;
-  --border-soft: #e8edf1;
+  --well: #f4f7f9;              /* 값이 담기는 자리. 표면보다 안쪽으로 들어간다 */
+  --border: #e4e9ee;
+  --border-soft: #edf1f4;
 
   /* 글자 */
   --text: #16202a;
   --text-2: #45525e;
   --muted: #5c6a76;
-  --muted-2: #7e8b96;
+  --muted-2: #626f7a;           /* 단위와 보조 수치. 4.5:1을 넘겨야 한다 */
 
   /* 앱 프레임 — 사이드바를 어둡게 해 화면에 뼈대를 준다.
      헤더는 밝게 둬 화면 제목이 본문의 일부로 읽히게 한다. */
@@ -41,7 +42,7 @@
   --series-surface: #e66b37;   /* 표면 온도 */
   --series-marker: #ad7b14;    /* 현재 조건 */
   --series-muted: #8a98a4;     /* 회색체 센서 */
-  --series-residual: #93a1ad;  /* 모델 밖 열량 — 오류가 아니므로 중립색 */
+  --series-residual: #7d8b98;  /* 모델 밖 열량 — 오류가 아니므로 중립색 */
 
   /* 장치 도식의 흐름 표시. --series-*와 값이 다르다.
      도식에서 공기 흐름이 파랑을 쓰고 있어 대류가 초록으로 밀려나 있다.
@@ -64,7 +65,7 @@
   --fs-base: 14px;
   --fs-lg: 17px;
   --fs-num: 23px;   /* 값 묶음의 숫자 */
-  --fs-answer: 40px; /* 화면의 답 하나 */
+  --fs-answer: 34px; /* 화면의 답 하나 */
 
   /* 굵기 — 400은 기본값이라 토큰을 두지 않는다.
      600 위로는 올라가지 않는다. 굵기로 강조하는 화면은 계측 도구로 안 읽힌다. */
@@ -78,13 +79,16 @@
   --sp-4: 16px;
   --sp-5: 20px;
   --sp-6: 24px;
-  --sp-7: 32px;
 
   /* 형태 */
   --radius-sm: 4px;
   --radius-md: 6px;
+  --radius-lg: 10px;            /* 카드 */
   --radius-pill: 999px;
-  --shadow-card: 0 1px 1px rgba(20, 33, 45, .04), 0 2px 6px rgba(20, 33, 45, .05);
+  --shadow-card: 0 1px 2px rgba(21, 29, 38, .04), 0 6px 16px -6px rgba(21, 29, 38, .10);
+  /* 표시부를 눌러 넣는다. 1~2px을 넘기면 스큐어모피즘이 된다. */
+  --inset: inset 0 1px 2px rgba(21, 29, 38, .07), inset 0 0 0 1px rgba(21, 29, 38, .035);
+  --inset-deep: inset 0 2px 4px rgba(21, 29, 38, .10), inset 0 0 0 1px rgba(21, 29, 38, .05);
   --shadow-raised: 0 24px 80px rgba(20, 33, 45, 0.22);
 
   /* 치수 */

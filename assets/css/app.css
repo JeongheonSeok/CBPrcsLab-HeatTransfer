@@ -47,7 +47,7 @@
   position: sticky; top: 0; z-index: 5;
   min-height: var(--header-h);
   display: flex; align-items: center; gap: var(--sp-3);
-  padding: 0 var(--sp-5);
+  padding: 0 var(--sp-4);
   background: var(--surface); border-bottom: 1px solid var(--border);
 }
 .topbar h1 { font-size: var(--fs-base); font-weight: var(--fw-semi); }
@@ -56,8 +56,8 @@
 /* ── 조건 띠 ───────────────────────────────────
    입력은 가로 한 줄로 눕힌다. 세로 패널로 세우면 결과가 폭을 잃는다. */
 .conditions {
-  display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-4);
-  padding: var(--sp-3) var(--sp-5);
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-3) var(--sp-4);
+  padding: var(--sp-2) var(--sp-4);
   background: var(--surface); border-bottom: 1px solid var(--border);
 }
 .conditions .group { display: flex; align-items: flex-end; gap: var(--sp-3); }
@@ -78,8 +78,8 @@
 /* ── 화면 본문 ────────────────────────────────── */
 .content {
   width: min(var(--content-max), 100%); margin: 0 auto;
-  padding: var(--sp-5) var(--sp-5) var(--sp-7);
-  display: flex; flex-direction: column; gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-4) var(--sp-6);
+  display: flex; flex-direction: column; gap: var(--sp-3);
 }
 .view { display: none; }
 .view.is-active { display: block; }

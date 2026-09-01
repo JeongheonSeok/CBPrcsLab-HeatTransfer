@@ -96,7 +96,7 @@ describe("디자인 토큰 · 대비", () => {
 describe("디자인 토큰 · 규칙 준수", () => {
   test("모서리 반경은 정해진 단계만 쓴다", () => {
     // 한 값이거나, 토큰과 0을 섞어 일부 모서리만 둥글게 한 형태까지 허용한다.
-    const step = "(?:var\\(--radius-(?:sm|md|pill)\\)|0)";
+    const step = "(?:var\\(--radius-(?:sm|md|lg|pill)\\)|0)";
     const allowed = new RegExp(`^(?:${step}(?:\\s+${step}){0,3}|50%|inherit)$`);
     const offenders = [];
     for (const [name, css] of cssFiles) {

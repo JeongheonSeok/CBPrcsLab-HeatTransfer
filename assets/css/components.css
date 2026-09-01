@@ -4,12 +4,16 @@
    측정값은 mono에 오른쪽 정렬. 자릿수가 맞아야 비교가 된다. */
 input[type="number"], input[type="text"], select {
   width: 100%;
+  min-height: 30px;
   padding: 4px var(--sp-2);
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  background: var(--surface); color: var(--text); font-size: var(--fs-md);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--well); box-shadow: var(--inset);
+  color: var(--text); font-size: var(--fs-md);
 }
 input[type="number"] { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
 input:focus, select:focus { border-color: var(--accent); }
+input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+input:disabled, select:disabled { opacity: .5; cursor: not-allowed; }
 input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 /* ── 버튼 — 기본형 하나에 변형 셋 ───────────────── */
@@ -20,7 +24,11 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   font-size: var(--fs-sm); font-weight: var(--fw-medium); white-space: nowrap;
   transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
+.btn { min-height: 30px; }
 .btn:hover { background: var(--surface-2); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:disabled:hover { background: var(--surface); }
 .btn--primary { border-color: var(--accent); background: var(--accent); color: #fff; }
 .btn--primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 .btn--quiet { border-color: transparent; background: none; color: var(--muted); }
@@ -38,7 +46,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   font-family: var(--font-mono); font-size: var(--fs-answer); font-weight: var(--fw-semi);
   font-variant-numeric: tabular-nums; line-height: 1.05;
 }
-.answer .figure small { margin-left: var(--sp-1); color: var(--muted); font-size: var(--fs-lg); font-weight: 400; }
+.answer .figure small { margin-left: var(--sp-1); color: var(--muted); font-size: var(--fs-base); font-weight: 400; }
 .answer .figure.conv { color: var(--series-conv); }
 .answer .figure.rad { color: var(--series-rad); }
 .answer .caption { color: var(--muted); font-size: var(--fs-md); max-width: 44ch; }
@@ -54,7 +62,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .values .v.rad { color: var(--series-rad); }
 
 /* ── 누적 막대 — 부분이 모여 전체가 되는 관계 ────── */
-.split-bar { display: flex; height: 18px; border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-3); }
+.split-bar { display: flex; height: 16px; border-radius: var(--radius-sm); overflow: hidden; background: var(--well); box-shadow: var(--inset-deep); }
 .split-bar i { display: block; height: 100%; transition: width 200ms ease; }
 .seg-conv { background: var(--series-conv); }
 .seg-rad { background: var(--series-rad); }
@@ -79,7 +87,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 /* ── 그래프 ───────────────────────────────────── */
 .chart-frame { position: relative; }
-canvas.chart { display: block; width: 100%; height: 240px; }
+.chart-frame.well { padding: 0; }
+canvas.chart { display: block; width: 100%; height: 220px; }
 .legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); color: var(--muted); font-size: var(--fs-sm); }
 .legend > span { display: inline-flex; align-items: center; gap: var(--sp-1); }
 /* 색만으로 계열을 구분하지 않는다. 선 종류를 함께 보여준다. */
@@ -92,7 +101,7 @@ canvas.chart { display: block; width: 100%; height: 240px; }
 .assumption strong { color: var(--text-2); font-weight: var(--fw-semi); }
 .caution {
   padding: var(--sp-2) var(--sp-3);
-  border-left: 2px solid var(--status-warn);
+  border-radius: var(--radius-md);
   background: var(--status-warn-soft); color: var(--status-warn);
   font-size: var(--fs-sm);
 }
@@ -138,31 +147,36 @@ dialog::backdrop { background: rgba(18, 40, 63, .4); }
 .toast.is-shown { opacity: 1; transform: translate(-50%, 0); }
 
 /* ── 카드 — 한 화면 안에서 영역을 나눈다 ────────────
-   모든 것을 감싸지 않는다. 조건·결과·근거·가정처럼
-   읽는 단계가 바뀌는 지점에서만 경계를 친다. */
+   제목에 배경을 채우고 실선을 그으면 카드마다 가로선이 두 개 생겨 딱딱해진다.
+   제목은 카드 안 작은 라벨로 내리고, 분리는 선이 아니라 깊이로 한다. */
 .card {
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow-card);
+  padding: var(--sp-4);
 }
+/* 화면의 결론에만 여백을 더 준다. 같은 껍데기라도 무게가 달라진다. */
+.card--lead { padding: var(--sp-5) var(--sp-4) var(--sp-4); }
+
 .card > header {
-  display: flex; align-items: baseline; gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-4);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  display: flex; align-items: baseline; gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
 }
 .card > header h2, .card > header h3 {
-  flex: 1; font-size: var(--fs-md); font-weight: var(--fw-semi); color: var(--text-2);
+  flex: 1; font-size: var(--fs-sm); font-weight: var(--fw-semi); color: var(--muted); margin: 0;
 }
 .card > header .sub { color: var(--muted-2); font-size: var(--fs-xs); }
-.card-body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-4); }
+.card-body { display: flex; flex-direction: column; gap: var(--sp-3); }
 .card--planned { border-style: dashed; box-shadow: none; background: none; }
-.card--planned > header { background: none; }
 
 /* 카드를 나란히 놓는다. 세로로만 쌓으면 화면이 길어지고 관계가 안 보인다. */
-.card-grid { display: grid; gap: var(--sp-4); }
+.card-grid { display: grid; gap: var(--sp-3); }
 .card-grid.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.card-grid.wide-left { grid-template-columns: minmax(0, 1.45fr) minmax(280px, 1fr); }
+.card-grid.wide-left { grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr); }
 @media (max-width: 1080px) { .card-grid.two, .card-grid.wide-left { grid-template-columns: 1fr; } }
+
+/* ── 표시부 — 값이 담기는 자리는 표면보다 안쪽으로 넣는다 ──
+   계기의 판독창과 같은 뜻이다. 글이 놓이는 자리에는 쓰지 않는다. */
+.well { background: var(--well); border-radius: var(--radius-md); box-shadow: var(--inset); }
+.well--flush { overflow: hidden; }
