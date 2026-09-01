@@ -1,33 +1,23 @@
-/* 공통 컴포넌트. 변형은 필요한 만큼만 두고 늘리지 않는다. */
+/* 공통 요소. 변형은 필요한 만큼만 두고 늘리지 않는다. */
 
-/* ── 패널 ─────────────────────────────────────────
-   모든 것을 카드로 감싸지 않는다. 패널은 독립된 대상일 때만 쓴다. */
-.panel {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  box-shadow: var(--shadow);
+/* ── 입력 ─────────────────────────────────────
+   측정값은 mono에 오른쪽 정렬. 자릿수가 맞아야 비교가 된다. */
+input[type="number"], input[type="text"], select {
+  width: 100%;
+  padding: 4px var(--sp-2);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); font-size: var(--fs-md);
 }
-.panel > header {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-4);
-  border-bottom: 1px solid var(--border-soft);
-}
-.panel > header h3 { flex: 1; }
-.panel > .body { padding: var(--sp-4); }
+input[type="number"] { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+input:focus, select:focus { border-color: var(--accent); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
 
-/* ── 버튼 — 기본형 하나에 변형 셋 ─────────────────── */
+/* ── 버튼 — 기본형 하나에 변형 셋 ───────────────── */
 .btn {
-  padding: 6px var(--sp-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--fs-md);
-  font-weight: var(--fw-medium);
-  white-space: nowrap;
+  padding: 4px var(--sp-2);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text);
+  font-size: var(--fs-sm); font-weight: var(--fw-medium); white-space: nowrap;
   transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 .btn:hover { background: var(--surface-2); }
@@ -35,143 +25,114 @@
 .btn--primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 .btn--quiet { border-color: transparent; background: none; color: var(--muted); }
 .btn--quiet:hover { background: var(--surface-2); color: var(--text); }
-.btn--sm { padding: 4px var(--sp-2); font-size: var(--fs-sm); }
 
 /* 선택 상태는 여기 한 곳에만 정의한다. 흩어지면 accent를 바꿀 때 다 놓친다. */
-.btn.is-active,
-.chip.is-active {
-  border-color: var(--accent-line);
-  background: var(--accent-soft);
-  color: var(--accent-ink);
-  font-weight: var(--fw-semi);
-}
-
-.chip {
-  padding: 3px var(--sp-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
-.chip:hover { background: var(--surface-2); }
+.btn.is-active { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent-ink); font-weight: var(--fw-semi); }
 
 .btn-row { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
 
-/* ── 입력 ─────────────────────────────────────────
-   측정값은 mono에 오른쪽 정렬. 자릿수가 맞아야 비교가 된다. */
-.field { display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
-.field > label { color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semi); }
-.field > label em { margin-left: 3px; color: var(--muted-2); font-style: normal; font-weight: 400; }
-.field-row { display: flex; align-items: center; gap: var(--sp-2); }
-.field-row .unit { flex: 0 0 auto; color: var(--muted-2); font-family: var(--font-mono); font-size: var(--fs-xs); }
-
-input[type="number"], input[type="text"], select {
-  width: 100%;
-  padding: 5px var(--sp-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--fs-md);
+/* ── 답 ───────────────────────────────────────
+   화면에서 가장 큰 것. 학생이 알고 싶은 하나의 숫자. */
+.answer { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); }
+.answer .figure {
+  font-family: var(--font-mono); font-size: var(--fs-answer); font-weight: var(--fw-semi);
+  font-variant-numeric: tabular-nums; line-height: 1.05;
 }
-input[type="number"] {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color: var(--accent); }
-input[type="range"] { width: 100%; accent-color: var(--accent); }
+.answer .figure small { margin-left: var(--sp-1); color: var(--muted); font-size: var(--fs-lg); font-weight: 400; }
+.answer .figure.conv { color: var(--series-conv); }
+.answer .figure.rad { color: var(--series-rad); }
+.answer .caption { color: var(--muted); font-size: var(--fs-md); max-width: 44ch; }
 
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
-.form-grid .span-2 { grid-column: 1 / -1; }
+/* ── 값 묶음 ──────────────────────────────────── */
+.values { display: flex; flex-wrap: wrap; gap: var(--sp-3) var(--sp-6); }
+.values > div { display: flex; flex-direction: column; gap: 1px; }
+.values .k { color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semi); }
+.values .v { font-family: var(--font-mono); font-size: var(--fs-num); font-weight: var(--fw-semi); font-variant-numeric: tabular-nums; }
+.values .v small { margin-left: 2px; color: var(--muted-2); font-size: var(--fs-xs); font-weight: 400; }
+.values .n { color: var(--muted-2); font-family: var(--font-mono); font-size: var(--fs-xs); }
+.values .v.conv { color: var(--series-conv); }
+.values .v.rad { color: var(--series-rad); }
 
-/* ── 배지와 주석 ───────────────────────────────────
-   상자는 정말 경고일 때만 친다. 나머지는 위 경계선과 옅은 글자로 충분하다. */
-.badge {
-  padding: 2px var(--sp-2);
-  border-radius: var(--radius-sm);
-  background: var(--surface-3);
-  color: var(--muted);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semi);
-  white-space: nowrap;
-}
-.badge--model { background: var(--status-ok-soft); color: var(--status-ok); }
-.badge--warn { background: var(--status-warn-soft); color: var(--status-warn); }
-
-.note {
-  margin: 0;
-  padding-top: var(--sp-2);
-  border-top: 1px solid var(--border-soft);
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
-.note--warn {
-  padding: var(--sp-2) var(--sp-3);
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: var(--status-warn-soft);
-  color: var(--status-warn);
+/* ── 누적 막대 — 부분이 모여 전체가 되는 관계 ────── */
+.split-bar { display: flex; height: 18px; border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-3); }
+.split-bar i { display: block; height: 100%; transition: width 200ms ease; }
+.seg-conv { background: var(--series-conv); }
+.seg-rad { background: var(--series-rad); }
+.seg-etc { background: var(--series-residual); }
+/* 합이 전체를 넘으면 빗금으로 알린다. 빨강은 복사와 뜻이 겹쳐 쓸 수 없다. */
+.split-bar.is-over i { position: relative; }
+.split-bar.is-over i::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,.55) 0 3px, transparent 3px 7px);
 }
 
-/* ── 수식 ─────────────────────────────────────────
-   MathML을 쓴다. 브라우저 내장이라 라이브러리가 필요 없다. */
-.formula { padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-sm); background: var(--surface-2); overflow-x: auto; }
-.formula math { font-size: var(--fs-base); }
+.keys { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-5); }
+.keys > div { display: flex; align-items: baseline; gap: var(--sp-2); }
+.keys .key { width: 9px; height: 9px; border-radius: var(--radius-sm); align-self: center; flex: 0 0 auto; }
+.keys .name { color: var(--muted); font-size: var(--fs-sm); }
+.keys .val { font-family: var(--font-mono); font-size: var(--fs-base); font-weight: var(--fw-semi); font-variant-numeric: tabular-nums; }
+.keys .val small { margin-left: 2px; color: var(--muted-2); font-size: var(--fs-xs); font-weight: 400; }
+.keys .val.conv { color: var(--series-conv); }
+.keys .val.rad { color: var(--series-rad); }
+.keys .pct { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--muted); font-variant-numeric: tabular-nums; }
+.keys .note-inline { color: var(--muted-2); font-size: var(--fs-xs); font-family: var(--font-mono); }
 
-/* ── 그래프 ───────────────────────────────────────── */
-.chart-frame { position: relative; min-height: 260px; }
-canvas.chart { display: block; width: 100%; height: 260px; }
-.legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-2); color: var(--muted); font-size: var(--fs-sm); }
+/* ── 그래프 ───────────────────────────────────── */
+.chart-frame { position: relative; }
+canvas.chart { display: block; width: 100%; height: 240px; }
+.legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); color: var(--muted); font-size: var(--fs-sm); }
 .legend > span { display: inline-flex; align-items: center; gap: var(--sp-1); }
 /* 색만으로 계열을 구분하지 않는다. 선 종류를 함께 보여준다. */
 .legend i { width: 16px; border-top: 3px solid; }
 .legend i.dashed { border-top-style: dashed; }
 .legend i.dotted { border-top-style: dotted; }
 
-/* ── 표 ─────────────────────────────────────────── */
+/* ── 가정 — 조용히, 그러나 결과 가까이 ──────────── */
+.assumption { color: var(--muted); font-size: var(--fs-sm); max-width: 78ch; }
+.assumption strong { color: var(--text-2); font-weight: var(--fw-semi); }
+.caution {
+  padding: var(--sp-2) var(--sp-3);
+  border-left: 2px solid var(--status-warn);
+  background: var(--status-warn-soft); color: var(--status-warn);
+  font-size: var(--fs-sm);
+}
+.badge {
+  padding: 2px var(--sp-2); border-radius: var(--radius-sm);
+  background: var(--surface-3); color: var(--muted);
+  font-size: var(--fs-xs); font-weight: var(--fw-semi); white-space: nowrap;
+}
+.badge--warn { background: var(--status-warn-soft); color: var(--status-warn); }
+
+/* ── 수식 ─────────────────────────────────────
+   MathML을 쓴다. 브라우저 내장이라 라이브러리가 필요 없다. */
+.formula { color: var(--muted-2); }
+.formula math { font-size: var(--fs-base); }
+
+/* ── 표 ─────────────────────────────────────── */
 .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
 table { width: 100%; border-collapse: collapse; font-size: var(--fs-md); }
 thead th {
-  padding: var(--sp-2) var(--sp-3);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--muted);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semi);
-  text-align: left;
-  white-space: nowrap;
+  padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--border);
+  background: var(--surface-2); color: var(--muted);
+  font-size: var(--fs-xs); font-weight: var(--fw-semi); text-align: left; white-space: nowrap;
 }
 tbody td { padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--border-soft); font-variant-numeric: tabular-nums; }
 tbody tr:last-child td { border-bottom: 0; }
 td.num-cell { font-family: var(--font-mono); text-align: right; }
 
-/* ── 다이얼로그 ───────────────────────────────────── */
+/* ── 다이얼로그와 토스트 ──────────────────────── */
 dialog {
-  width: min(700px, 92vw);
-  max-height: 84vh;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow-raised);
+  width: min(680px, 92vw); max-height: 84vh; padding: 0;
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow-raised);
 }
-dialog::backdrop { background: rgba(18, 40, 63, 0.4); }
+dialog::backdrop { background: rgba(18, 40, 63, .4); }
 
-/* ── 토스트 ───────────────────────────────────────── */
 .toast {
-  position: fixed;
-  left: 50%; bottom: var(--sp-5);
-  transform: translate(-50%, 8px);
-  padding: var(--sp-2) var(--sp-4);
-  border-radius: var(--radius-sm);
-  background: var(--frame);
-  color: #fff;
-  font-size: var(--fs-md);
-  opacity: 0;
-  pointer-events: none;
+  position: fixed; left: 50%; bottom: var(--sp-5); transform: translate(-50%, 8px);
+  padding: var(--sp-2) var(--sp-4); border-radius: var(--radius-sm);
+  background: var(--frame); color: #fff; font-size: var(--fs-md);
+  opacity: 0; pointer-events: none;
   transition: opacity 140ms ease, transform 140ms ease;
 }
 .toast.is-shown { opacity: 1; transform: translate(-50%, 0); }

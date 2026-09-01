@@ -50,9 +50,7 @@
   --flow-conv: #33a385;
   --flow-rad: #dc6658;
 
-  /* 상태 */
-  --status-ok: #17674f;
-  --status-ok-soft: #e7f6f1;
+  /* 상태 — 경고만 쓴다. 성공을 알릴 자리가 아직 없다. */
   --status-warn: #6f5518;
   --status-warn-soft: #fff7df;
 
@@ -65,7 +63,8 @@
   --fs-md: 13px;
   --fs-base: 14px;
   --fs-lg: 17px;
-  --fs-num: 23px;
+  --fs-num: 23px;   /* 값 묶음의 숫자 */
+  --fs-answer: 40px; /* 화면의 답 하나 */
 
   /* 굵기 — 400은 기본값이라 토큰을 두지 않는다.
      600 위로는 올라가지 않는다. 굵기로 강조하는 화면은 계측 도구로 안 읽힌다. */
@@ -85,7 +84,6 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-pill: 999px;
-  --shadow: 0 1px 2px rgba(26, 42, 56, 0.05);
   --shadow-raised: 0 24px 80px rgba(20, 33, 45, 0.22);
 
   /* 치수 */

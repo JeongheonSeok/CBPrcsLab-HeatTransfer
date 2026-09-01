@@ -1,109 +1,102 @@
-/* 앱 프레임 — 어두운 사이드바, 얇은 밝은 헤더, 본문 */
+/* 앱 프레임과 화면 흐름.
+   화면은 대시보드가 아니라 문서로 읽히게 한다.
+   조건 → 결과 → 근거 → 가정 이 순서로 위에서 아래로 내려간다. */
 
-.app {
-  display: grid;
-  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
-  min-height: 100vh;
-}
+.app { display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr); min-height: 100vh; }
 
-/* ── 사이드바 ───────────────────────────────────────── */
+/* ── 사이드바 ───────────────────────────────────── */
 .sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column; gap: var(--sp-4);
   padding: var(--sp-4) var(--sp-3);
-  background: var(--frame);
-  color: var(--frame-ink);
+  background: var(--frame); color: var(--frame-ink);
 }
-
 .brand { display: flex; align-items: center; gap: var(--sp-2); padding: 0 var(--sp-2); }
 .brand-mark {
-  width: 26px; height: 26px;
-  display: grid; place-items: center;
-  border: 1px solid var(--frame-line);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
-  color: var(--frame-accent);
+  width: 26px; height: 26px; display: grid; place-items: center;
+  border: 1px solid var(--frame-line); border-radius: var(--radius-sm);
+  font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--frame-accent);
 }
 .brand-name { font-size: var(--fs-md); font-weight: var(--fw-semi); }
 .brand-sub { color: var(--frame-ink-2); font-size: var(--fs-xs); }
 
 .nav { display: flex; flex-direction: column; gap: 2px; }
 .nav-item {
-  display: block;
-  width: 100%;
-  padding: var(--sp-2) var(--sp-3);
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: none;
-  color: var(--frame-ink-2);
-  text-align: left;
+  width: 100%; padding: var(--sp-2) var(--sp-3);
+  border: 0; border-radius: var(--radius-sm); background: none;
+  color: var(--frame-ink-2); text-align: left;
   transition: background 120ms ease, color 120ms ease;
 }
-.nav-item:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
-.nav-item.is-active {
-  background: rgba(255, 255, 255, 0.09);
-  color: #fff;
-  box-shadow: inset 3px 0 0 var(--frame-accent);
-}
+.nav-item:hover { background: rgba(255,255,255,.06); color: #fff; }
+.nav-item.is-active { background: rgba(255,255,255,.09); color: #fff; box-shadow: inset 3px 0 0 var(--frame-accent); }
 .nav-item strong { display: block; font-size: var(--fs-md); font-weight: var(--fw-medium); }
 .nav-item span { display: block; margin-top: 1px; font-size: var(--fs-xs); opacity: .8; }
 
 .sidebar-foot {
-  margin-top: auto;
-  padding: var(--sp-3) var(--sp-2) 0;
+  margin-top: auto; padding: var(--sp-3) var(--sp-2) 0;
   border-top: 1px solid var(--frame-line);
-  color: var(--frame-ink-2);
-  font-size: var(--fs-xs);
-  line-height: 1.5;
+  color: var(--frame-ink-2); font-size: var(--fs-xs); line-height: 1.5;
 }
 
-/* ── 헤더 ─────────────────────────────────────────── */
+/* ── 헤더 ─────────────────────────────────────── */
 .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 5;
+  position: sticky; top: 0; z-index: 5;
   min-height: var(--header-h);
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
+  display: flex; align-items: center; gap: var(--sp-3);
   padding: 0 var(--sp-5);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--surface); border-bottom: 1px solid var(--border);
 }
 .topbar h1 { font-size: var(--fs-base); font-weight: var(--fw-semi); }
 .topbar .spacer { flex: 1; }
 
-.tag {
-  padding: 3px var(--sp-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
+/* ── 조건 띠 ───────────────────────────────────
+   입력은 가로 한 줄로 눕힌다. 세로 패널로 세우면 결과가 폭을 잃는다. */
+.conditions {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--surface); border-bottom: 1px solid var(--border);
 }
+.conditions .group { display: flex; align-items: flex-end; gap: var(--sp-3); }
+.conditions .divider { width: 1px; align-self: stretch; background: var(--border); }
+.conditions .spacer { flex: 1; }
 
-/* ── 본문 ─────────────────────────────────────────── */
+.input {
+  display: flex; flex-direction: column; gap: 2px;
+  width: 92px;
+}
+.input > label { color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semi); white-space: nowrap; }
+.input > label em { color: var(--muted-2); font-style: normal; font-weight: 400; }
+.input .with-unit { display: flex; align-items: baseline; gap: var(--sp-1); }
+.input .unit { color: var(--muted-2); font-family: var(--font-mono); font-size: var(--fs-xs); }
+.input.wide { width: 150px; }
+.input.free { width: auto; }
+
+/* ── 화면 본문 ────────────────────────────────── */
 .content { width: min(var(--content-max), 100%); margin: 0 auto; padding: var(--sp-5) var(--sp-5) var(--sp-7); }
 .view { display: none; }
-.view.is-active { display: flex; flex-direction: column; gap: var(--sp-4); }
+.view.is-active { display: flex; flex-direction: column; gap: var(--sp-6); }
 
-.workspace { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--sp-4); align-items: start; }
-.column { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+/* 결과 → 근거 → 가정. 각 단계는 제목 한 줄과 내용으로 이루어진다. */
+.block { display: flex; flex-direction: column; gap: var(--sp-3); }
+.block > h2 {
+  display: flex; align-items: baseline; gap: var(--sp-2);
+  padding-bottom: var(--sp-2); border-bottom: 1px solid var(--border);
+  font-size: var(--fs-md); font-weight: var(--fw-semi); color: var(--muted);
+}
+.block > h2 .spacer { flex: 1; }
+
+/* 공간을 다루는 화면만 좌우로 나눈다 */
+.split { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(260px, .8fr); gap: var(--sp-4); align-items: start; }
 
 @media (max-width: 1080px) {
-  .workspace { grid-template-columns: 1fr; }
+  .split { grid-template-columns: 1fr; }
 }
 @media (max-width: 860px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { position: static; height: auto; }
   .nav { flex-direction: row; overflow-x: auto; }
   .nav-item { width: auto; white-space: nowrap; }
-  .nav-item span { display: none; }
-  .sidebar-foot { display: none; }
+  .nav-item span, .sidebar-foot { display: none; }
+  .conditions { padding: var(--sp-3); gap: var(--sp-3); }
   .content { padding: var(--sp-4) var(--sp-3) var(--sp-6); }
 }

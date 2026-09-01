@@ -7,11 +7,11 @@
 <title>Heat Transfer Lab · CBPrcsLab</title>
 
 <link rel="stylesheet" href="assets/css/fonts.css" />
-<link rel="stylesheet" href="assets/css/tokens.css" />
-<link rel="stylesheet" href="assets/css/base.css" />
-<link rel="stylesheet" href="assets/css/app.css" />
-<link rel="stylesheet" href="assets/css/components.css" />
-<link rel="stylesheet" href="assets/css/views.css" />
+<link rel="stylesheet" href="assets/css/build/tokens.css" />
+<link rel="stylesheet" href="assets/css/build/base.css" />
+<link rel="stylesheet" href="assets/css/build/app.css" />
+<link rel="stylesheet" href="assets/css/build/components.css" />
+<link rel="stylesheet" href="assets/css/build/views.css" />
 
 <script type="module" src="assets/js/main.js"></script>
 </head>
@@ -37,564 +37,594 @@
       <h1 id="pageTitle">Apparatus</h1>
       <span class="spacer"></span>
       <span class="tag">SNU CBE</span>
-      <button class="btn btn--sm" id="openAssumptions" type="button">Models &amp; assumptions</button>
+      <button class="btn" id="openAssumptions" type="button">Models &amp; assumptions</button>
     </header>
 
-    <div class="content">
+    
 
-      <!-- ═══ Apparatus ═══ -->
+      <!-- ═══════════════ Apparatus ═══════════════ -->
       <section class="view is-active" id="apparatus">
-        <div class="apparatus-layout">
-          <article class="panel">
-            <header>
-              <h3 id="apparatusHeading">Experiment A · Combined convection and radiation</h3>
-              <div class="btn-row">
-                <button class="btn btn--sm is-active apparatus-mode" data-mode="A" type="button">Exp. A</button>
-                <button class="btn btn--sm apparatus-mode" data-mode="B" type="button">Exp. B</button>
-              </div>
-            </header>
-            <div class="btn-row" style="padding: var(--sp-3) var(--sp-4) 0;">
-              <button class="btn btn--sm is-active toggle-layer" data-layer="air" type="button">Air flow</button>
-              <button class="btn btn--sm is-active toggle-layer" data-layer="convection" type="button">Convection</button>
-              <button class="btn btn--sm is-active toggle-layer" data-layer="radiation" type="button">Radiation</button>
-            </div>
-            <div class="diagram-stage">
-              <svg class="apparatus-diagram" data-apparatus="A" viewBox="0 0 760 520" role="img" aria-label="Experiment A apparatus, interactive diagram">
-                                <defs>
-                                  <linearGradient id="ductA" x1="0" x2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset="0.5" stop-color="#ffffff"/><stop offset="1" stop-color="#e9eef2"/></linearGradient>
-                                  <linearGradient id="pipeWallA" x1="0" x2="1"><stop offset="0" stop-color="#aeb9c1"/><stop offset="0.18" stop-color="#dbe2e7"/><stop offset="0.5" stop-color="#eef2f5"/><stop offset="0.82" stop-color="#d2dae0"/><stop offset="1" stop-color="#9eabb5"/></linearGradient>
-                                  <linearGradient id="tubeMetalA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f4f6"/><stop offset="0.45" stop-color="#b8c2c9"/><stop offset="0.55" stop-color="#9ba8b2"/><stop offset="1" stop-color="#e5eaed"/></linearGradient>
-                                  <linearGradient id="heaterGradientA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6b477"/><stop offset="0.55" stop-color="#eb7545"/><stop offset="1" stop-color="#c94739"/></linearGradient>
-                                  <marker id="arrowAirA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#4c8fea"/></marker>
-                                  <marker id="arrowConvA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#33a385"/></marker>
-                                  <marker id="arrowRadA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#dc6658"/></marker>
-                                </defs>
-              
-                                <!-- 관벽의 두께가 보이도록 단면으로 그린다 -->
-                                <rect x="238" y="34" width="284" height="413" rx="66" fill="url(#pipeWallA)" stroke="#8998a3" stroke-width="2.5"/>
-                                <rect x="266" y="48" width="228" height="385" rx="48" fill="url(#ductA)" stroke="#b2bec7" stroke-width="2"/>
-                                <path d="M266 92h228M266 386h228" stroke="#d5dce1" stroke-width="1"/>
-                                <path d="M252 62v356M508 62v356" stroke="rgba(255,255,255,.68)" stroke-width="2"/>
-              
-                                <g class="flow-layer" data-layer-group="air">
-                                  <path class="flow-path air-path" d="M322 408 C300 360 327 318 316 270 C306 225 319 185 316 91" marker-end="url(#arrowAirA)"/>
-                                  <path class="flow-path air-path" d="M440 408 C466 357 436 318 449 268 C461 222 444 179 450 90" marker-end="url(#arrowAirA)" style="animation-delay:-.8s"/>
-                                </g>
-              
-                                <g class="flow-layer" data-layer-group="convection">
-                                  <path class="flow-path conv-path" d="M329 185 C304 150 315 119 341 96" marker-end="url(#arrowConvA)"/>
-                                  <path class="flow-path conv-path" d="M430 185 C456 151 444 119 419 96" marker-end="url(#arrowConvA)" style="animation-delay:-.5s"/>
-                                </g>
-              
-                                <g class="flow-layer" data-layer-group="radiation">
-                                  <path class="flow-path rad-path" d="M322 178 L267 139" marker-end="url(#arrowRadA)"/>
-                                  <path class="flow-path rad-path" d="M380 158 L380 88" marker-end="url(#arrowRadA)" style="animation-delay:-.4s"/>
-                                  <path class="flow-path rad-path" d="M438 178 L493 139" marker-end="url(#arrowRadA)" style="animation-delay:-.8s"/>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="a-duct" tabindex="0" role="button" aria-label="Duct">
-                                  <rect class="part-hit" x="232" y="28" width="296" height="425" rx="70"/>
-                                  <path d="M232 72 C210 70 199 72 177 72" class="part-leader"/>
-                                  <text x="92" y="68" class="part-label">Vertical pipe</text>
-                                  <text x="92" y="86" class="part-sub">Duct wall and flow path</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="a-heater" tabindex="0" role="button" aria-label="Heated cylinder and support tube">
-                                  <rect class="part-hit" x="192" y="150" width="376" height="70" rx="30"/>
-                                  <!-- 회색은 관벽 밖 지지관, 주황은 관 내부의 가열 구간 -->
-                                  <rect x="202" y="160" width="356" height="50" rx="25" fill="url(#tubeMetalA)" stroke="#7f8d97" stroke-width="2"/>
-                                  <ellipse cx="222" cy="185" rx="20" ry="25" fill="#d8e0e5" stroke="#8f9da7" stroke-width="1.5"/>
-                                  <ellipse cx="538" cy="185" rx="20" ry="25" fill="#aeb9c1" stroke="#7f8d97" stroke-width="1.5"/>
-                                  <rect x="294" y="164" width="172" height="42" rx="21" fill="url(#heaterGradientA)" stroke="#b44b37" stroke-width="2"/>
-                                  <ellipse cx="315" cy="185" rx="19" ry="21" fill="#f3a66a"/>
-                                  <rect x="248" y="157" width="16" height="56" rx="6" fill="#87959f" opacity=".82"/>
-                                  <rect x="496" y="157" width="16" height="56" rx="6" fill="#87959f" opacity=".82"/>
-                                  <path d="M560 185 C570 185 576 185 588 185" class="part-leader"/>
-                                  <text x="598" y="181" class="part-label">Heated cylinder</text>
-                                  <text x="598" y="199" class="part-sub">Heated zone + support tube</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="a-t10" tabindex="0" role="button" aria-label="T10 surface temperature sensor">
-                                  <circle class="part-hit" cx="381" cy="164" r="20"/>
-                                  <circle cx="381" cy="164" r="7" fill="#fff" stroke="#c44539" stroke-width="3"/>
-                                  <path d="M381 157 C381 125 413 113 449 113" class="part-leader"/>
-                                  <text x="459" y="109" class="part-label">T10</text>
-                                  <text x="459" y="127" class="part-sub">Surface temperature</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="a-t8" tabindex="0" role="button" aria-label="T8 air temperature sensor">
-                                  <circle class="part-hit" cx="427" cy="313" r="24"/>
-                                  <path d="M427 313 v-43 h36" stroke="#52616d" stroke-width="3" fill="none"/>
-                                  <circle cx="427" cy="313" r="7" fill="#fff" stroke="#2f6fed" stroke-width="3"/>
-                                  <path d="M451 313 C510 313 529 313 557 313" class="part-leader"/>
-                                  <text x="568" y="309" class="part-label">T8</text>
-                                  <text x="568" y="327" class="part-sub">Duct air temperature</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="a-throttle" tabindex="0" role="button" aria-label="Throttle plate">
-                                  <rect class="part-hit" x="329" y="385" width="102" height="40" rx="12"/>
-                                  <path d="M334 402 h92" stroke="#667681" stroke-width="5" stroke-linecap="round"/>
-                                  <path d="M380 387 v30" stroke="#667681" stroke-width="3"/>
-                                  <path d="M329 406 C273 411 243 411 199 411" class="part-leader"/>
-                                  <text x="84" y="407" class="part-label">Throttle plate</text>
-                                  <text x="84" y="425" class="part-sub">Throttles the air inlet</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="a-fan" tabindex="0" role="button" aria-label="Fan">
-                                  <rect class="part-hit" x="280" y="430" width="200" height="72" rx="16"/>
-                                  <rect x="294" y="444" width="172" height="44" rx="10" fill="#dce4e9" stroke="#9aa8b3"/>
-                                  <circle cx="380" cy="466" r="17" fill="#fff" stroke="#8c9aa5" stroke-width="2"/>
-                                  <path d="M380 450 q19 16 0 32 q-19-16 0-32z" fill="#8f9da8"/>
-                                  <path d="M475 466 C520 466 539 466 557 466" class="part-leader"/>
-                                  <text x="568" y="462" class="part-label">Fan</text>
-                                  <text x="568" y="480" class="part-sub">Off in Experiment A</text>
-                                </g>
-                              </svg>
-              <svg class="apparatus-diagram is-hidden" data-apparatus="B" viewBox="0 0 760 520" role="img" aria-label="Experiment B apparatus, interactive diagram">
-                                <defs>
-                                  <linearGradient id="ductB" x1="0" x2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset="0.5" stop-color="#ffffff"/><stop offset="1" stop-color="#e9eef2"/></linearGradient>
-                                  <marker id="arrowAirB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#4c8fea"/></marker>
-                                  <marker id="arrowConvB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#33a385"/></marker>
-                                  <marker id="arrowRadB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#dc6658"/></marker>
-                                </defs>
-              
-                                <rect x="270" y="42" width="220" height="397" rx="50" fill="url(#ductB)" stroke="#aebbc5" stroke-width="2"/>
-                                <rect x="260" y="105" width="18" height="180" rx="8" fill="#e66b37" opacity="0.82"/>
-                                <rect x="482" y="105" width="18" height="180" rx="8" fill="#e66b37" opacity="0.82"/>
-                                <rect x="278" y="94" width="204" height="20" rx="8" fill="#d9e0e5" stroke="#aab6bf"/>
-              
-                                <g class="flow-layer" data-layer-group="air">
-                                  <path class="flow-path air-path" d="M325 414 C315 357 326 320 321 278 C316 230 325 182 322 79" marker-end="url(#arrowAirB)"/>
-                                  <path class="flow-path air-path" d="M437 414 C448 358 436 320 443 278 C450 229 438 178 442 79" marker-end="url(#arrowAirB)" style="animation-delay:-.7s"/>
-                                </g>
-              
-                                <g class="flow-layer" data-layer-group="convection">
-                                  <path class="flow-path conv-path" d="M352 180 C338 166 337 148 345 135" marker-end="url(#arrowConvB)"/>
-                                  <path class="flow-path conv-path" d="M354 217 C339 203 339 185 346 170" marker-end="url(#arrowConvB)" style="animation-delay:-.5s"/>
-                                  <path class="flow-path conv-path" d="M357 258 C338 241 339 221 348 202" marker-end="url(#arrowConvB)" style="animation-delay:-.9s"/>
-                                </g>
-              
-                                <g class="flow-layer" data-layer-group="radiation">
-                                  <path class="flow-path rad-path" d="M286 157 L345 180" marker-end="url(#arrowRadB)"/>
-                                  <path class="flow-path rad-path" d="M474 199 L412 217" marker-end="url(#arrowRadB)" style="animation-delay:-.4s"/>
-                                  <path class="flow-path rad-path" d="M286 250 L347 258" marker-end="url(#arrowRadB)" style="animation-delay:-.8s"/>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-duct" tabindex="0" role="button" aria-label="Duct">
-                                  <rect class="part-hit" x="264" y="36" width="232" height="409" rx="56"/>
-                                  <path d="M264 65 C219 65 199 65 177 65" class="part-leader"/>
-                                  <text x="102" y="61" class="part-label">Duct</text>
-                                  <text x="102" y="79" class="part-sub">Vertical duct</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-heater-wall" tabindex="0" role="button" aria-label="Heated outer wall">
-                                  <rect class="part-hit" x="249" y="96" width="262" height="200" rx="18"/>
-                                  <path d="M508 144 C545 144 555 144 574 144" class="part-leader"/>
-                                  <text x="584" y="140" class="part-label">Heated wall</text>
-                                  <text x="584" y="158" class="part-sub">Electric band heater</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-t10" tabindex="0" role="button" aria-label="T10 outer wall temperature sensor">
-                                  <circle class="part-hit" cx="491" cy="122" r="21"/>
-                                  <circle cx="491" cy="122" r="7" fill="#fff" stroke="#c44539" stroke-width="3"/>
-                                  <path d="M511 122 C548 116 558 116 574 116" class="part-leader"/>
-                                  <text x="584" y="112" class="part-label">T10</text>
-                                  <text x="584" y="130" class="part-sub">Heated wall temperature</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-t6" tabindex="0" role="button" aria-label="T6 small grey body bead">
-                                  <circle class="part-hit" cx="380" cy="180" r="20"/>
-                                  <line x1="380" y1="180" x2="524" y2="180" stroke="#596873" stroke-width="2"/>
-                                  <circle cx="380" cy="180" r="5" fill="#9aa5ae" stroke="#66747e"/>
-                                  <path d="M524 180 C546 180 557 180 574 180" class="part-leader"/>
-                                  <text x="584" y="176" class="part-label">T6</text>
-                                  <text x="584" y="194" class="part-sub">Small grey body · 0.5 mm</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-t7" tabindex="0" role="button" aria-label="T7 small black body bead">
-                                  <circle class="part-hit" cx="380" cy="217" r="20"/>
-                                  <line x1="380" y1="217" x2="524" y2="217" stroke="#596873" stroke-width="2"/>
-                                  <circle cx="380" cy="217" r="5" fill="#222b32"/>
-                                  <path d="M524 217 C546 217 557 217 574 217" class="part-leader"/>
-                                  <text x="584" y="213" class="part-label">T7</text>
-                                  <text x="584" y="231" class="part-sub">Small black body · 0.5 mm</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-t8" tabindex="0" role="button" aria-label="T8 large black body bead">
-                                  <circle class="part-hit" cx="380" cy="258" r="25"/>
-                                  <line x1="380" y1="258" x2="524" y2="258" stroke="#596873" stroke-width="2"/>
-                                  <circle cx="380" cy="258" r="11" fill="#222b32"/>
-                                  <path d="M524 258 C546 258 557 258 574 258" class="part-leader"/>
-                                  <text x="584" y="254" class="part-label">T8</text>
-                                  <text x="584" y="272" class="part-sub">Large black body · 3 mm</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-shield" tabindex="0" role="button" aria-label="Shield">
-                                  <rect class="part-hit" x="278" y="85" width="204" height="42" rx="12"/>
-                                  <path d="M276 101 C226 102 208 102 177 102" class="part-leader"/>
-                                  <text x="102" y="98" class="part-label">Shield</text>
-                                  <text x="102" y="116" class="part-sub">Upper shield</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-t5" tabindex="0" role="button" aria-label="T5 inlet air temperature sensor">
-                                  <circle class="part-hit" cx="426" cy="342" r="23"/>
-                                  <path d="M426 342 v-42 h36" stroke="#52616d" stroke-width="3" fill="none"/>
-                                  <circle cx="426" cy="342" r="7" fill="#fff" stroke="#2f6fed" stroke-width="3"/>
-                                  <path d="M449 342 C512 342 542 342 574 342" class="part-leader"/>
-                                  <text x="584" y="338" class="part-label">T5</text>
-                                  <text x="584" y="356" class="part-sub">Inlet air temperature</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-anemometer" tabindex="0" role="button" aria-label="Anemometer">
-                                  <rect class="part-hit" x="334" y="368" width="92" height="41" rx="12"/>
-                                  <path d="M339 387 h82" stroke="#65747f" stroke-width="3"/>
-                                  <path d="M380 374 v27M365 380 l30 14M395 380 l-30 14" stroke="#65747f" stroke-width="2"/>
-                                  <path d="M334 390 C273 390 225 390 177 390" class="part-leader"/>
-                                  <text x="82" y="386" class="part-label">Anemometer</text>
-                                  <text x="82" y="404" class="part-sub">Measures air velocity</text>
-                                </g>
-              
-                                <g class="apparatus-part" data-part="b-fan" tabindex="0" role="button" aria-label="Fan">
-                                  <rect class="part-hit" x="280" y="430" width="200" height="72" rx="16"/>
-                                  <rect x="294" y="444" width="172" height="44" rx="10" fill="#dce4e9" stroke="#9aa8b3"/>
-                                  <circle cx="380" cy="466" r="17" fill="#fff" stroke="#8c9aa5" stroke-width="2"/>
-                                  <path d="M380 450 q19 16 0 32 q-19-16 0-32z" fill="#8f9da8"/>
-                                  <path d="M280 466 C232 466 210 466 177 466" class="part-leader"/>
-                                  <text x="109" y="462" class="part-label">Fan</text>
-                                  <text x="109" y="480" class="part-sub">Sets forced convection</text>
-                                </g>
-                              </svg>
-            </div>
-            <p class="note" style="padding: var(--sp-3) var(--sp-4);" id="apparatusCaption">
-              A teaching schematic. Sensor numbers and positions match the real rig, but it is not a dimensioned drawing.
-            </p>
-          </article>
 
-          <article class="panel">
-            <header><h3>Selected component</h3><span class="badge" id="componentBadge">Sensor</span></header>
-            <div class="body part-info">
-              <div>
-                <h2 id="componentTitle">—</h2>
-                <p class="note" style="border: 0; padding: 0;" id="componentSummary">—</p>
+        <div class="conditions">
+          <div class="input free"><label>Experiment</label>
+            <div class="btn-row">
+              <button class="btn is-active apparatus-mode" data-mode="A" type="button">A · heated cylinder</button>
+              <button class="btn apparatus-mode" data-mode="B" type="button">B · thermocouples</button>
+            </div></div>
+          <span class="divider"></span>
+          <div class="input free"><label>Show</label>
+            <div class="btn-row">
+              <button class="btn is-active toggle-layer" data-layer="air" type="button">Air flow</button>
+              <button class="btn is-active toggle-layer" data-layer="convection" type="button">Convection</button>
+              <button class="btn is-active toggle-layer" data-layer="radiation" type="button">Radiation</button>
+            </div></div>
+          <span class="spacer"></span>
+          <span class="badge" id="apparatusHeading">—</span>
+        </div>
+
+        <div class="content">
+          <div class="split">
+            <div class="block">
+              <div class="diagram-stage">
+                <svg class="apparatus-diagram" data-apparatus="A" viewBox="0 0 760 520" role="img" aria-label="Experiment A apparatus, interactive diagram">
+                                  <defs>
+                                    <linearGradient id="ductA" x1="0" x2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset="0.5" stop-color="#ffffff"/><stop offset="1" stop-color="#e9eef2"/></linearGradient>
+                                    <linearGradient id="pipeWallA" x1="0" x2="1"><stop offset="0" stop-color="#aeb9c1"/><stop offset="0.18" stop-color="#dbe2e7"/><stop offset="0.5" stop-color="#eef2f5"/><stop offset="0.82" stop-color="#d2dae0"/><stop offset="1" stop-color="#9eabb5"/></linearGradient>
+                                    <linearGradient id="tubeMetalA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f4f6"/><stop offset="0.45" stop-color="#b8c2c9"/><stop offset="0.55" stop-color="#9ba8b2"/><stop offset="1" stop-color="#e5eaed"/></linearGradient>
+                                    <linearGradient id="heaterGradientA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6b477"/><stop offset="0.55" stop-color="#eb7545"/><stop offset="1" stop-color="#c94739"/></linearGradient>
+                                    <marker id="arrowAirA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#4c8fea"/></marker>
+                                    <marker id="arrowConvA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#33a385"/></marker>
+                                    <marker id="arrowRadA" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#dc6658"/></marker>
+                                  </defs>
+                
+                                  <!-- 관벽의 두께가 보이도록 단면으로 그린다 -->
+                                  <rect x="238" y="34" width="284" height="413" rx="66" fill="url(#pipeWallA)" stroke="#8998a3" stroke-width="2.5"/>
+                                  <rect x="266" y="48" width="228" height="385" rx="48" fill="url(#ductA)" stroke="#b2bec7" stroke-width="2"/>
+                                  <path d="M266 92h228M266 386h228" stroke="#d5dce1" stroke-width="1"/>
+                                  <path d="M252 62v356M508 62v356" stroke="rgba(255,255,255,.68)" stroke-width="2"/>
+                
+                                  <g class="flow-layer" data-layer-group="air">
+                                    <path class="flow-path air-path" d="M322 408 C300 360 327 318 316 270 C306 225 319 185 316 91" marker-end="url(#arrowAirA)"/>
+                                    <path class="flow-path air-path" d="M440 408 C466 357 436 318 449 268 C461 222 444 179 450 90" marker-end="url(#arrowAirA)" style="animation-delay:-.8s"/>
+                                  </g>
+                
+                                  <g class="flow-layer" data-layer-group="convection">
+                                    <path class="flow-path conv-path" d="M329 185 C304 150 315 119 341 96" marker-end="url(#arrowConvA)"/>
+                                    <path class="flow-path conv-path" d="M430 185 C456 151 444 119 419 96" marker-end="url(#arrowConvA)" style="animation-delay:-.5s"/>
+                                  </g>
+                
+                                  <g class="flow-layer" data-layer-group="radiation">
+                                    <path class="flow-path rad-path" d="M322 178 L267 139" marker-end="url(#arrowRadA)"/>
+                                    <path class="flow-path rad-path" d="M380 158 L380 88" marker-end="url(#arrowRadA)" style="animation-delay:-.4s"/>
+                                    <path class="flow-path rad-path" d="M438 178 L493 139" marker-end="url(#arrowRadA)" style="animation-delay:-.8s"/>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="a-duct" tabindex="0" role="button" aria-label="Duct">
+                                    <rect class="part-hit" x="232" y="28" width="296" height="425" rx="70"/>
+                                    <path d="M232 72 C210 70 199 72 177 72" class="part-leader"/>
+                                    <text x="92" y="68" class="part-label">Vertical pipe</text>
+                                    <text x="92" y="86" class="part-sub">Duct wall and flow path</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="a-heater" tabindex="0" role="button" aria-label="Heated cylinder and support tube">
+                                    <rect class="part-hit" x="192" y="150" width="376" height="70" rx="30"/>
+                                    <!-- 회색은 관벽 밖 지지관, 주황은 관 내부의 가열 구간 -->
+                                    <rect x="202" y="160" width="356" height="50" rx="25" fill="url(#tubeMetalA)" stroke="#7f8d97" stroke-width="2"/>
+                                    <ellipse cx="222" cy="185" rx="20" ry="25" fill="#d8e0e5" stroke="#8f9da7" stroke-width="1.5"/>
+                                    <ellipse cx="538" cy="185" rx="20" ry="25" fill="#aeb9c1" stroke="#7f8d97" stroke-width="1.5"/>
+                                    <rect x="294" y="164" width="172" height="42" rx="21" fill="url(#heaterGradientA)" stroke="#b44b37" stroke-width="2"/>
+                                    <ellipse cx="315" cy="185" rx="19" ry="21" fill="#f3a66a"/>
+                                    <rect x="248" y="157" width="16" height="56" rx="6" fill="#87959f" opacity=".82"/>
+                                    <rect x="496" y="157" width="16" height="56" rx="6" fill="#87959f" opacity=".82"/>
+                                    <path d="M560 185 C570 185 576 185 588 185" class="part-leader"/>
+                                    <text x="598" y="181" class="part-label">Heated cylinder</text>
+                                    <text x="598" y="199" class="part-sub">Heated zone + support tube</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="a-t10" tabindex="0" role="button" aria-label="T10 surface temperature sensor">
+                                    <circle class="part-hit" cx="381" cy="164" r="20"/>
+                                    <circle cx="381" cy="164" r="7" fill="#fff" stroke="#c44539" stroke-width="3"/>
+                                    <path d="M381 157 C381 125 413 113 449 113" class="part-leader"/>
+                                    <text x="459" y="109" class="part-label">T10</text>
+                                    <text x="459" y="127" class="part-sub">Surface temperature</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="a-t8" tabindex="0" role="button" aria-label="T8 air temperature sensor">
+                                    <circle class="part-hit" cx="427" cy="313" r="24"/>
+                                    <path d="M427 313 v-43 h36" stroke="#52616d" stroke-width="3" fill="none"/>
+                                    <circle cx="427" cy="313" r="7" fill="#fff" stroke="#2f6fed" stroke-width="3"/>
+                                    <path d="M451 313 C510 313 529 313 557 313" class="part-leader"/>
+                                    <text x="568" y="309" class="part-label">T8</text>
+                                    <text x="568" y="327" class="part-sub">Duct air temperature</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="a-throttle" tabindex="0" role="button" aria-label="Throttle plate">
+                                    <rect class="part-hit" x="329" y="385" width="102" height="40" rx="12"/>
+                                    <path d="M334 402 h92" stroke="#667681" stroke-width="5" stroke-linecap="round"/>
+                                    <path d="M380 387 v30" stroke="#667681" stroke-width="3"/>
+                                    <path d="M329 406 C273 411 243 411 199 411" class="part-leader"/>
+                                    <text x="84" y="407" class="part-label">Throttle plate</text>
+                                    <text x="84" y="425" class="part-sub">Throttles the air inlet</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="a-fan" tabindex="0" role="button" aria-label="Fan">
+                                    <rect class="part-hit" x="280" y="430" width="200" height="72" rx="16"/>
+                                    <rect x="294" y="444" width="172" height="44" rx="10" fill="#dce4e9" stroke="#9aa8b3"/>
+                                    <circle cx="380" cy="466" r="17" fill="#fff" stroke="#8c9aa5" stroke-width="2"/>
+                                    <path d="M380 450 q19 16 0 32 q-19-16 0-32z" fill="#8f9da8"/>
+                                    <path d="M475 466 C520 466 539 466 557 466" class="part-leader"/>
+                                    <text x="568" y="462" class="part-label">Fan</text>
+                                    <text x="568" y="480" class="part-sub">Off in Experiment A</text>
+                                  </g>
+                                </svg>
+                <svg class="apparatus-diagram is-hidden" data-apparatus="B" viewBox="0 0 760 520" role="img" aria-label="Experiment B apparatus, interactive diagram">
+                                  <defs>
+                                    <linearGradient id="ductB" x1="0" x2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset="0.5" stop-color="#ffffff"/><stop offset="1" stop-color="#e9eef2"/></linearGradient>
+                                    <marker id="arrowAirB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#4c8fea"/></marker>
+                                    <marker id="arrowConvB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#33a385"/></marker>
+                                    <marker id="arrowRadB" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#dc6658"/></marker>
+                                  </defs>
+                
+                                  <rect x="270" y="42" width="220" height="397" rx="50" fill="url(#ductB)" stroke="#aebbc5" stroke-width="2"/>
+                                  <rect x="260" y="105" width="18" height="180" rx="8" fill="#e66b37" opacity="0.82"/>
+                                  <rect x="482" y="105" width="18" height="180" rx="8" fill="#e66b37" opacity="0.82"/>
+                                  <rect x="278" y="94" width="204" height="20" rx="8" fill="#d9e0e5" stroke="#aab6bf"/>
+                
+                                  <g class="flow-layer" data-layer-group="air">
+                                    <path class="flow-path air-path" d="M325 414 C315 357 326 320 321 278 C316 230 325 182 322 79" marker-end="url(#arrowAirB)"/>
+                                    <path class="flow-path air-path" d="M437 414 C448 358 436 320 443 278 C450 229 438 178 442 79" marker-end="url(#arrowAirB)" style="animation-delay:-.7s"/>
+                                  </g>
+                
+                                  <g class="flow-layer" data-layer-group="convection">
+                                    <path class="flow-path conv-path" d="M352 180 C338 166 337 148 345 135" marker-end="url(#arrowConvB)"/>
+                                    <path class="flow-path conv-path" d="M354 217 C339 203 339 185 346 170" marker-end="url(#arrowConvB)" style="animation-delay:-.5s"/>
+                                    <path class="flow-path conv-path" d="M357 258 C338 241 339 221 348 202" marker-end="url(#arrowConvB)" style="animation-delay:-.9s"/>
+                                  </g>
+                
+                                  <g class="flow-layer" data-layer-group="radiation">
+                                    <path class="flow-path rad-path" d="M286 157 L345 180" marker-end="url(#arrowRadB)"/>
+                                    <path class="flow-path rad-path" d="M474 199 L412 217" marker-end="url(#arrowRadB)" style="animation-delay:-.4s"/>
+                                    <path class="flow-path rad-path" d="M286 250 L347 258" marker-end="url(#arrowRadB)" style="animation-delay:-.8s"/>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-duct" tabindex="0" role="button" aria-label="Duct">
+                                    <rect class="part-hit" x="264" y="36" width="232" height="409" rx="56"/>
+                                    <path d="M264 65 C219 65 199 65 177 65" class="part-leader"/>
+                                    <text x="102" y="61" class="part-label">Duct</text>
+                                    <text x="102" y="79" class="part-sub">Vertical duct</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-heater-wall" tabindex="0" role="button" aria-label="Heated outer wall">
+                                    <rect class="part-hit" x="249" y="96" width="262" height="200" rx="18"/>
+                                    <path d="M508 144 C545 144 555 144 574 144" class="part-leader"/>
+                                    <text x="584" y="140" class="part-label">Heated wall</text>
+                                    <text x="584" y="158" class="part-sub">Electric band heater</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-t10" tabindex="0" role="button" aria-label="T10 outer wall temperature sensor">
+                                    <circle class="part-hit" cx="491" cy="122" r="21"/>
+                                    <circle cx="491" cy="122" r="7" fill="#fff" stroke="#c44539" stroke-width="3"/>
+                                    <path d="M511 122 C548 116 558 116 574 116" class="part-leader"/>
+                                    <text x="584" y="112" class="part-label">T10</text>
+                                    <text x="584" y="130" class="part-sub">Heated wall temperature</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-t6" tabindex="0" role="button" aria-label="T6 small grey body bead">
+                                    <circle class="part-hit" cx="380" cy="180" r="20"/>
+                                    <line x1="380" y1="180" x2="524" y2="180" stroke="#596873" stroke-width="2"/>
+                                    <circle cx="380" cy="180" r="5" fill="#9aa5ae" stroke="#66747e"/>
+                                    <path d="M524 180 C546 180 557 180 574 180" class="part-leader"/>
+                                    <text x="584" y="176" class="part-label">T6</text>
+                                    <text x="584" y="194" class="part-sub">Small grey body · 0.5 mm</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-t7" tabindex="0" role="button" aria-label="T7 small black body bead">
+                                    <circle class="part-hit" cx="380" cy="217" r="20"/>
+                                    <line x1="380" y1="217" x2="524" y2="217" stroke="#596873" stroke-width="2"/>
+                                    <circle cx="380" cy="217" r="5" fill="#222b32"/>
+                                    <path d="M524 217 C546 217 557 217 574 217" class="part-leader"/>
+                                    <text x="584" y="213" class="part-label">T7</text>
+                                    <text x="584" y="231" class="part-sub">Small black body · 0.5 mm</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-t8" tabindex="0" role="button" aria-label="T8 large black body bead">
+                                    <circle class="part-hit" cx="380" cy="258" r="25"/>
+                                    <line x1="380" y1="258" x2="524" y2="258" stroke="#596873" stroke-width="2"/>
+                                    <circle cx="380" cy="258" r="11" fill="#222b32"/>
+                                    <path d="M524 258 C546 258 557 258 574 258" class="part-leader"/>
+                                    <text x="584" y="254" class="part-label">T8</text>
+                                    <text x="584" y="272" class="part-sub">Large black body · 3 mm</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-shield" tabindex="0" role="button" aria-label="Shield">
+                                    <rect class="part-hit" x="278" y="85" width="204" height="42" rx="12"/>
+                                    <path d="M276 101 C226 102 208 102 177 102" class="part-leader"/>
+                                    <text x="102" y="98" class="part-label">Shield</text>
+                                    <text x="102" y="116" class="part-sub">Upper shield</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-t5" tabindex="0" role="button" aria-label="T5 inlet air temperature sensor">
+                                    <circle class="part-hit" cx="426" cy="342" r="23"/>
+                                    <path d="M426 342 v-42 h36" stroke="#52616d" stroke-width="3" fill="none"/>
+                                    <circle cx="426" cy="342" r="7" fill="#fff" stroke="#2f6fed" stroke-width="3"/>
+                                    <path d="M449 342 C512 342 542 342 574 342" class="part-leader"/>
+                                    <text x="584" y="338" class="part-label">T5</text>
+                                    <text x="584" y="356" class="part-sub">Inlet air temperature</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-anemometer" tabindex="0" role="button" aria-label="Anemometer">
+                                    <rect class="part-hit" x="334" y="368" width="92" height="41" rx="12"/>
+                                    <path d="M339 387 h82" stroke="#65747f" stroke-width="3"/>
+                                    <path d="M380 374 v27M365 380 l30 14M395 380 l-30 14" stroke="#65747f" stroke-width="2"/>
+                                    <path d="M334 390 C273 390 225 390 177 390" class="part-leader"/>
+                                    <text x="82" y="386" class="part-label">Anemometer</text>
+                                    <text x="82" y="404" class="part-sub">Measures air velocity</text>
+                                  </g>
+                
+                                  <g class="apparatus-part" data-part="b-fan" tabindex="0" role="button" aria-label="Fan">
+                                    <rect class="part-hit" x="280" y="430" width="200" height="72" rx="16"/>
+                                    <rect x="294" y="444" width="172" height="44" rx="10" fill="#dce4e9" stroke="#9aa8b3"/>
+                                    <circle cx="380" cy="466" r="17" fill="#fff" stroke="#8c9aa5" stroke-width="2"/>
+                                    <path d="M380 450 q19 16 0 32 q-19-16 0-32z" fill="#8f9da8"/>
+                                    <path d="M280 466 C232 466 210 466 177 466" class="part-leader"/>
+                                    <text x="109" y="462" class="part-label">Fan</text>
+                                    <text x="109" y="480" class="part-sub">Sets forced convection</text>
+                                  </g>
+                                </svg>
               </div>
-              <dl>
-                <div><dt>Measures</dt><dd id="componentMeasure">—</dd></div>
-                <div><dt>Location</dt><dd id="componentLocation">—</dd></div>
-                <div><dt>Role</dt><dd id="componentRole">—</dd></div>
-              </dl>
-              <div>
-                <p class="note">Components</p>
-                <div class="part-list" id="componentList"></div>
-              </div>
+              <p class="assumption">Sensor numbers and positions follow the real rig. It is a teaching schematic, not a dimensioned drawing — click a part to read what it does.</p>
             </div>
-          </article>
+
+            <div class="block">
+              <h2>Selected part<span class="spacer"></span><span class="badge" id="componentBadge">—</span></h2>
+              <div class="answer" style="gap: var(--sp-2);">
+                <span style="font-size: var(--fs-lg); font-weight: var(--fw-semi);" id="componentTitle">—</span>
+              </div>
+              <p class="assumption" id="componentSummary">—</p>
+              <div class="values" style="flex-direction: column; gap: var(--sp-3);">
+                <div><span class="k">Measures</span><span style="font-size: var(--fs-md);" id="componentMeasure">—</span></div>
+                <div><span class="k">Location</span><span style="font-size: var(--fs-md);" id="componentLocation">—</span></div>
+                <div><span class="k">Role</span><span style="font-size: var(--fs-md);" id="componentRole">—</span></div>
+              </div>
+              <div class="btn-row" id="componentList"></div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- ═══ Experiment A ═══ -->
+      <!-- ═══════════════ Experiment A ═══════════════ -->
       <section class="view" id="experiment-a">
-        <div class="workspace">
-          <article class="panel">
-            <header><h3>Conditions</h3></header>
-            <div class="body">
-              <div class="form-grid">
-                <div class="field"><label for="aVoltage">Voltage</label><div class="field-row"><input id="aVoltage" type="number" value="11" min="0" step="0.1"><span class="unit">V</span></div></div>
-                <div class="field"><label for="aCurrent">Current</label><div class="field-row"><input id="aCurrent" type="number" value="0.25" min="0" step="0.01"><span class="unit">A</span></div></div>
-                <div class="field"><label for="aAirTemp">Air T8</label><div class="field-row"><input id="aAirTemp" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
-                <div class="field"><label for="aSurfaceTemp">Surface T10</label><div class="field-row"><input id="aSurfaceTemp" type="number" value="90" step="0.1"><span class="unit">°C</span></div></div>
-                <div class="field span-2"><label for="aModel">Convection correlation</label><select id="aModel"><option value="mcadams">McAdams</option><option value="morgan">Morgan</option></select></div>
-              </div>
-              <div class="btn-row" style="margin-top: var(--sp-3);">
-                <button class="btn btn--sm a-voltage" data-value="5" type="button">5 V</button>
-                <button class="btn btn--sm a-voltage is-active" data-value="11" type="button">11 V</button>
-                <button class="btn btn--sm a-voltage" data-value="17" type="button">17 V</button>
-              </div>
-              <details id="aAdvanced" style="margin-top: var(--sp-3);">
-                <summary class="note" style="border:0; padding:0; cursor:pointer;">Air properties for Morgan</summary>
-                <div class="form-grid" style="margin-top: var(--sp-3);">
-                  <div class="field"><label for="aK">k</label><div class="field-row"><input id="aK" type="number" value="0.027" step="0.001"><span class="unit">W/mK</span></div></div>
-                  <div class="field"><label for="aNu">ν</label><div class="field-row"><input id="aNu" type="number" value="0.0000175" step="0.0000001"><span class="unit">m²/s</span></div></div>
-                  <div class="field span-2"><label for="aPr">Pr</label><div class="field-row"><input id="aPr" type="number" value="0.707" step="0.001"><span class="unit">—</span></div></div>
-                </div>
-              </details>
-              <p class="note--warn note" style="margin-top: var(--sp-3);" id="aWarning">—</p>
-            </div>
-          </article>
 
-          <div class="column">
-            <article class="panel">
-              <header><h3>Energy balance</h3><span class="badge badge--model">Course model</span></header>
-              <div class="body balance">
-                <div class="balance-head">
-                  <span class="label">Power in</span>
-                  <span class="total" id="aPower">—</span>
-                  <math><mrow><msub><mi>Q</mi><mtext>in</mtext></msub><mo>=</mo><mi>V</mi><mi>I</mi><mo>=</mo><mn>100</mn><mo>%</mo></mrow></math>
-                </div>
-                <div class="stackbar" id="aStackBar">
-                  <i class="seg-conv" id="aConvBar" style="width:0"></i><i class="seg-rad" id="aRadBar" style="width:0"></i><i class="seg-etc" id="aLossBar" style="width:0"></i>
-                </div>
-                <div class="balance-legend">
-                  <div><span class="key seg-conv"></span><span class="name">Convection</span><span class="val conv" id="aConv">—</span><span class="pct" id="aConvPct">—</span><span class="sub" id="aConvSub">h = —</span></div>
-                  <div><span class="key seg-rad"></span><span class="name">Radiation</span><span class="val rad" id="aRad">—</span><span class="pct" id="aRadPct">—</span><span class="sub" id="aRadSub">h<sub>r</sub> = —</span></div>
-                  <div><span class="key seg-etc"></span><span class="name">Unmodelled</span><span class="val" id="aResidual">—</span><span class="pct" id="aLossPct">—</span><span class="sub">Q<sub>in</sub> − (Q<sub>c</sub> + Q<sub>r</sub>)</span></div>
-                </div>
-                <p class="note" id="aOverflowNote" hidden>Hatching marks the part above the supplied power. The model predicts more than went in, so check the assumptions.</p>
-              </div>
-            </article>
-
-            <article class="panel">
-              <header><h3>Heat transfer vs surface temperature</h3></header>
-              <div class="body">
-                <div class="chart-frame"><canvas class="chart" id="aChart"></canvas></div>
-                <div class="legend">
-                  <span><i style="border-color: var(--series-conv)"></i>Convection</span>
-                  <span><i class="dashed" style="border-color: var(--series-rad)"></i>Radiation</span>
-                  <span><i class="dotted" style="border-color: var(--series-marker)"></i>Current T<sub>s</sub></span>
-                </div>
-                <div class="formula" style="margin-top: var(--sp-3);">
-                  <math><mrow><msub><mi>Q</mi><mtext>in</mtext></msub><mo>=</mo><mi>V</mi><mi>I</mi><mo>,</mo><mspace width="8px"/><msub><mi>Q</mi><mtext>total</mtext></msub><mo>=</mo><msub><mi>Q</mi><mi>c</mi></msub><mo>+</mo><msub><mi>Q</mi><mi>r</mi></msub></mrow></math>
-                </div>
-              </div>
-            </article>
+        <div class="conditions">
+          <div class="group">
+            <div class="input"><label for="aVoltage">Voltage</label>
+              <div class="with-unit"><input id="aVoltage" type="number" value="11" min="0" step="0.1"><span class="unit">V</span></div></div>
+            <div class="input"><label for="aCurrent">Current</label>
+              <div class="with-unit"><input id="aCurrent" type="number" value="0.25" min="0" step="0.01"><span class="unit">A</span></div></div>
           </div>
+          <span class="divider"></span>
+          <div class="group">
+            <div class="input"><label for="aAirTemp">Air T8</label>
+              <div class="with-unit"><input id="aAirTemp" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
+            <div class="input"><label for="aSurfaceTemp">Surface T10</label>
+              <div class="with-unit"><input id="aSurfaceTemp" type="number" value="90" step="0.1"><span class="unit">°C</span></div></div>
+          </div>
+          <span class="divider"></span>
+          <div class="input wide"><label for="aModel">Correlation</label>
+            <select id="aModel"><option value="mcadams">McAdams</option><option value="morgan">Morgan</option></select></div>
+          <span class="spacer"></span>
+          <div class="input free"><label>Quick set</label>
+            <div class="btn-row">
+              <button class="btn a-voltage" data-value="5" type="button">5 V</button>
+              <button class="btn a-voltage is-active" data-value="11" type="button">11 V</button>
+              <button class="btn a-voltage" data-value="17" type="button">17 V</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+
+          <div class="block">
+            <h2>Where the supplied power goes<span class="spacer"></span><span class="badge">Course model</span></h2>
+
+            <div class="answer">
+              <span class="figure" id="aPower">—</span>
+              <span class="caption">of electrical power enters the cylinder. The model below accounts for part of it as convection and radiation; the rest is not described by these two terms.</span>
+            </div>
+
+            <div class="split-bar" id="aStackBar">
+              <i class="seg-conv" id="aConvBar" style="width:0"></i><i class="seg-rad" id="aRadBar" style="width:0"></i><i class="seg-etc" id="aLossBar" style="width:0"></i>
+            </div>
+
+            <div class="keys">
+              <div><span class="key seg-conv"></span><span class="name">Convection</span><span class="val conv" id="aConv">—</span><span class="pct" id="aConvPct">—</span><span class="note-inline" id="aConvSub">h = —</span></div>
+              <div><span class="key seg-rad"></span><span class="name">Radiation</span><span class="val rad" id="aRad">—</span><span class="pct" id="aRadPct">—</span><span class="note-inline" id="aRadSub">hr = —</span></div>
+              <div><span class="key seg-etc"></span><span class="name">Unmodelled</span><span class="val" id="aResidual">—</span><span class="pct" id="aLossPct">—</span></div>
+            </div>
+
+            <p class="caution" id="aOverflowNote" hidden>The hatched part sits above the supplied power: the two terms already add up to more than went in. Check the surface temperature, the emissivity, and which correlation you picked.</p>
+
+            <p class="formula">
+              <math><mrow><msub><mi>Q</mi><mtext>in</mtext></msub><mo>=</mo><mi>V</mi><mi>I</mi><mo>=</mo>
+              <msub><mi>Q</mi><mtext>conv</mtext></msub><mo>+</mo><msub><mi>Q</mi><mtext>rad</mtext></msub><mo>+</mo>
+              <msub><mi>Q</mi><mtext>unmodelled</mtext></msub></mrow></math>
+            </p>
+          </div>
+
+          <div class="block">
+            <h2>How the split changes with surface temperature</h2>
+            <div class="chart-frame"><canvas class="chart" id="aChart"></canvas></div>
+            <div class="legend">
+              <span><i style="border-color: var(--series-conv)"></i>Convection</span>
+              <span><i class="dashed" style="border-color: var(--series-rad)"></i>Radiation</span>
+              <span><i class="dotted" style="border-color: var(--series-marker)"></i>Your T10</span>
+            </div>
+            <p class="assumption">Radiation grows with <math><msup><mi>T</mi><mn>4</mn></msup></math> while convection grows roughly with <math><msup><mrow><mo>Δ</mo><mi>T</mi></mrow><mn>1.25</mn></msup></math>, so radiation eventually overtakes it. The marked temperature is where that happens for the current air temperature and emissivity.</p>
+          </div>
+
+          <div class="block">
+            <h2>What this assumed</h2>
+            <p class="assumption" id="aWarning">—</p>
+            <p class="assumption">Cylinder diameter, heated length, emissivity and view factor are <strong>placeholder values</strong> until the rig is measured. They scale every number above.
+              <button class="btn btn--quiet" id="aAdvancedToggle" type="button">Air properties</button>
+            </p>
+            <div id="aAdvanced" hidden>
+              <div class="values">
+                <div class="input"><label for="aK">k</label><div class="with-unit"><input id="aK" type="number" value="0.027" step="0.001"><span class="unit">W/mK</span></div></div>
+                <div class="input"><label for="aNu">ν</label><div class="with-unit"><input id="aNu" type="number" value="0.0000175" step="0.0000001"><span class="unit">m²/s</span></div></div>
+                <div class="input"><label for="aPr">Pr</label><div class="with-unit"><input id="aPr" type="number" value="0.707" step="0.001"><span class="unit">—</span></div></div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      <!-- ═══ Experiment B ═══ -->
+      <!-- ═══════════════ Experiment B ═══════════════ -->
       <section class="view" id="experiment-b">
-        <div class="workspace">
-          <article class="panel">
-            <header><h3>Conditions</h3></header>
-            <div class="body">
-              <div class="form-grid">
-                <div class="field"><label for="bWallTemp">Wall T10</label><div class="field-row"><input id="bWallTemp" type="number" value="120" step="0.1"><span class="unit">°C</span></div></div>
-                <div class="field"><label for="bGasTemp">Inlet air T5</label><div class="field-row"><input id="bGasTemp" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
-                <div class="field span-2"><label for="bVelocity">Air velocity <span class="num" id="bVelocityValue">0.40</span></label><input id="bVelocity" type="range" min="0" max="1.8" step="0.01" value="0.4"></div>
-                <div class="field span-2"><label for="bT6Emissivity">T6 emissivity <em>assumed</em></label><div class="field-row"><input id="bT6Emissivity" type="number" value="0.4" min="0.01" max="1" step="0.01"><span class="unit">—</span></div></div>
-              </div>
-              <div class="btn-row" style="margin-top: var(--sp-3);">
-                <button class="btn btn--sm b-velocity" data-value="0.2" type="button">0.2</button>
-                <button class="btn btn--sm b-velocity is-active" data-value="0.4" type="button">0.4</button>
-                <button class="btn btn--sm b-velocity" data-value="0.8" type="button">0.8</button>
-                <button class="btn btn--sm b-velocity" data-value="1.6" type="button">1.6 m/s</button>
-              </div>
-              <p class="note">Sensor</p>
-              <div class="btn-row">
-                <button class="btn btn--sm sensor-button" data-sensor="T6" type="button">T6 grey</button>
-                <button class="btn btn--sm sensor-button is-active" data-sensor="T7" type="button">T7 black</button>
-                <button class="btn btn--sm sensor-button" data-sensor="T8" type="button">T8 large</button>
-              </div>
-            </div>
-          </article>
 
-          <div class="column">
-            <article class="panel">
-              <header><h3>Selected sensor at steady state</h3><span class="badge badge--model">Course model</span></header>
-              <div class="body">
-                <div class="readout">
-                  <div><span class="label">Reading</span><span class="value" id="bSensorTemp">—</span><span class="sub" id="bSensorSub">—</span></div>
-                  <div><span class="label">Error vs air</span><span class="value rad" id="bError">—</span><span class="sub">T<sub>c</sub> − T<sub>g</sub></span></div>
-                  <div><span class="label">Convection coeff.</span><span class="value conv" id="bH">—</span><span class="sub" id="bRe">—</span></div>
-                  <div><span class="label">Radiation in</span><span class="value" id="bHeat">—</span><span class="sub" id="bRadValue">—</span></div>
-                </div>
-                <div class="stackbar" style="margin-top: var(--sp-3);">
-                  <i class="seg-rad" id="bRadBar" style="width:0"></i><i class="seg-conv" id="bConvBar" style="width:0"></i>
-                </div>
-                <div class="balance-legend" style="margin-top: var(--sp-2);">
-                  <div><span class="key seg-rad"></span><span class="name">Radiation gained</span><span class="val rad" id="bRadShare">—</span></div>
-                  <div><span class="key seg-conv"></span><span class="name">Convection lost</span><span class="val conv" id="bConvValue">—</span></div>
-                </div>
-                <div class="formula" style="margin-top: var(--sp-3);">
-                  <math><mrow><mi>ε</mi><mi>σ</mi><mi>F</mi><mi>A</mi><mo>(</mo><msubsup><mi>T</mi><mi>s</mi><mn>4</mn></msubsup><mo>−</mo><msubsup><mi>T</mi><mi>c</mi><mn>4</mn></msubsup><mo>)</mo><mo>=</mo><mi>h</mi><mi>A</mi><mo>(</mo><msub><mi>T</mi><mi>c</mi></msub><mo>−</mo><msub><mi>T</mi><mi>g</mi></msub><mo>)</mo></mrow></math>
-                </div>
-              </div>
-            </article>
-
-            <article class="panel">
-              <header><h3>Sensor reading vs air velocity</h3></header>
-              <div class="body">
-                <div class="chart-frame"><canvas class="chart" id="bChart"></canvas></div>
-                <div class="legend">
-                  <span><i class="dotted" style="border-color: var(--series-muted)"></i>T6 grey · 0.5 mm</span>
-                  <span><i style="border-color: var(--series-conv)"></i>T7 black · 0.5 mm</span>
-                  <span><i class="dashed" style="border-color: var(--series-rad)"></i>T8 black · 3 mm</span>
-                </div>
-                <p class="note">Faster flow cools the bead harder, so the reading falls toward the true air temperature. A larger bead has a lower convection coefficient and stays hotter.</p>
-              </div>
-            </article>
+        <div class="conditions">
+          <div class="group">
+            <div class="input"><label for="bWallTemp">Wall T10</label>
+              <div class="with-unit"><input id="bWallTemp" type="number" value="120" step="0.1"><span class="unit">°C</span></div></div>
+            <div class="input"><label for="bGasTemp">Inlet air T5</label>
+              <div class="with-unit"><input id="bGasTemp" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
           </div>
+          <span class="divider"></span>
+          <div class="input wide"><label for="bVelocity">Air velocity <span class="unit num" id="bVelocityValue">0.40</span> m/s</label>
+            <input id="bVelocity" type="range" min="0" max="1.8" step="0.01" value="0.4"></div>
+          <div class="input free"><label>&nbsp;</label>
+            <div class="btn-row">
+              <button class="btn b-velocity" data-value="0.2" type="button">0.2</button>
+              <button class="btn b-velocity is-active" data-value="0.4" type="button">0.4</button>
+              <button class="btn b-velocity" data-value="0.8" type="button">0.8</button>
+              <button class="btn b-velocity" data-value="1.6" type="button">1.6</button>
+            </div>
+          </div>
+          <span class="divider"></span>
+          <div class="input free"><label>Sensor</label>
+            <div class="btn-row">
+              <button class="btn sensor-button" data-sensor="T6" type="button">T6 grey</button>
+              <button class="btn sensor-button is-active" data-sensor="T7" type="button">T7 black</button>
+              <button class="btn sensor-button" data-sensor="T8" type="button">T8 large</button>
+            </div>
+          </div>
+          <span class="spacer"></span>
+          <div class="input"><label for="bT6Emissivity">T6 ε <em>assumed</em></label>
+            <div class="with-unit"><input id="bT6Emissivity" type="number" value="0.4" min="0.01" max="1" step="0.01"><span class="unit">—</span></div></div>
+        </div>
+
+        <div class="content">
+
+          <div class="block">
+            <h2>How far the reading sits from the true air temperature<span class="spacer"></span><span class="badge">Course model</span></h2>
+
+            <div class="answer">
+              <span class="figure rad" id="bError">—</span>
+              <span class="caption">The thermocouple does not read the air. It sits between the hot wall and the cool air, so it settles above the air temperature — <span class="num" id="bSensorTemp">—</span> instead of the true value.</span>
+            </div>
+
+            <p class="assumption" id="bSensorSub">—</p>
+          </div>
+
+          <div class="block">
+            <h2>Why: radiation in balances convection out</h2>
+
+            <div class="split-bar">
+              <i class="seg-rad" id="bRadBar" style="width:0"></i><i class="seg-conv" id="bConvBar" style="width:0"></i>
+            </div>
+            <div class="keys">
+              <div><span class="key seg-rad"></span><span class="name">Radiation gained from the wall</span><span class="val rad" id="bRadValue">—</span></div>
+              <div><span class="key seg-conv"></span><span class="name">Convection lost to the air</span><span class="val conv" id="bConvValue">—</span></div>
+            </div>
+
+            <div class="values">
+              <div><span class="k">Convection coefficient</span><span class="v conv" id="bH">—</span><span class="n" id="bRe">—</span></div>
+              <div><span class="k">Radiation at balance</span><span class="v" id="bHeat">—</span><span class="n">ε σ F A (Ts⁴ − Tc⁴)</span></div>
+            </div>
+
+            <p class="formula">
+              <math><mrow><mi>ε</mi><mi>σ</mi><mi>F</mi><mi>A</mi><mo>(</mo><msubsup><mi>T</mi><mi>s</mi><mn>4</mn></msubsup><mo>−</mo>
+              <msubsup><mi>T</mi><mi>c</mi><mn>4</mn></msubsup><mo>)</mo><mo>=</mo><mi>h</mi><mi>A</mi><mo>(</mo>
+              <msub><mi>T</mi><mi>c</mi></msub><mo>−</mo><msub><mi>T</mi><mi>g</mi></msub><mo>)</mo></mrow></math>
+            </p>
+          </div>
+
+          <div class="block">
+            <h2>Faster air, smaller error</h2>
+            <div class="chart-frame"><canvas class="chart" id="bChart"></canvas></div>
+            <div class="legend">
+              <span><i class="dotted" style="border-color: var(--series-muted)"></i>T6 · grey · 0.5 mm</span>
+              <span><i style="border-color: var(--series-conv)"></i>T7 · black · 0.5 mm</span>
+              <span><i class="dashed" style="border-color: var(--series-rad)"></i>T8 · black · 3 mm</span>
+            </div>
+            <p class="assumption">Raising the velocity raises the convection coefficient, which pulls the bead toward the air temperature. A larger bead has a lower coefficient for the same flow, so T8 stays hottest. T6 gains less radiation to begin with because its emissivity is lower.</p>
+          </div>
+
+          <div class="block">
+            <h2>What this assumed</h2>
+            <p class="assumption"><strong>Conduction along the thermocouple wire is not modelled.</strong> Real wires drain heat away from the bead, so the true error is smaller than what is shown here.</p>
+            <p class="assumption">Bead diameters, emissivities and the view factor are placeholder values. The T6 emissivity above is yours to set because the course notes do not give it.</p>
+          </div>
+
         </div>
       </section>
 
-      <!-- ═══ Transient ═══ -->
+      <!-- ═══════════════ Transient ═══════════════ -->
       <section class="view" id="transient">
-        <div class="workspace">
-          <article class="panel">
-            <header>
-              <h3>Conditions</h3>
-              <div class="btn-row">
-                <button class="btn btn--sm is-active lumped-mode" data-mode="A" type="button">Exp. A</button>
-                <button class="btn btn--sm lumped-mode" data-mode="B" type="button">Exp. B</button>
-              </div>
-            </header>
-            <div class="body">
-              <div id="lumpedAControls">
-                <div class="form-grid">
-                  <div class="field"><label for="lumpedAVoltage">Voltage</label><div class="field-row"><input id="lumpedAVoltage" type="number" value="11" min="0" step="0.1"><span class="unit">V</span></div></div>
-                  <div class="field"><label for="lumpedACurrent">Current</label><div class="field-row"><input id="lumpedACurrent" type="number" value="0.25" min="0" step="0.01"><span class="unit">A</span></div></div>
-                  <div class="field"><label for="lumpedAAir">Air</label><div class="field-row"><input id="lumpedAAir" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
-                  <div class="field"><label for="lumpedAInitial">Initial</label><div class="field-row"><input id="lumpedAInitial" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
-                  <div class="field span-2"><label for="lumpedACapacity">Effective heat capacity <em>not calibrated</em></label><div class="field-row"><input id="lumpedACapacity" type="number" value="18" min="0.1" step="0.5"><span class="unit">J/K</span></div></div>
-                  <div class="field span-2"><label for="lumpedAUA">Extra loss UA <em>assumed</em></label><div class="field-row"><input id="lumpedAUA" type="number" value="0.006" min="0" step="0.001"><span class="unit">W/K</span></div></div>
-                  <div class="field span-2"><label for="lumpedADuration">Duration</label><div class="field-row"><input id="lumpedADuration" type="number" value="600" min="30" max="3600" step="30"><span class="unit">s</span></div></div>
-                </div>
-              </div>
-              <div id="lumpedBControls" hidden>
-                <div class="form-grid">
-                  <div class="field"><label for="lumpedBWall">Wall</label><div class="field-row"><input id="lumpedBWall" type="number" value="120" step="0.1"><span class="unit">°C</span></div></div>
-                  <div class="field"><label for="lumpedBGas">Air</label><div class="field-row"><input id="lumpedBGas" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
-                  <div class="field"><label for="lumpedBVelocity">Velocity</label><div class="field-row"><input id="lumpedBVelocity" type="number" value="0.4" min="0" step="0.1"><span class="unit">m/s</span></div></div>
-                  <div class="field"><label for="lumpedBInitial">Initial</label><div class="field-row"><input id="lumpedBInitial" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
-                  <div class="field"><label for="lumpedBT6Epsilon">T6 ε</label><div class="field-row"><input id="lumpedBT6Epsilon" type="number" value="0.4" min="0.01" max="1" step="0.01"><span class="unit">—</span></div></div>
-                  <div class="field"><label for="lumpedBDuration">Duration</label><div class="field-row"><input id="lumpedBDuration" type="number" value="180" min="10" max="1200" step="10"><span class="unit">s</span></div></div>
-                </div>
-              </div>
-              <p class="note--warn note" style="margin-top: var(--sp-3);" id="lumpedNote">—</p>
-            </div>
-          </article>
 
-          <div class="column">
-            <article class="panel">
-              <header><h3 id="lumpedChartTitle">—</h3><span class="badge badge--warn">Uncalibrated parameters</span></header>
-              <div class="body">
-                <div class="readout">
-                  <div><span class="label" id="lumpedMetric1Label">—</span><span class="value" id="lumpedMetric1">—</span><span class="sub" id="lumpedMetric1Sub">—</span></div>
-                  <div><span class="label" id="lumpedMetric2Label">—</span><span class="value" id="lumpedMetric2">—</span><span class="sub" id="lumpedMetric2Sub">—</span></div>
-                  <div><span class="label" id="lumpedMetric3Label">—</span><span class="value" id="lumpedMetric3">—</span><span class="sub" id="lumpedMetric3Sub">—</span></div>
-                  <div><span class="label" id="lumpedMetric4Label">—</span><span class="value" id="lumpedMetric4">—</span><span class="sub" id="lumpedMetric4Sub">—</span></div>
-                </div>
-                <div class="chart-frame" style="margin-top: var(--sp-4);"><canvas class="chart" id="lumpedChart"></canvas></div>
-                <div class="legend" id="lumpedLegend"></div>
-              </div>
-            </article>
+        <div class="conditions">
+          <div class="input free"><label>Experiment</label>
+            <div class="btn-row">
+              <button class="btn is-active lumped-mode" data-mode="A" type="button">A · cylinder</button>
+              <button class="btn lumped-mode" data-mode="B" type="button">B · thermocouple</button>
+            </div>
+          </div>
+          <span class="divider"></span>
+          <div class="group" id="lumpedAControls">
+            <div class="input"><label for="lumpedAVoltage">Voltage</label><div class="with-unit"><input id="lumpedAVoltage" type="number" value="11" min="0" step="0.1"><span class="unit">V</span></div></div>
+            <div class="input"><label for="lumpedACurrent">Current</label><div class="with-unit"><input id="lumpedACurrent" type="number" value="0.25" min="0" step="0.01"><span class="unit">A</span></div></div>
+            <div class="input"><label for="lumpedAAir">Air</label><div class="with-unit"><input id="lumpedAAir" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
+            <div class="input"><label for="lumpedAInitial">Start</label><div class="with-unit"><input id="lumpedAInitial" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
+            <div class="input"><label for="lumpedACapacity">C <em>not fitted</em></label><div class="with-unit"><input id="lumpedACapacity" type="number" value="18" min="0.1" step="0.5"><span class="unit">J/K</span></div></div>
+            <div class="input"><label for="lumpedAUA">UA <em>assumed</em></label><div class="with-unit"><input id="lumpedAUA" type="number" value="0.006" min="0" step="0.001"><span class="unit">W/K</span></div></div>
+            <div class="input"><label for="lumpedADuration">Duration</label><div class="with-unit"><input id="lumpedADuration" type="number" value="600" min="30" max="3600" step="30"><span class="unit">s</span></div></div>
+          </div>
+          <div class="group" id="lumpedBControls" hidden>
+            <div class="input"><label for="lumpedBWall">Wall</label><div class="with-unit"><input id="lumpedBWall" type="number" value="120" step="0.1"><span class="unit">°C</span></div></div>
+            <div class="input"><label for="lumpedBGas">Air</label><div class="with-unit"><input id="lumpedBGas" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
+            <div class="input"><label for="lumpedBVelocity">Velocity</label><div class="with-unit"><input id="lumpedBVelocity" type="number" value="0.4" min="0" step="0.1"><span class="unit">m/s</span></div></div>
+            <div class="input"><label for="lumpedBInitial">Start</label><div class="with-unit"><input id="lumpedBInitial" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
+            <div class="input"><label for="lumpedBT6Epsilon">T6 ε</label><div class="with-unit"><input id="lumpedBT6Epsilon" type="number" value="0.4" min="0.01" max="1" step="0.01"><span class="unit">—</span></div></div>
+            <div class="input"><label for="lumpedBDuration">Duration</label><div class="with-unit"><input id="lumpedBDuration" type="number" value="180" min="10" max="1200" step="10"><span class="unit">s</span></div></div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="block">
+            <h2 id="lumpedChartTitle">—<span class="spacer"></span><span class="badge badge--warn">Time axis not calibrated</span></h2>
+            <p class="caution" id="lumpedNote">—</p>
+            <div class="values">
+              <div><span class="k" id="lumpedMetric1Label">—</span><span class="v" id="lumpedMetric1">—</span><span class="n" id="lumpedMetric1Sub">—</span></div>
+              <div><span class="k" id="lumpedMetric2Label">—</span><span class="v" id="lumpedMetric2">—</span><span class="n" id="lumpedMetric2Sub">—</span></div>
+              <div><span class="k" id="lumpedMetric3Label">—</span><span class="v" id="lumpedMetric3">—</span><span class="n" id="lumpedMetric3Sub">—</span></div>
+              <div><span class="k" id="lumpedMetric4Label">—</span><span class="v" id="lumpedMetric4">—</span><span class="n" id="lumpedMetric4Sub">—</span></div>
+            </div>
+          </div>
+
+          <div class="block">
+            <h2>Approach to steady state</h2>
+            <div class="chart-frame"><canvas class="chart" id="lumpedChart"></canvas></div>
+            <div class="legend" id="lumpedLegend"></div>
+            <p class="assumption">The shape of the curve follows from the model, but its <strong>timing does not</strong>. Effective heat capacity and extra loss are not given in the course notes and have not been fitted to a recorded run, so read the ratio between conditions rather than the seconds on the axis.</p>
           </div>
         </div>
       </section>
 
-      <!-- ═══ Field viewer ═══ -->
+      <!-- ═══════════════ Field ═══════════════ -->
       <section class="view" id="field-viewer">
-        <div class="field-controls">
-          <article class="panel"><div class="body">
-            <div class="field"><label for="fieldCase">CFD case</label>
-              <select id="fieldCase">
-                <optgroup label="Exp. A · natural"><option value="A5">A · 5 V</option><option value="A11" selected>A · 11 V</option><option value="A17">A · 17 V</option></optgroup>
-                <optgroup label="Exp. B · natural"><option value="BN5">B · fan off · 5 V</option><option value="BN11">B · fan off · 11 V</option><option value="BN17">B · fan off · 17 V</option></optgroup>
-                <optgroup label="Exp. B · forced"><option value="B02">B · 17 V · 0.2 m/s</option><option value="B04">B · 17 V · 0.4 m/s</option><option value="B08">B · 17 V · 0.8 m/s</option><option value="B16">B · 17 V · 1.6 m/s</option></optgroup>
-              </select>
-            </div>
-          </div></article>
-          <article class="panel"><div class="body">
-            <div class="field"><label for="fieldType">Field</label><select id="fieldType"><option value="temperature">Temperature</option><option value="speed">Speed</option></select></div>
-          </div></article>
-          <article class="panel"><div class="body">
-            <div class="field"><label for="fieldTime">Time <span class="num" id="fieldTimeValue">t = 180 s</span></label><input id="fieldTime" type="range" min="0" max="600" value="180" step="2"></div>
-            <div class="btn-row" style="margin-top: var(--sp-2);">
-              <button class="btn btn--sm" id="fieldPlay" type="button">Play</button>
-              <button class="btn btn--sm btn--quiet" id="fieldReset" type="button">Reset</button>
-            </div>
-          </div></article>
+
+        <div class="conditions">
+          <div class="input wide"><label for="fieldCase">Case</label>
+            <select id="fieldCase">
+              <optgroup label="Exp. A · natural"><option value="A5">A · 5 V</option><option value="A11" selected>A · 11 V</option><option value="A17">A · 17 V</option></optgroup>
+              <optgroup label="Exp. B · natural"><option value="BN5">B · fan off · 5 V</option><option value="BN11">B · fan off · 11 V</option><option value="BN17">B · fan off · 17 V</option></optgroup>
+              <optgroup label="Exp. B · forced"><option value="B02">B · 0.2 m/s</option><option value="B04">B · 0.4 m/s</option><option value="B08">B · 0.8 m/s</option><option value="B16">B · 1.6 m/s</option></optgroup>
+            </select></div>
+          <div class="input"><label for="fieldType">Field</label>
+            <select id="fieldType"><option value="temperature">Temperature</option><option value="speed">Speed</option></select></div>
+          <span class="divider"></span>
+          <div class="input wide"><label for="fieldTime"><span class="num" id="fieldTimeValue">t = 180 s</span></label>
+            <input id="fieldTime" type="range" min="0" max="600" value="180" step="2"></div>
+          <div class="input free"><label>&nbsp;</label>
+            <div class="btn-row">
+              <button class="btn" id="fieldPlay" type="button">Play</button>
+              <button class="btn btn--quiet" id="fieldReset" type="button">Reset</button>
+            </div></div>
         </div>
 
-        <article class="panel">
-          <header>
-            <h3 id="viewerStatus">—</h3>
-            <span class="badge badge--warn">Synthetic illustration · not CFD output</span>
-          </header>
-          <div class="viewer">
-            <canvas id="fieldCanvas"></canvas>
-            <div class="viewer-overlay">
-              <span class="viewer-readout" id="fieldReadout">x — · y — · —</span>
-              <span class="viewer-readout" id="fieldFrame">t = 180 s</span>
+        <div class="content">
+          <div class="block">
+            <h2 id="viewerStatus">—<span class="spacer"></span><span class="badge badge--warn">Illustration · not solver output</span></h2>
+            <div class="viewer">
+              <canvas id="fieldCanvas"></canvas>
+              <div class="viewer-overlay">
+                <span class="viewer-readout" id="fieldReadout">—</span>
+                <span class="viewer-readout" id="fieldFrame">t = 180 s</span>
+              </div>
+              <div class="colorbar">
+                <span class="colorbar-scale" id="colorbarGradient"></span>
+                <span class="colorbar-labels"><span id="colorbarMax">hot</span><span id="colorbarMid">T</span><span id="colorbarMin">cold</span></span>
+              </div>
             </div>
-            <div class="colorbar">
-              <span class="colorbar-scale" id="colorbarGradient"></span>
-              <span class="colorbar-labels"><span id="colorbarMax">hot</span><span id="colorbarMid">T</span><span id="colorbarMin">cold</span></span>
-            </div>
+            <p class="assumption">The plume is drawn from a shape function so you can see what the flow looks like. It is <strong>not solver output</strong>, so the probe reports a relative value with no units.</p>
           </div>
-          <p class="note" style="padding: var(--sp-3) var(--sp-4);">
-            The plume shape is generated to show what the flow looks like. It is not solver output, so no numbers are read from it.
-          </p>
-        </article>
 
-        <article class="panel pending">
-          <header><h3>Surface heat transfer</h3><span class="badge" id="cfdRadMethod">Awaiting CFD data</span></header>
-          <div class="body">
-            <div class="readout">
-              <div><span class="label">Convection</span><span class="value" id="cfdQConv">—</span></div>
-              <div><span class="label">Radiation</span><span class="value" id="cfdQRad">—</span></div>
-              <div><span class="label">Total</span><span class="value" id="cfdQTotal">—</span></div>
-              <div><span class="label">Radiation share</span><span class="value" id="cfdRadFraction">—</span></div>
+          <div class="block pending">
+            <h2>Surface heat transfer<span class="spacer"></span><span class="badge" id="cfdRadMethod">—</span></h2>
+            <div class="values">
+              <div><span class="k">Convection</span><span class="v" id="cfdQConv">—</span></div>
+              <div><span class="k">Radiation</span><span class="v" id="cfdQRad">—</span></div>
+              <div><span class="k">Total</span><span class="v" id="cfdQTotal">—</span></div>
+              <div><span class="k">Radiation share</span><span class="v" id="cfdRadFraction">—</span></div>
             </div>
-            <div class="table-wrap" style="margin-top: var(--sp-4);">
+            <div class="table-wrap">
               <table>
                 <thead><tr><th>Quantity</th><th>CFD</th><th>Lumped</th><th>Difference</th></tr></thead>
                 <tbody>
-                  <tr><td id="cmpTemperatureLabel">Mean surface temperature</td><td class="num-cell" id="cmpTCfd">—</td><td class="num-cell" id="cmpTLumped">—</td><td class="num-cell" id="cmpDeltaT">—</td></tr>
+                  <tr><td id="cmpTemperatureLabel">—</td><td class="num-cell" id="cmpTCfd">—</td><td class="num-cell" id="cmpTLumped">—</td><td class="num-cell" id="cmpDeltaT">—</td></tr>
                   <tr><td>Convective heat transfer</td><td class="num-cell" id="cmpConvCfd">—</td><td class="num-cell" id="cmpConvLumped">—</td><td class="num-cell" id="cmpDeltaConv">—</td></tr>
                   <tr><td>Radiative heat transfer</td><td class="num-cell" id="cmpRadCfd">—</td><td class="num-cell" id="cmpRadLumped">—</td><td class="num-cell" id="cmpDeltaRad">—</td></tr>
                 </tbody>
               </table>
             </div>
-            <p class="note" id="cfdHeatMethodNote">
-              These rows list what each pre-computed case will report once the lab runs it. Values stay blank until a real case file is loaded.
-            </p>
+            <p class="assumption" id="cfdHeatMethodNote">—</p>
           </div>
-        </article>
+        </div>
       </section>
 
-      <!-- ═══ My data ═══ -->
+      <!-- ═══════════════ My data ═══════════════ -->
       <section class="view" id="data">
-        <article class="panel">
-          <header><h3>Measurements</h3></header>
-          <div class="body">
-            <div class="data-toolbar">
-              <div class="btn-row">
-                <button class="btn btn--sm is-active dataset-button" data-dataset="A" type="button">Experiment A</button>
-                <button class="btn btn--sm dataset-button" data-dataset="B" type="button">Experiment B</button>
-              </div>
-              <div class="btn-row">
-                <button class="btn btn--sm" id="fillExample" type="button">Fill example</button>
-                <button class="btn btn--sm btn--quiet" id="clearData" type="button">Clear</button>
-                <button class="btn btn--sm btn--primary" id="exportCsv" type="button">Export CSV</button>
-              </div>
-            </div>
-            <div class="table-wrap" style="margin-top: var(--sp-4);" id="dataTableWrap"></div>
-            <p class="note">Values stay in this browser tab. Export to CSV before you close it.</p>
+        <div class="conditions">
+          <div class="input free"><label>Experiment</label>
+            <div class="btn-row">
+              <button class="btn is-active dataset-button" data-dataset="A" type="button">A</button>
+              <button class="btn dataset-button" data-dataset="B" type="button">B</button>
+            </div></div>
+          <span class="spacer"></span>
+          <div class="input free"><label>&nbsp;</label>
+            <div class="btn-row">
+              <button class="btn" id="fillExample" type="button">Fill example</button>
+              <button class="btn btn--quiet" id="clearData" type="button">Clear</button>
+              <button class="btn btn--primary" id="exportCsv" type="button">Export CSV</button>
+            </div></div>
+        </div>
+        <div class="content">
+          <div class="block">
+            <h2>Measurements</h2>
+            <div class="table-wrap" id="dataTableWrap"></div>
+            <p class="assumption">Values live in this browser tab only. Export to CSV before you close it.</p>
           </div>
-        </article>
+        </div>
       </section>
 
-    </div>
-  </main>
-</div>
-
-<dialog id="assumptionDialog">
-  <header style="display:flex; align-items:center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-bottom: 1px solid var(--border);">
-    <h2 style="flex:1;">Models and assumptions</h2>
-    <button class="btn btn--sm btn--quiet" id="closeAssumptions" type="button">Close</button>
-  </header>
-  <div style="padding: var(--sp-4); overflow: auto;">
-    <h3>Experiment A</h3>
-    <p class="note">Steady-state balance on the heated cylinder. Radiation uses a linearised coefficient with ε and view factor as inputs. Convection is either the McAdams simple form or Morgan's correlation with the air properties you enter.</p>
-    <h3 style="margin-top: var(--sp-4);">Experiment B</h3>
-    <p class="note">The bead balance solves radiation gained against convection lost. Conduction along the thermocouple wire is not included, so the predicted error is a lower bound.</p>
-    <h3 style="margin-top: var(--sp-4);">Transient</h3>
-    <p class="note">One lumped node per body. Effective heat capacity and extra loss are not given in the course notes and are not calibrated against measurements, so absolute times should not be trusted.</p>
-    <h3 style="margin-top: var(--sp-4);">Field viewer</h3>
-    <p class="note">The field is generated for illustration. Pre-computed CFD cases will replace it, and the surface integrals will come from the original grid rather than the display grid.</p>
+    </main>
   </div>
-</dialog>
 
-<div class="toast" id="toast" role="status"></div>
+  <dialog id="assumptionDialog">
+    <div style="display:flex; align-items:center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-bottom: 1px solid var(--border);">
+      <h2 style="flex:1; font-size: var(--fs-base);">Models and assumptions</h2>
+      <button class="btn btn--quiet" id="closeAssumptions" type="button">Close</button>
+    </div>
+    <div style="padding: var(--sp-4); overflow: auto; display: flex; flex-direction: column; gap: var(--sp-4);">
+      <div><h3>Experiment A</h3><p class="assumption">Steady-state balance on the heated cylinder. Radiation uses a linearised coefficient with emissivity and view factor as inputs. Convection is either the McAdams simple form or Morgan's correlation with the air properties you enter. The residual is not "experimental error" — it is heat the two terms do not describe.</p></div>
+      <div><h3>Experiment B</h3><p class="assumption">The bead balance solves radiation gained against convection lost. Conduction along the thermocouple wire is not included, so the predicted error is an upper bound on what the real sensor shows.</p></div>
+      <div><h3>Transient</h3><p class="assumption">One lumped node per body. Effective heat capacity and extra loss are not in the course notes and have not been fitted to a recorded run, so absolute times are not trustworthy.</p></div>
+      <div><h3>Field</h3><p class="assumption">The field is generated for illustration. Pre-computed CFD cases will replace it, and surface integrals will come from the original grid rather than the display grid.</p></div>
+      <div><h3>Verification</h3><p class="assumption">Every model here is cross-checked against an independent SciPy implementation that uses different algorithms — Brent root finding and adaptive Runge–Kutta instead of bisection and fixed-step RK4 — so a mistake in one cannot hide in the other.</p></div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
 </body>
 </html>

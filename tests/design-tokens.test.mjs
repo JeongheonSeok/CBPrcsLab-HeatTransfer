@@ -81,8 +81,12 @@ describe("디자인 토큰 · 대비", () => {
     }
   });
 
-  test("상태색이 각자의 배경에서 읽힌다", () => {
-    for (const [fg, bg] of [["status-ok", "status-ok-soft"], ["status-warn", "status-warn-soft"]]) {
+  test("정의된 상태색이 각자의 배경에서 읽힌다", () => {
+    // 쓸 자리가 없는 상태색은 토큰을 두지 않으므로, 있는 짝만 검사한다.
+    const pairs = [["status-ok", "status-ok-soft"], ["status-warn", "status-warn-soft"]]
+      .filter(([fg, bg]) => token(fg) && token(bg));
+    assert.ok(pairs.length > 0, "상태색이 하나도 정의되지 않았다");
+    for (const [fg, bg] of pairs) {
       const r = contrast(token(fg), token(bg));
       assert.ok(r >= 4.5, `--${fg} on --${bg}: ${r.toFixed(2)}:1`);
     }
