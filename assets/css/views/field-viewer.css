@@ -11,7 +11,7 @@
 .viewer-canvas-wrap { position: relative; min-height: 560px; background: #132334; }
 #fieldCanvas { width: 100%; height: 560px; display: block; }
 .field-overlay { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; justify-content: space-between; pointer-events: none; }
-.field-readout { padding: var(--sp-2) var(--sp-2); border-radius: var(--radius-sm); background: rgba(18, 29, 41, 0.78); color: #fff; font-size: var(--fs-sm); backdrop-filter: blur(6px); }
+.field-readout { padding: var(--sp-2) var(--sp-2); border-radius: var(--radius-sm); background: rgba(18, 29, 41, 0.78); color: #fff; font-size: var(--fs-sm); }
 .colorbar { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); display: flex; align-items: stretch; gap: var(--sp-1); }
 .colorbar-gradient { width: 12px; height: 170px; border: 1px solid rgba(255,255,255,.45); border-radius: var(--radius-pill); }
 .colorbar-labels { display: flex; flex-direction: column; justify-content: space-between; color: #fff; font-size: var(--fs-xs); text-shadow: 0 1px 2px rgba(0,0,0,.5); }

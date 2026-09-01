@@ -10,10 +10,9 @@
   padding: var(--sp-2) var(--sp-3) 0;
   display: grid;
   place-items: center;
-  background:
-    linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(118, 137, 151, 0.06) 31px 32px),
-    repeating-linear-gradient(90deg, transparent 0 31px, rgba(118, 137, 151, 0.06) 31px 32px);
+  /* 모눈 배경을 두지 않는다. 격자가 SVG 좌표에도 축척에도 정렬되지 않아
+     아무것도 나타내지 않으면서 축척이 있다는 오해만 부른다. */
+  background: var(--surface-2);
 }
 .apparatus-diagram { width: 100%; max-width: 850px; height: 520px; }
 .apparatus-diagram.is-hidden { display: none; }

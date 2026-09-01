@@ -9,8 +9,7 @@
   margin-bottom: 20px;
 }
 
-.eyebrow { color: var(--accent); font-size: var(--fs-sm); font-weight: var(--fw-semi); letter-spacing: 0.04em; }
-.page-intro h2, .section-heading h2 { margin: 5px 0 5px; font-size: clamp(23px, 2.2vw, 30px); line-height: 1.25; letter-spacing: -0.04em; }
+.page-intro h2, .section-heading h2 { margin: 0 0 var(--sp-1); font-size: var(--fs-lg); font-weight: var(--fw-semi); line-height: 1.35; }
 .page-intro p, .section-heading p { max-width: 780px; margin: 0; color: var(--muted); font-size: var(--fs-base); }
 
 .segment {
@@ -126,7 +125,7 @@ details.advanced .form-grid { margin-top: 12px; }
 .fill.conv { background: var(--series-conv); }
 .fill.rad { background: var(--series-rad); }
 .fill.loss { background: #b4a46a; }
-.formula-chip { margin-top: 3px; padding: var(--sp-2) var(--sp-2); border-radius: var(--radius-sm); background: var(--surface-2); color: #44525e; font-family: "SFMono-Regular", Consolas, monospace; font-size: var(--fs-sm); overflow-wrap: anywhere; }
+.formula-chip { margin-top: 3px; padding: var(--sp-2) var(--sp-2); border-radius: var(--radius-sm); background: var(--surface-2); color: #44525e; font-family: var(--font-mono); font-size: var(--fs-sm); overflow-wrap: anywhere; }
 
 .chart-wrap { position: relative; min-height: 290px; }
 canvas.chart { width: 100%; height: 290px; display: block; }

@@ -65,37 +65,15 @@
 }
 
 .nav-button:hover { background: var(--surface-2); color: var(--text); }
-.nav-button.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: var(--fw-bold); }
+.nav-button.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: var(--fw-semi); box-shadow: inset 3px 0 0 var(--accent); }
 
-.nav-icon {
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  display: grid;
-  place-items: center;
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semi);
-  flex: 0 0 auto;
-}
 
-.nav-button.active .nav-icon { border-color: var(--accent-line); background: #fff; }
-.nav-copy strong { display: block; font-size: var(--fs-base); }
+.nav-button.active .nav-copy strong { display: block; font-size: var(--fs-base); }
 .nav-copy span { display: block; margin-top: 1px; color: var(--muted-2); font-size: var(--fs-sm); font-weight: var(--fw-medium); }
 
 .sidebar-spacer { flex: 1; }
-.sidebar-note {
-  padding: var(--sp-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface-2);
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
+.sidebar-note { margin: 0; color: var(--muted-2); font-size: var(--fs-xs); line-height: 1.5; }
 
-.status-line { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: 5px; color: var(--text); font-weight: var(--fw-bold); }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #35a983; }
 
 .main { min-width: 0; }
 .topbar {
@@ -110,7 +88,6 @@
   position: sticky;
   top: 0;
   z-index: 15;
-  backdrop-filter: blur(12px);
 }
 
 .page-meta { color: var(--muted); font-size: var(--fs-sm); }
@@ -118,6 +95,6 @@
 .top-actions { display: flex; align-items: center; gap: var(--sp-2); }
 
 .content { width: min(1440px, 100%); margin: 0 auto; padding: var(--sp-6) var(--sp-7) var(--sp-7); }
-.view { display: none; animation: fade 160ms ease; }
+.view { display: none; }
 .view.active { display: block; }
 @keyframes fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }

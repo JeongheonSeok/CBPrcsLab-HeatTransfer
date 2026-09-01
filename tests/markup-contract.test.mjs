@@ -66,7 +66,7 @@ describe("마크업 계약 · 화면 전환", () => {
 
   test("레지스트리 항목에 빠진 값이 없다", () => {
     for (const view of VIEWS) {
-      for (const key of ["id", "marker", "label", "sub", "title"]) {
+      for (const key of ["id", "label", "sub", "title"]) {
         assert.ok(view[key], `VIEWS의 "${view.id}"에 ${key}가 없음`);
       }
     }

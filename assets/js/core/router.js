@@ -11,7 +11,6 @@ function renderNav() {
   if (!list) return;
   list.innerHTML = VIEWS.map(view => `
     <button class="nav-button" type="button" data-view="${view.id}">
-      <span class="nav-icon" aria-hidden="true">${view.marker}</span>
       <span class="nav-copy"><strong>${view.label}</strong><span>${view.sub}</span></span>
     </button>`).join("");
 }
