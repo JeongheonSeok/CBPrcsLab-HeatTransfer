@@ -138,7 +138,7 @@ export function initExperimentAView() {
 
   $$(".a-voltage").forEach(button => button.addEventListener("click", () => {
     $("#aVoltage").value = button.dataset.value;
-    $$(".a-voltage").forEach(item => item.classList.toggle("active", item === button));
+    $$(".a-voltage").forEach(item => item.classList.toggle("is-active", item === button));
     updateA();
   }));
 

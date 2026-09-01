@@ -95,13 +95,13 @@ export function initExperimentBView() {
 
   $$(".sensor-button").forEach(button => button.addEventListener("click", () => {
     selectedSensor = button.dataset.sensor;
-    $$(".sensor-button").forEach(item => item.classList.toggle("active", item === button));
+    $$(".sensor-button").forEach(item => item.classList.toggle("is-active", item === button));
     updateB();
   }));
 
   $$(".b-velocity").forEach(button => button.addEventListener("click", () => {
     $("#bVelocity").value = button.dataset.value;
-    $$(".b-velocity").forEach(item => item.classList.toggle("active", item === button));
+    $$(".b-velocity").forEach(item => item.classList.toggle("is-active", item === button));
     updateB();
   }));
 

@@ -17,19 +17,19 @@ function selectPart(partId) {
   $("#componentMeasure").textContent = data.measure;
   $("#componentLocation").textContent = data.location;
   $("#componentRole").textContent = data.role;
-  $$(".component-chip").forEach(chip => chip.classList.toggle("active", chip.dataset.part === partId));
+  $$("#componentList .btn").forEach(chip => chip.classList.toggle("is-active", chip.dataset.part === partId));
 }
 
 function renderComponentList(mode) {
   $("#componentList").innerHTML = componentOrder[mode]
-    .map(id => `<button class="component-chip" data-part="${id}">${componentData[id].label}</button>`)
+    .map(id => `<button class="btn" type="button" data-part="${id}">${componentData[id].label}</button>`)
     .join("");
-  $$(".component-chip").forEach(button => button.addEventListener("click", () => selectPart(button.dataset.part)));
+  $$("#componentList .btn").forEach(button => button.addEventListener("click", () => selectPart(button.dataset.part)));
 }
 
 function updateFlowLayers() {
-  $$(".toggle-button").forEach(button => {
-    const visible = button.classList.contains("active");
+  $$(".toggle-layer").forEach(button => {
+    const visible = button.classList.contains("is-active");
     $$(`[data-layer-group="${button.dataset.layer}"]`)
       .forEach(layer => layer.classList.toggle("layer-hidden", !visible));
   });
@@ -37,7 +37,7 @@ function updateFlowLayers() {
 
 function switchApparatus(mode) {
   apparatusMode = mode;
-  $$(".apparatus-mode").forEach(button => button.classList.toggle("active", button.dataset.mode === mode));
+  $$(".apparatus-mode").forEach(button => button.classList.toggle("is-active", button.dataset.mode === mode));
   $$(".apparatus-diagram").forEach(svg => svg.classList.toggle("is-hidden", svg.dataset.apparatus !== mode));
   $("#apparatusHeading").textContent = mode === "A"
     ? "Experiment A · Combined convection and radiation"
@@ -58,8 +58,8 @@ export function initApparatusView() {
     });
   });
 
-  $$(".toggle-button").forEach(button =>
-    button.addEventListener("click", () => { button.classList.toggle("active"); updateFlowLayers(); }));
+  $$(".toggle-layer").forEach(button =>
+    button.addEventListener("click", () => { button.classList.toggle("is-active"); updateFlowLayers(); }));
 
   switchApparatus("A");
 }

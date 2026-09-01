@@ -170,3 +170,41 @@ describe("마크업 계약 · 입력 요소", () => {
     assert.equal(classCount("lumped-mode"), 2, "시간 변화 모드 버튼");
   });
 });
+
+describe("마크업 계약 · 클래스 이름", () => {
+  // JS가 붙이는 클래스에 CSS 규칙이 없으면 화면은 조용히 무너진다.
+  // 사이드바 메뉴가 통째로 안 보이는 사고가 실제로 났다.
+  const cssText = (function collect(dir, out = []) {
+    for (const entry of readdirSync(dir)) {
+      const full = join(dir, entry);
+      if (statSync(full).isDirectory()) collect(full, out);
+      else if (entry.endsWith(".css") && entry !== "fonts.css") out.push(readFileSync(full, "utf8"));
+    }
+    return out;
+  })(join(ROOT, "assets", "css")).join("\n");
+
+  const cssClasses = new Set([...cssText.matchAll(/\.([a-zA-Z][\w-]*)/g)].map(m => m[1]));
+
+  // 이벤트를 걸기 위한 표식일 뿐 모양을 담당하지 않는 클래스
+  const hooks = new Set([
+    "a-voltage", "b-velocity", "sensor-button", "dataset-button", "lumped-mode",
+    "apparatus-mode", "toggle-layer", "selected", "is-hidden", "layer-hidden"
+  ]);
+
+  test("JS가 붙이는 클래스에 CSS 규칙이 있다", () => {
+    const applied = new Set();
+    for (const [, source] of jsSources) {
+      for (const m of source.matchAll(/classList\.(?:add|remove|toggle)\("([a-z][\w-]*)"/g)) applied.add(m[1]);
+      for (const m of source.matchAll(/class="([^"$]+)"/g)) m[1].split(/\s+/).forEach(c => c && applied.add(c));
+    }
+    const orphans = [...applied].filter(c => !cssClasses.has(c) && !hooks.has(c)).sort();
+    assert.deepEqual(orphans, [], `CSS에 규칙이 없는 클래스: ${orphans.join(", ")}`);
+  });
+
+  test("마크업의 클래스에 CSS 규칙이 있다", () => {
+    const inMarkup = new Set();
+    for (const m of html.matchAll(/class="([^"]+)"/g)) m[1].split(/\s+/).forEach(c => c && inMarkup.add(c));
+    const orphans = [...inMarkup].filter(c => !cssClasses.has(c) && !hooks.has(c)).sort();
+    assert.deepEqual(orphans, [], `CSS에 규칙이 없는 클래스: ${orphans.join(", ")}`);
+  });
+});

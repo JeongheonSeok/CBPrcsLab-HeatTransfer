@@ -38,7 +38,7 @@ function exportCsv() {
 export function initDataView() {
   $$(".dataset-button").forEach(button => button.addEventListener("click", () => {
     dataset = button.dataset.dataset;
-    $$(".dataset-button").forEach(item => item.classList.toggle("active", item === button));
+    $$(".dataset-button").forEach(item => item.classList.toggle("is-active", item === button));
     renderDataTable(false);
   }));
 

@@ -8,9 +8,9 @@ export function showToast(message) {
   const toast = $("#toast");
   if (!toast) return;
   toast.textContent = message;
-  toast.classList.add("show");
+  toast.classList.add("is-shown");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove("show"), 1700);
+  toastTimer = setTimeout(() => toast.classList.remove("is-shown"), 1700);
 }
 
 export function initAssumptionDialog() {

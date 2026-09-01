@@ -83,8 +83,8 @@ function updateAPanel() {
   $("#lumpedMetric4Sub").textContent = "Qc(tend)";
   $("#lumpedChartTitle").textContent = "Cylinder mean temperature";
   $("#lumpedLegend").innerHTML =
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.surface}"></i>Cylinder mean</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.conv}"></i>Air temperature</span>`;
+    `<span class=""><i class="" style="border-color:${SERIES_COLOR.surface}"></i>Cylinder mean</span>` +
+    `<span class=""><i class="" style="border-color:${SERIES_COLOR.conv}"></i>Air temperature</span>`;
   $("#lumpedNote").textContent = "Effective heat capacity and extra loss are not in the course notes and have not been fitted to measurements. Treat the time axis as indicative only.";
 }
 
@@ -104,18 +104,18 @@ function updateBPanel() {
   $("#lumpedMetric4Sub").textContent = "set by bead heat capacity";
   $("#lumpedChartTitle").textContent = "Thermocouple bead response";
   $("#lumpedLegend").innerHTML =
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T6}"></i>T6</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T7}"></i>T7</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SENSOR_COLOR.T8}"></i>T8</span>` +
-    `<span class="legend-item"><i class="legend-swatch" style="border-color:${SERIES_COLOR.marker}"></i>Air temperature</span>`;
+    `<span class=""><i class="" style="border-color:${SENSOR_COLOR.T6}"></i>T6</span>` +
+    `<span class=""><i class="" style="border-color:${SENSOR_COLOR.T7}"></i>T7</span>` +
+    `<span class=""><i class="" style="border-color:${SENSOR_COLOR.T8}"></i>T8</span>` +
+    `<span class=""><i class="" style="border-color:${SERIES_COLOR.marker}"></i>Air temperature</span>`;
   $("#lumpedNote").textContent = "Bead material properties are placeholder values and wire conduction is not modelled, so the response is faster than the real sensor.";
 }
 
 export function updateLumped() {
   if (!$("#lumpedChart")) return;
-  $("#lumpedAControls").classList.toggle("mode-panel-hidden", lumpedMode !== "A");
-  $("#lumpedBControls").classList.toggle("mode-panel-hidden", lumpedMode !== "B");
-  $$(".lumped-mode").forEach(button => button.classList.toggle("active", button.dataset.mode === lumpedMode));
+  $("#lumpedAControls").hidden = lumpedMode !== "A";
+  $("#lumpedBControls").hidden = lumpedMode !== "B";
+  $$(".lumped-mode").forEach(button => button.classList.toggle("is-active", button.dataset.mode === lumpedMode));
   if (lumpedMode === "A") updateAPanel(); else updateBPanel();
   drawLumpedChart();
 }
