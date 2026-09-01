@@ -31,9 +31,11 @@ export function drawAChart() {
   let maxY = 1;
   for (let i = 0; i < 100; i += 1) {
     const t = minX + (maxX - minX) * i / 99;
-    const heat = cylinderHeat({ ...input, tsC: t });
-    values.push({ t, qc: Math.abs(heat.qConv), qr: Math.abs(heat.qRad) });
-    maxY = Math.max(maxY, Math.abs(heat.qConv), Math.abs(heat.qRad));
+    const mcadams = cylinderHeat({ ...input, tsC: t, model: "mcadams" });
+    const morgan = cylinderHeat({ ...input, tsC: t, model: "morgan" });
+    // 복사는 상관식과 무관하므로 어느 쪽을 써도 같다.
+    values.push({ t, qa: Math.abs(mcadams.qConv), qm: Math.abs(morgan.qConv), qr: Math.abs(mcadams.qRad) });
+    maxY = Math.max(maxY, Math.abs(mcadams.qConv), Math.abs(morgan.qConv), Math.abs(mcadams.qRad));
   }
   maxY *= 1.12;
 
@@ -41,19 +43,24 @@ export function drawAChart() {
   drawAxes(ctx, w, h, "Tₛ (°C)", "Q (W)",
     [minX, Math.round((minX + maxX) / 2), maxX],
     [0, +(maxY / 2).toFixed(1), +maxY.toFixed(1)], xMap, yMap);
-  drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qc)]), SERIES_COLOR.conv, 2.2, SERIES_DASH.solid);
+  // 두 상관식은 같은 물리량이라 색이 같다. 선 종류로만 나뉜다.
+  drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qa)]), SERIES_COLOR.conv, 2.2, SERIES_DASH.solid);
+  drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qm)]), SERIES_COLOR.conv, 1.8, SERIES_DASH.dotted);
   drawLine(ctx, values.map(item => [xMap(item.t), yMap(item.qr)]), SERIES_COLOR.rad, 2.2, SERIES_DASH.dashed);
 
   // 복사가 대류를 다시 앞지르는 온도만 표시한다. 실험 A가 가르치려는 지점이다.
   // 상온 근처의 첫 교차는 ΔT가 작아 생기는 것이라 표시하지 않는다.
-  const crossing = findCrossings(values).find(c => c.radiationTakesOver && c.t > input.taC + 20);
+  // 교차점은 화면에서 고른 상관식 기준으로 표시한다.
+  const picked = values.map(item => ({ ...item, qc: input.model === "morgan" ? item.qm : item.qa }));
+  const crossing = findCrossings(picked).find(c => c.radiationTakesOver && c.t > input.taC + 20);
   if (crossing) {
     drawCrossing(ctx, xMap(crossing.t), yMap(crossing.q), `radiation leads above ${crossing.t.toFixed(0)} °C`, h);
   }
 
   const last = values[values.length - 1];
   labelEnds(ctx, [
-    { name: "Convection", color: SERIES_COLOR.conv, x: xMap(last.t), y: yMap(last.qc) },
+    { name: "McAdams", color: SERIES_COLOR.conv, x: xMap(last.t), y: yMap(last.qa) },
+    { name: "Morgan", color: SERIES_COLOR.conv, x: xMap(last.t), y: yMap(last.qm) },
     { name: "Radiation", color: SERIES_COLOR.rad, x: xMap(last.t), y: yMap(last.qr) }
   ]);
 
@@ -132,6 +139,17 @@ function showSplit(input, result) {
   $("#aOverflowNote").hidden = !over;
 }
 
+// 교안 결과보고서가 두 모델의 열전달량 비교를 따로 요구한다. 하나씩 전환해서는 답할 수 없다.
+function compareModels(input) {
+  const [mcadams, morgan] = ["mcadams", "morgan"].map(model => experimentASteady({ ...input, model }));
+  const gap = (morgan.qConv - mcadams.qConv) / Math.abs(mcadams.qConv) * 100;
+  $("#aCompare").textContent =
+    `McAdams ${mcadams.qConv.toFixed(2)} W (h = ${mcadams.hConv.toFixed(2)}) · ` +
+    `Morgan ${morgan.qConv.toFixed(2)} W (h = ${morgan.hConv.toFixed(2)}) · ` +
+    `Morgan is ${Math.abs(gap).toFixed(1)}% ${gap < 0 ? "lower" : "higher"}. ` +
+    `The split above uses ${input.model === "morgan" ? "Morgan" : "McAdams"}.`;
+}
+
 export function updateA() {
   const input = readInputs();
   const result = experimentASteady(input);
@@ -144,6 +162,7 @@ export function updateA() {
   $("#aRadSub").textContent = `hr = ${result.hRad.toFixed(2)} W·m⁻²·K⁻¹`;
 
   showSplit(input, result);
+  compareModels(input);
 
   if (result.model === "morgan") {
     $("#aWarning").textContent = `Morgan correlation, Ra = ${result.ra ? result.ra.toExponential(2) : "0"}, using the k, ν and Pr you entered.${result.extrapolated ? " This Ra falls outside the table in the course notes." : ""}`;

@@ -39,6 +39,8 @@
         <div><span class="key seg-etc"></span><span class="name">Unmodelled</span><span class="val" id="aResidual">—</span><span class="pct" id="aLossPct">—</span></div>
       </div>
 
+      <p class="assumption" id="aCompare">—</p>
+
       <p class="caution" id="aSplitNote" role="status" hidden></p>
 
       <p class="caution" id="aOverflowNote" role="status" hidden>The hatched part sits above the supplied power: the two terms already add up to more than went in. Check the surface temperature, the emissivity, and which correlation you picked.</p>
@@ -57,7 +59,8 @@
     <div class="card-body">
       <div class="chart-frame well well--flush"><canvas class="chart" id="aChart"></canvas></div>
       <div class="legend">
-        <span><i class="conv"></i>Convection</span>
+        <span><i class="conv"></i>Convection · McAdams</span>
+        <span><i class="dotted conv"></i>Convection · Morgan</span>
         <span><i class="dashed rad"></i>Radiation</span>
         <span><i class="dotted marker"></i>Your T10</span>
       </div>
