@@ -24,8 +24,9 @@ What you need depends on what you are doing.
 | **Serve or edit it locally** | Any static file server, e.g. `python3 -m http.server 8000`. |
 | **Change `assets/js/physics/`** | Node 20+ and [uv](https://docs.astral.sh/uv/), to run the checks below. |
 
-The site is 180 KB of plain HTML, CSS and ES modules. It loads no libraries, no fonts
-and no scripts from anywhere else, so it works offline and deployment is a `git push`.
+The site is plain HTML, CSS and ES modules with no libraries. Fonts are vendored into
+the repository rather than pulled from a CDN, so nothing is fetched from another host
+at runtime: it works offline, and deployment is a `git push`.
 
 ```bash
 # only if you will run the checks
@@ -76,12 +77,20 @@ Run both before committing anything under `assets/js/physics/`.
 
 ```text
 index.html            markup and apparatus SVG diagrams
-assets/css/           base · layout · components · views/ · responsive
+assets/css/
+  tokens.css          the design system — colours, type, spacing, shape
+  base.css            reset and base typography
+  app.css             frame: dark sidebar, header, content
+  components.css      panels, buttons, fields, notes, charts, tables
+  views.css           per-screen rules
+  fonts.css           vendored IBM Plex faces (no CDN)
+assets/fonts/         woff2 files, Latin subsets only
 assets/js/
   core/               DOM helpers, router, canvas plotting, numerical routines
   physics/            heat transfer models — no DOM access, unit-testable
   data/               component copy, CFD case metadata, table schemas
   views/              per-screen input handling and rendering
+assets/svg/           the apparatus diagrams, kept as standalone files
 tests/                property tests for the physics models
 tools/                reference export and the SciPy cross-check
 docs/ROADMAP.md       development roadmap and hosting review
