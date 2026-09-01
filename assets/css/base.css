@@ -42,6 +42,33 @@
   --status-warn: #6f5518;
   --status-warn-soft: #fff7df;
 
+  /* 타입 — IBM Plex는 x-높이가 작아 같은 px에서 더 작게 보인다 */
+  --font-sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --fs-xs: 11px;      /* 라벨, 각주 */
+  --fs-sm: 12px;      /* 칩, 배지, 표 */
+  --fs-md: 13px;      /* 버튼, 입력 */
+  --fs-base: 14px;    /* 본문 */
+  --fs-lg: 17px;      /* 카드 제목 */
+  --fs-xl: 22px;      /* 화면 제목 */
+  --fs-num: 23px;     /* 큰 수치 */
+
+  /* 굵기 — 400은 기본값이라 토큰을 두지 않는다.
+     800은 쓰지 않는다. 굵기로 강조하는 화면은 계측 도구로 안 읽힌다. */
+  --fw-medium: 500;
+  --fw-semi: 600;
+  --fw-bold: 700;     /* 화면 제목에만 */
+
+  /* 간격 — 4px 배수 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 32px;
+
   /* 형태 */
   --radius-sm: 4px;           /* 입력, 배지 */
   --radius-md: 6px;           /* 카드, 버튼 */
@@ -60,8 +87,8 @@ body {
   min-width: 320px;
   color: var(--text);
   background: var(--bg);
-  font-family: Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 15px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
   line-height: 1.55;
   letter-spacing: -0.01em;
   word-break: keep-all;

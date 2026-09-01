@@ -1,13 +1,13 @@
 /* 장치 이해 화면: SVG 도식, 부품 강조, 흐름 레이어 */
-.apparatus-layout { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(300px, 0.75fr); gap: 16px; align-items: stretch; }
+.apparatus-layout { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(300px, 0.75fr); gap: var(--sp-4); align-items: stretch; }
 .diagram-card { overflow: hidden; }
-.diagram-toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.toggle-button { padding: 6px 9px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.diagram-toolbar { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+.toggle-button { padding: var(--sp-1) var(--sp-2); color: var(--muted); font-size: var(--fs-sm); font-weight: var(--fw-bold); }
 .toggle-button.active { color: var(--accent-ink); border-color: var(--accent-line); background: var(--accent-soft); }
 
 .apparatus-canvas {
   min-height: 555px;
-  padding: 10px 14px 0;
+  padding: var(--sp-2) var(--sp-3) 0;
   display: grid;
   place-items: center;
   background:
@@ -17,7 +17,7 @@
 }
 .apparatus-diagram { width: 100%; max-width: 850px; height: 520px; }
 .apparatus-diagram.is-hidden { display: none; }
-.diagram-caption { padding: 11px 17px 14px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+.diagram-caption { padding: var(--sp-3) var(--sp-4) var(--sp-3); border-top: 1px solid var(--border); color: var(--muted); font-size: var(--fs-md); }
 
 .apparatus-part { cursor: pointer; }
 .apparatus-part .part-hit { fill: rgba(var(--accent-rgb), 0); stroke: transparent; stroke-width: 8; transition: 140ms ease; }
@@ -26,9 +26,9 @@
   stroke: rgba(var(--accent-rgb), 0.75);
   stroke-width: 3;
 }
-.apparatus-part:hover .part-label, .apparatus-part.selected .part-label { fill: var(--accent-ink); font-weight: 800; }
-.part-label { fill: #44525e; font-size: 14px; font-weight: 700; pointer-events: none; }
-.part-sub { fill: #7a8791; font-size: 12px; pointer-events: none; }
+.apparatus-part:hover .part-label, .apparatus-part.selected .part-label { fill: var(--accent-ink); font-weight: var(--fw-semi); }
+.part-label { fill: #44525e; font-size: var(--fs-base); font-weight: var(--fw-bold); pointer-events: none; }
+.part-sub { fill: #7a8791; font-size: var(--fs-sm); pointer-events: none; }
 .part-leader { stroke: #9aa8b3; stroke-width: 1.5; fill: none; pointer-events: none; }
 
 .flow-layer { transition: opacity 180ms ease; }
@@ -40,34 +40,34 @@
 @keyframes moveDash { to { stroke-dashoffset: -32; } }
 
 .info-card { display: flex; flex-direction: column; min-height: 100%; }
-.info-card .card-body { display: flex; flex-direction: column; gap: 16px; height: 100%; }
-.info-badge { width: fit-content; padding: 4px 8px; border-radius: var(--radius-pill); color: var(--accent-ink); background: var(--accent-soft); font-size: 12px; font-weight: 800; }
-.component-title { margin: 0; font-size: 22px; letter-spacing: -0.035em; }
-.component-summary { margin: 0; color: var(--muted); font-size: 14px; }
-.info-grid { margin: 0; display: grid; gap: 11px; }
+.info-card .card-body { display: flex; flex-direction: column; gap: var(--sp-4); height: 100%; }
+.info-badge { width: fit-content; padding: var(--sp-1) var(--sp-2); border-radius: var(--radius-pill); color: var(--accent-ink); background: var(--accent-soft); font-size: var(--fs-sm); font-weight: var(--fw-semi); }
+.component-title { margin: 0; font-size: var(--fs-xl); letter-spacing: -0.035em; }
+.component-summary { margin: 0; color: var(--muted); font-size: var(--fs-base); }
+.info-grid { margin: 0; display: grid; gap: var(--sp-3); }
 .info-row { padding-top: 10px; border-top: 1px solid var(--border); }
-.info-row dt { margin: 0 0 3px; color: var(--muted-2); font-size: 12px; font-weight: 700; }
-.info-row dd { margin: 0; font-size: 14px; }
+.info-row dt { margin: 0 0 3px; color: var(--muted-2); font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.info-row dd { margin: 0; font-size: var(--fs-base); }
 .component-list-wrap { margin-top: auto; }
-.component-list-title { margin-bottom: 8px; color: var(--muted); font-size: 12px; font-weight: 800; }
-.component-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.component-list-title { margin-bottom: 8px; color: var(--muted); font-size: var(--fs-sm); font-weight: var(--fw-semi); }
+.component-list { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
 .component-chip {
-  padding: 6px 9px;
+  padding: var(--sp-1) var(--sp-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   cursor: pointer;
 }
-.component-chip.active { color: var(--accent-ink); border-color: var(--accent-line); background: var(--accent-soft); font-weight: 800; }
+.component-chip.active { color: var(--accent-ink); border-color: var(--accent-line); background: var(--accent-soft); font-weight: var(--fw-semi); }
 
 .apparatus-note {
   margin-top: 16px;
-  padding: 13px 15px;
+  padding: var(--sp-3) var(--sp-4);
   border: 1px solid var(--accent-line);
   border-radius: var(--radius-md);
   background: var(--accent-soft);
   color: #35516f;
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
