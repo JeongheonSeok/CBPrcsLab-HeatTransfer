@@ -11,6 +11,13 @@ export const numberValue = (id, fallback = 0) => {
   return Number.isFinite(value) ? value : fallback;
 };
 
+// quick-set 버튼의 선택 표시. 클릭할 때만 표시를 옮기면 직접 타이핑한 뒤에도
+// 버튼이 옛 값을 주장하므로, 표시는 언제나 입력 칸의 현재 값에서 나와야 한다.
+export function syncQuickSet(selector, value) {
+  $$(selector).forEach(button =>
+    button.classList.toggle("is-active", Number(button.dataset.value) === value));
+}
+
 export function formatW(value, digits = 2) {
   return `${value.toFixed(digits)} <small>W</small>`;
 }

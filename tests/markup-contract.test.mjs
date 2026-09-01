@@ -245,6 +245,15 @@ describe("마크업 계약 · 클래스 이름", () => {
     "apparatus-mode", "toggle-layer", "selected", "is-hidden", "layer-hidden"
   ]);
 
+  test("마크업의 버튼이 모두 JS에 연결되어 있다", () => {
+    // "Air properties for Morgan" 버튼에 리스너가 하나도 없어 눌리지 않은 적이 있다.
+    const js = jsSources.map(([, source]) => source).join("\n");
+    const orphans = [...html.matchAll(/<button[^>]*\sid="([^"]+)"/g)]
+      .map(m => m[1])
+      .filter(id => !js.includes(`#${id}`));
+    assert.deepEqual(orphans, [], `JS가 참조하지 않는 버튼: ${orphans.join(", ")}`);
+  });
+
   test("JS가 붙이는 클래스에 CSS 규칙이 있다", () => {
     const applied = new Set();
     for (const [, source] of jsSources) {

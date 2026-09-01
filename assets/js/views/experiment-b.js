@@ -1,6 +1,6 @@
 // 실험 B 화면: 선택한 열전쌍의 측정 온도·오차와 유속별 비교 그래프
 
-import { $, $$, numberValue, formatSmallHeat } from "../core/dom.js";
+import { $, $$, numberValue, formatSmallHeat, syncQuickSet } from "../core/dom.js";
 import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, SERIES_COLOR, sensorStyle } from "../core/chart.js";
 import { solveSensor } from "../physics/experiment-b.js";
 
@@ -74,6 +74,7 @@ export function updateB() {
   const conditions = readConditions();
   const result = solveSensor(selectedSensor, conditions);
 
+  syncQuickSet(".b-velocity", conditions.velocity);
   $("#bVelocityValue").textContent = result.velocity.toFixed(2);
   $("#bSensorTemp").innerHTML = `${result.tcC.toFixed(2)} <small>°C</small>`;
   $("#bSensorSub").textContent = `${result.name} · ε=${result.epsilon.toFixed(2)} · d=${(result.d * 1000).toFixed(1)} mm`;
@@ -100,9 +101,9 @@ export function initExperimentBView() {
     updateB();
   }));
 
+  // 선택 표시는 updateB가 슬라이더 값에서 다시 계산한다.
   $$(".b-velocity").forEach(button => button.addEventListener("click", () => {
     $("#bVelocity").value = button.dataset.value;
-    $$(".b-velocity").forEach(item => item.classList.toggle("is-active", item === button));
     updateB();
   }));
 

@@ -8,9 +8,9 @@
   <span class="divider"></span>
   <div class="group">
     <div class="input"><label for="aAirTemp">Air T8</label>
-      <div class="with-unit"><input id="aAirTemp" type="number" value="25" step="0.1"><span class="unit">°C</span></div></div>
+      <div class="with-unit"><input id="aAirTemp" type="number" value="25" min="-273.15" step="0.1"><span class="unit">°C</span></div></div>
     <div class="input"><label for="aSurfaceTemp">Surface T10</label>
-      <div class="with-unit"><input id="aSurfaceTemp" type="number" value="90" step="0.1"><span class="unit">°C</span></div></div>
+      <div class="with-unit"><input id="aSurfaceTemp" type="number" value="90" min="-273.15" step="0.1"><span class="unit">°C</span></div></div>
   </div>
   <span class="divider"></span>
   <div class="input wide"><label for="aModel">Correlation</label>
@@ -45,7 +45,9 @@
         <div><span class="key seg-etc"></span><span class="name">Unmodelled</span><span class="val" id="aResidual">—</span><span class="pct" id="aLossPct">—</span></div>
       </div>
 
-      <p class="caution" id="aOverflowNote" hidden>The hatched part sits above the supplied power: the two terms already add up to more than went in. Check the surface temperature, the emissivity, and which correlation you picked.</p>
+      <p class="caution" id="aSplitNote" role="status" hidden></p>
+
+      <p class="caution" id="aOverflowNote" role="status" hidden>The hatched part sits above the supplied power: the two terms already add up to more than went in. Check the surface temperature, the emissivity, and which correlation you picked.</p>
 
       <p class="formula">
         <math><mrow><msub><mi>Q</mi><mtext>in</mtext></msub><mo>=</mo><mi>V</mi><mi>I</mi><mo>=</mo>
@@ -74,7 +76,7 @@
     <div class="card-body">
       <p class="assumption" id="aWarning">—</p>
       <p class="assumption">Cylinder diameter, heated length, emissivity and view factor are <strong>placeholder values</strong> until the rig is measured. They scale every number above.</p>
-      <div><button class="btn btn--quiet" id="aAdvancedToggle" type="button">Air properties for Morgan</button></div>
+      <div><button class="btn btn--quiet" id="aAdvancedToggle" type="button" aria-expanded="false" aria-controls="aAdvanced">Air properties for Morgan</button></div>
       <div id="aAdvanced" hidden>
         <div class="values">
           <div class="input"><label for="aK">k</label><div class="with-unit"><input id="aK" type="number" value="0.027" step="0.001"><span class="unit">W/mK</span></div></div>

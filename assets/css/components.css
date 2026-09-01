@@ -14,6 +14,9 @@ input[type="number"] { font-family: var(--font-mono); font-variant-numeric: tabu
 input:focus, select:focus { border-color: var(--accent); }
 input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 input:disabled, select:disabled { opacity: .5; cursor: not-allowed; }
+/* 물리적으로 불가능한 값은 조용히 넘어가지 않는다. 빨강은 복사와 뜻이 겹쳐 쓰지 않고
+   주의 색을 그대로 쓴다. 학생의 입력은 틀린 것이 아니라 모델 밖에 있는 것이다. */
+input:invalid { border-color: var(--status-warn); background: var(--status-warn-soft); }
 input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 /* ── 버튼 — 기본형 하나에 변형 셋 ───────────────── */

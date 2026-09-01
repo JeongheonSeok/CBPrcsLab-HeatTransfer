@@ -45,21 +45,29 @@ function loadViewStyles(id) {
 
 async function loadView(view) {
   if (loaded.has(view.id)) return;
-  loaded.add(view.id);
   const section = document.getElementById(view.id);
   if (!section) return;
 
   if (view.status === "planned") {
+    loaded.add(view.id);
     section.innerHTML = planPlaceholder(view);
     return;
   }
   loadViewStyles(view.id);
-  const response = await fetch(`assets/views/${view.id}.html`);
-  if (!response.ok) {
-    section.innerHTML = `<div class="content"><p class="caution">Could not load assets/views/${view.id}.html (${response.status}).</p></div>`;
+
+  // 실패한 화면은 loaded에 넣지 않는다. 넣어 두면 다시 눌러도 빈 화면이 그대로 남는다.
+  let markup;
+  try {
+    const response = await fetch(`assets/views/${view.id}.html`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    markup = await response.text();
+  } catch (error) {
+    section.innerHTML = `<div class="content"><p class="caution" role="status">Could not load assets/views/${view.id}.html (${error.message}). Check the connection and pick this screen again.</p></div>`;
     return;
   }
-  section.innerHTML = `<div class="content">${await response.text()}</div>`;
+
+  loaded.add(view.id);
+  section.innerHTML = `<div class="content">${markup}</div>`;
   if (onActivate[view.id]?.mount) onActivate[view.id].mount();
 }
 
