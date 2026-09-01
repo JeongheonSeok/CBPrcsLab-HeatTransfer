@@ -7,7 +7,6 @@ export const SERIES_COLOR = {
   rad: "#d94f5c",
   surface: "#e66b37",
   marker: "#ad7b14",
-  muted: "#8a98a4",  // T6 회색체
   guide: "#aeb8c0"
 };
 
@@ -72,6 +71,21 @@ export function drawLine(ctx, points, stroke, width = 2.2, dash = []) {
 
 /** 색을 못 읽는 사람도 계열을 구분할 수 있도록 선 종류를 함께 쓴다. */
 export const SERIES_DASH = { solid: [], dashed: [7, 4], dotted: [2, 3] };
+
+// assets/css/tokens.css의 --sensor-* 와 값이 같아야 하며 테스트가 검사한다.
+export const SENSOR_COLOR = { grey: "#78848f", black: "#2f3e4b" };
+
+// 열전쌍은 물리량이 아니라 장치이므로 계열 색을 빌려 쓰지 않는다.
+// 색은 비드 표면을, 굵기는 비드 지름을 나타낸다. 표면이 같은 T7과 T8은
+// 색도 같고 굵기만 다르다. 선 종류는 색을 보조한다 (계획서 6절).
+export function sensorStyle({ epsilon, d }) {
+  const black = epsilon >= 0.7;          // 교안이 회색체(0.40)와 흑체(0.95)로만 나눈다
+  return {
+    color: black ? SENSOR_COLOR.black : SENSOR_COLOR.grey,
+    width: d >= 0.002 ? 3.2 : 1.8,       // 0.5 mm와 3 mm
+    dash: black ? SERIES_DASH.solid : SERIES_DASH.dotted
+  };
+}
 
 /** 두 곡선이 만나는 지점을 표시한다. 어느 쪽이 언제 우세해지는지가 읽히도록. */
 export function drawCrossing(ctx, x, y, label, h) {

@@ -1,13 +1,10 @@
 // 실험 B 화면: 선택한 열전쌍의 측정 온도·오차와 유속별 비교 그래프
 
 import { $, $$, numberValue, formatSmallHeat } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, SERIES_COLOR, SERIES_DASH } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, drawHorizontalGuide, SERIES_COLOR, sensorStyle } from "../core/chart.js";
 import { solveSensor } from "../physics/experiment-b.js";
 
 const SENSOR_NAMES = ["T6", "T7", "T8"];
-const SENSOR_COLOR = { T6: SERIES_COLOR.muted, T7: SERIES_COLOR.conv, T8: SERIES_COLOR.rad };
-// 색만으로 계열을 구분하지 않는다 (계획서 6절). 선 종류를 함께 쓴다.
-const SENSOR_DASH = { T6: SERIES_DASH.dotted, T7: SERIES_DASH.solid, T8: SERIES_DASH.dashed };
 
 let selectedSensor = "T7";
 
@@ -29,12 +26,16 @@ export function drawBChart() {
 
   const minX = 0.05, maxX = 1.8;
   const series = { T6: [], T7: [], T8: [] };
+  // 곡선의 색과 굵기는 비드의 표면과 지름에서 나온다. T6은 방사율이 입력값이라
+  // 학생이 그 값을 올리면 곡선도 흑체 쪽으로 어두워진다.
+  const style = {};
   let minY = Infinity, maxY = -Infinity;
   for (let i = 0; i < 90; i += 1) {
     const velocity = minX + (maxX - minX) * i / 89;
     SENSOR_NAMES.forEach(name => {
       const result = solveSensor(name, { ...conditions, velocity });
       series[name].push({ velocity, temperature: result.tcC });
+      style[name] ??= sensorStyle(result);
       minY = Math.min(minY, result.tcC);
       maxY = Math.max(maxY, result.tcC);
     });
@@ -51,7 +52,7 @@ export function drawBChart() {
     [+minY.toFixed(0), +((minY + maxY) / 2).toFixed(0), +maxY.toFixed(0)], xMap, yMap);
   SENSOR_NAMES.forEach(name =>
     drawLine(ctx, series[name].map(item => [xMap(item.velocity), yMap(item.temperature)]),
-      SENSOR_COLOR[name], 2.2, SENSOR_DASH[name]));
+      style[name].color, style[name].width, style[name].dash));
 
   // 공기 온도선이 무엇인지 그래프 안에서 바로 읽히게 한다.
   ctx.font = "11px 'IBM Plex Sans KR', system-ui, sans-serif";
@@ -61,7 +62,7 @@ export function drawBChart() {
   ctx.textAlign = "right";
   SENSOR_NAMES.forEach(name => {
     const last = series[name][series[name].length - 1];
-    ctx.fillStyle = SENSOR_COLOR[name];
+    ctx.fillStyle = style[name].color;
     ctx.fillText(name, xMap(last.velocity) - 3, yMap(last.temperature) - 5);
   });
   ctx.textAlign = "left";

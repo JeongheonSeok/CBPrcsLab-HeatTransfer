@@ -1,10 +1,8 @@
 // 시간 변화 화면: 실험 A 실린더 평균 온도, 실험 B 열전쌍 응답
 
 import { $, $$, clamp, numberValue, formatW } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawHorizontalGuide, SERIES_COLOR } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawHorizontalGuide, SERIES_COLOR, sensorStyle } from "../core/chart.js";
 import { simulateCylinder, simulateSensors } from "../physics/lumped.js";
-
-const SENSOR_COLOR = { T6: SERIES_COLOR.muted, T7: SERIES_COLOR.conv, T8: SERIES_COLOR.rad };
 
 let lumpedMode = "A";
 
@@ -61,8 +59,11 @@ export function drawLumpedChart() {
     const { xMap, yMap } = makeScales(w, h, [0, sim.duration], [minY, maxY]);
     drawAxes(ctx, w, h, "t (s)", "T (°C)", [0, Math.round(sim.duration / 2), sim.duration],
       [+minY.toFixed(0), +((minY + maxY) / 2).toFixed(0), +maxY.toFixed(0)], xMap, yMap);
-    Object.keys(SENSOR_COLOR).forEach(name =>
-      drawLine(ctx, sim.series[name].map(p => [xMap(p.t), yMap(p.temp)]), SENSOR_COLOR[name], 2.3));
+    sim.sensors.forEach(sensor => {
+      const style = sensorStyle(sensor);
+      drawLine(ctx, sim.series[sensor.name].map(p => [xMap(p.t), yMap(p.temp)]),
+        style.color, style.width, style.dash);
+    });
     drawHorizontalGuide(ctx, yMap(sim.gas), w, SERIES_COLOR.marker, [5, 5], 1.2);
   }
 }
@@ -104,10 +105,9 @@ function updateBPanel() {
   $("#lumpedMetric4Sub").textContent = "set by bead heat capacity";
   $("#lumpedChartTitle").textContent = "Thermocouple bead response";
   $("#lumpedLegend").innerHTML =
-    `<span class=""><i class="" style="border-color:${SENSOR_COLOR.T6}"></i>T6</span>` +
-    `<span class=""><i class="" style="border-color:${SENSOR_COLOR.T7}"></i>T7</span>` +
-    `<span class=""><i class="" style="border-color:${SENSOR_COLOR.T8}"></i>T8</span>` +
-    `<span class=""><i class="" style="border-color:${SERIES_COLOR.marker}"></i>Air temperature</span>`;
+    sim.sensors.map(sensor =>
+      `<span><i style="border-color:${sensorStyle(sensor).color}"></i>${sensor.name}</span>`).join("") +
+    `<span><i style="border-color:${SERIES_COLOR.marker}"></i>Air temperature</span>`;
   $("#lumpedNote").textContent = "Bead material properties are placeholder values and wire conduction is not modelled, so the response is faster than the real sensor.";
 }
 

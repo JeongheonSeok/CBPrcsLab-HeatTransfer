@@ -26,8 +26,10 @@
 .flow-layer { transition: opacity 180ms ease; }
 .flow-layer.layer-hidden { opacity: 0; pointer-events: none; }
 .flow-path { fill: none; stroke-linecap: round; stroke-dasharray: 8 8; animation: flow 1.8s linear infinite; }
-.air-path { stroke: var(--flow-air); stroke-width: 3; }
-.conv-path { stroke: var(--flow-conv); stroke-width: 3; }
-.rad-path { stroke: var(--flow-rad); stroke-width: 2.5; }
+/* 공기 흐름은 열의 경로가 아니라 매질이므로 중립색으로 물러난다.
+   그 자리를 비워야 대류가 그래프와 같은 파랑을 쓸 수 있다. */
+.air-path { stroke: var(--muted); stroke-width: 3; }
+.conv-path { stroke: var(--series-conv); stroke-width: 3; }
+.rad-path { stroke: var(--series-rad); stroke-width: 2.5; }
 @keyframes flow { to { stroke-dashoffset: -32; } }
 @media (prefers-reduced-motion: reduce) { .flow-path { animation: none; } }

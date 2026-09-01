@@ -7,7 +7,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { SERIES_COLOR } from "../assets/js/core/chart.js";
+import { SERIES_COLOR, SENSOR_COLOR } from "../assets/js/core/chart.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cssFiles = (function collect(dir, out = []) {
@@ -40,8 +40,7 @@ describe("디자인 토큰 · 데이터 색의 단일 출처", () => {
     ["series-conv", "conv"],
     ["series-rad", "rad"],
     ["series-surface", "surface"],
-    ["series-marker", "marker"],
-    ["series-muted", "muted"]
+    ["series-marker", "marker"]
   ];
 
   for (const [cssName, jsKey] of pairs) {
@@ -50,6 +49,15 @@ describe("디자인 토큰 · 데이터 색의 단일 출처", () => {
       assert.ok(css, `base.css에 --${cssName}가 없음`);
       assert.equal(css.toLowerCase(), SERIES_COLOR[jsKey].toLowerCase(),
         `표는 CSS 색, 그래프는 JS 색을 쓰므로 두 값이 같아야 한다`);
+    });
+  }
+
+  for (const jsKey of Object.keys(SENSOR_COLOR)) {
+    test(`--sensor-${jsKey} 와 SENSOR_COLOR.${jsKey} 가 같다`, () => {
+      const css = token(`sensor-${jsKey}`);
+      assert.ok(css, `tokens.css에 --sensor-${jsKey}가 없음`);
+      assert.equal(css.toLowerCase(), SENSOR_COLOR[jsKey].toLowerCase(),
+        `범례는 CSS 색, 곡선은 JS 색을 쓰므로 두 값이 같아야 한다`);
     });
   }
 });
@@ -75,10 +83,26 @@ describe("디자인 토큰 · 대비", () => {
 
   test("데이터 색이 큰 글자 기준을 넘는다", () => {
     // 지표 카드의 큰 숫자에 쓰이므로 3:1이 기준이다.
-    for (const [, key] of [["", "conv"], ["", "rad"], ["", "surface"], ["", "marker"]]) {
+    for (const key of ["conv", "rad", "surface", "marker"]) {
       const r = contrast(SERIES_COLOR[key], "#ffffff");
       assert.ok(r >= 3.0, `SERIES_COLOR.${key} ${SERIES_COLOR[key]}: ${r.toFixed(2)}:1 (기준 3.0)`);
     }
+  });
+
+  test("센서 색이 그래프 배경과 카드 위에서 모두 구분된다", () => {
+    // 곡선이므로 비텍스트 기준 3:1이다. 그래프는 --well 위에, 범례는 카드 위에 있다.
+    for (const key of Object.keys(SENSOR_COLOR)) {
+      for (const bg of ["#ffffff", token("well")]) {
+        const r = contrast(SENSOR_COLOR[key], bg);
+        assert.ok(r >= 3.0, `SENSOR_COLOR.${key} ${SENSOR_COLOR[key]} on ${bg}: ${r.toFixed(2)}:1`);
+      }
+    }
+  });
+
+  test("회색체와 흑체가 서로 구분된다", () => {
+    // 방사율을 색으로 나타내므로 두 색이 붙어 있으면 그 구분이 사라진다.
+    const r = contrast(SENSOR_COLOR.grey, SENSOR_COLOR.black);
+    assert.ok(r >= 2.5, `--sensor-grey 와 --sensor-black: ${r.toFixed(2)}:1 (기준 2.5)`);
   });
 
   test("정의된 상태색이 각자의 배경에서 읽힌다", () => {
