@@ -17,6 +17,7 @@
      데이터 계열과 헷갈리지 않도록 청록 기운의 파랑을 쓴다. */
   --accent: #1a6d94;
   --accent-rgb: 26, 109, 148;   /* 알파를 섞어 쓸 때 */
+  --accent-hover: #155a7c;
   --accent-ink: #13566f;      /* accent-soft 위에 올리는 글자 */
   --accent-soft: #e4f0f6;
   --accent-line: #a8cfe2;

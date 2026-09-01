@@ -67,7 +67,7 @@
 .small-button { padding: var(--sp-2) var(--sp-2); font-size: var(--fs-sm); font-weight: var(--fw-bold); }
 .primary-button { padding: var(--sp-2) var(--sp-3); border-color: var(--accent); background: var(--accent); color: #fff; font-size: var(--fs-md); font-weight: var(--fw-semi); }
 .ghost-button:hover, .small-button:hover, .toggle-button:hover, .chip-button:hover { background: var(--surface-2); }
-.primary-button:hover { background: #245fce; }
+.primary-button:hover { background: var(--accent-hover); }
 
 
 /* 섹션 헤더 · 작업 영역 · 입력 폼 · 지표 카드 · 막대 · 차트 */

@@ -113,6 +113,22 @@ describe("디자인 토큰 · 규칙 준수", () => {
     assert.deepEqual(offenders, [], "UI 요소가 데이터 색을 씀");
   });
 
+  test("UI 규칙이 데이터 계열 색값을 직접 쓰지 않는다", () => {
+    // --accent 계열이어야 할 자리에 --series-* 의 hex가 새어 들어오면
+    // 버튼에 마우스를 올리는 순간 UI가 "대류" 색으로 변한다. 실제로 있었던 결함이다.
+    const seriesHex = Object.values(SERIES_COLOR).map(v => v.toLowerCase());
+    const offenders = [];
+    for (const [name, css] of cssFiles) {
+      if (name.endsWith("base.css")) continue;   // 토큰 정의부는 예외
+      css.split("\n").forEach((line, i) => {
+        for (const hex of seriesHex) {
+          if (line.toLowerCase().includes(hex)) offenders.push(`${name}:${i + 1}  ${line.trim().slice(0, 70)}`);
+        }
+      });
+    }
+    assert.deepEqual(offenders, [], `데이터 색을 직접 쓴 곳:\n  ${offenders.join("\n  ")}`);
+  });
+
   test("정의만 되고 안 쓰는 토큰이 없다", () => {
     // --series-*는 CSS에 안 나와도 JS 차트가 쓴다. 위의 단일 출처 검사가 이미 지킨다.
     // --accent-rgb는 rgba(var(--accent-rgb), a) 형태라 별도로 찾는다.
