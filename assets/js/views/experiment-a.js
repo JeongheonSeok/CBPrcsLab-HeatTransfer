@@ -57,16 +57,26 @@ export function updateA() {
   $("#aConvSub").textContent = `h = ${result.hConv.toFixed(2)} W·m⁻²·K⁻¹`;
   $("#aRadSub").textContent = `hr = ${result.hRad.toFixed(2)} W·m⁻²·K⁻¹`;
 
-  const totalAbs = Math.abs(result.qConv) + Math.abs(result.qRad);
-  const convPct = totalAbs > 0 ? Math.abs(result.qConv) / totalAbs * 100 : 0;
-  const radPct = totalAbs > 0 ? Math.abs(result.qRad) / totalAbs * 100 : 0;
-  const lossPct = Math.abs(result.qIn) > 1e-12 ? Math.abs(result.residual) / Math.abs(result.qIn) * 100 : 0;
+  // 세 항이 공급 전력을 어떻게 나누는지 비율로 환산한다.
+  // 분모는 대류+복사 합이 아니라 공급 전력이어야 막대가 100%를 뜻한다.
+  const qIn = Math.abs(result.qIn);
+  const share = value => (qIn > 1e-12 ? value / qIn * 100 : 0);
+  const convPct = share(Math.abs(result.qConv));
+  const radPct = share(Math.abs(result.qRad));
+  const residualPct = share(result.residual);
+
   $("#aConvPct").textContent = `${convPct.toFixed(1)}%`;
   $("#aRadPct").textContent = `${radPct.toFixed(1)}%`;
-  $("#aLossPct").textContent = `${lossPct.toFixed(1)}%`;
-  $("#aConvBar").style.width = `${clamp(convPct, 0, 100)}%`;
-  $("#aRadBar").style.width = `${clamp(radPct, 0, 100)}%`;
-  $("#aLossBar").style.width = `${clamp(lossPct, 0, 100)}%`;
+  $("#aLossPct").textContent = `${residualPct.toFixed(1)}%`;
+
+  // 모델 합이 공급 전력을 넘으면 잔차가 음수가 된다. 막대를 100%에서 끊고 빗금으로 알린다.
+  const over = residualPct < 0;
+  const scale = over ? 100 / Math.max(convPct + radPct, 1e-9) : 1;
+  $("#aConvBar").style.width = `${clamp(convPct * scale, 0, 100)}%`;
+  $("#aRadBar").style.width = `${clamp(radPct * scale, 0, 100)}%`;
+  $("#aLossBar").style.width = `${over ? 0 : clamp(residualPct, 0, 100)}%`;
+  $("#aStackBar").classList.toggle("is-over", over);
+  $("#aOverflowNote").hidden = !over;
 
   if (result.model === "morgan") {
     $("#aWarning").textContent = `Morgan 계산: Ra = ${result.ra ? result.ra.toExponential(2) : "0"}. 입력한 k, ν, Pr를 사용합니다.${result.extrapolated ? " 현재 Ra는 교안 표 범위 밖입니다." : ""}`;

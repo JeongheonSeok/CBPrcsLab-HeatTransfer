@@ -364,21 +364,36 @@
             </aside>
 
             <div class="stack">
-              <div class="metric-grid">
-                <div class="metric-card"><div class="metric-label">전기 입력</div><div class="metric-value" id="aPower">—</div><div class="metric-sub">Qin = VI</div></div>
-                <div class="metric-card conv"><div class="metric-label">자연대류</div><div class="metric-value" id="aConv">—</div><div class="metric-sub" id="aConvSub">h = —</div></div>
-                <div class="metric-card rad"><div class="metric-label">복사</div><div class="metric-value" id="aRad">—</div><div class="metric-sub" id="aRadSub">hr = —</div></div>
-                <div class="metric-card warn"><div class="metric-label">에너지 수지 잔차</div><div class="metric-value" id="aResidual">—</div><div class="metric-sub">Qin − (Qc + Qr)</div></div>
-              </div>
+              <article class="card">
+                <div class="card-header"><div><h3>에너지 수지</h3></div><span class="model-badge" id="aModelBadge">교안 기반 계산</span></div>
+                <div class="card-body balance">
+                  <div class="balance-head">
+                    <div class="balance-label">전기 입력</div>
+                    <div class="balance-total" id="aPower">—</div>
+                    <div class="balance-eq">
+                      <math><mrow><msub><mi>Q</mi><mtext>in</mtext></msub><mo>=</mo><mi>V</mi><mi>I</mi><mo>=</mo><mn>100</mn><mo>%</mo></mrow></math>
+                    </div>
+                  </div>
+
+                  <div class="stackbar" id="aStackBar">
+                    <i class="seg-conv" id="aConvBar" style="width:0"></i><i class="seg-rad" id="aRadBar" style="width:0"></i><i class="seg-etc" id="aLossBar" style="width:0"></i>
+                  </div>
+
+                  <div class="balance-legend">
+                    <div><span class="key seg-conv"></span><span class="name">자연대류</span><span class="val conv" id="aConv">—</span><span class="pct" id="aConvPct">—</span><span class="sub" id="aConvSub">h = —</span></div>
+                    <div><span class="key seg-rad"></span><span class="name">복사</span><span class="val rad" id="aRad">—</span><span class="pct" id="aRadPct">—</span><span class="sub" id="aRadSub">hr = —</span></div>
+                    <div><span class="key seg-etc"></span><span class="name">모델 밖 열량</span><span class="val" id="aResidual">—</span><span class="pct" id="aLossPct">—</span><span class="sub">Qin − (Qc + Qr)</span></div>
+                  </div>
+
+                  <p class="note-plain" id="aOverflowNote" hidden>빗금은 공급 전력을 넘어선 구간입니다. 모델 합이 입력보다 크므로 가정을 확인하세요.</p>
+                </div>
+              </article>
 
               <div class="analysis-grid">
                 <article class="card">
                   <div class="card-header"><div><h3>열전달 기여도</h3><p>계산된 열량의 상대적 크기</p></div></div>
-                  <div class="card-body bar-group">
-                    <div><div class="bar-label"><span>자연대류</span><strong id="aConvPct">—</strong></div><div class="track"><div class="fill conv" id="aConvBar" style="width:0"></div></div></div>
-                    <div><div class="bar-label"><span>복사</span><strong id="aRadPct">—</strong></div><div class="track"><div class="fill rad" id="aRadBar" style="width:0"></div></div></div>
-                    <div><div class="bar-label"><span>입력 대비 잔차</span><strong id="aLossPct">—</strong></div><div class="track"><div class="fill loss" id="aLossBar" style="width:0"></div></div></div>
-                    <div class="formula-chip">Qin = VI, Qtotal = Qc + Qr</div>
+                  <div class="card-body">
+                    <div class="formula-chip"><math><mrow><msub><mi>Q</mi><mtext>in</mtext></msub><mo>=</mo><mi>V</mi><mi>I</mi><mo>,</mo><mspace width="6px"/><msub><mi>Q</mi><mtext>total</mtext></msub><mo>=</mo><msub><mi>Q</mi><mi>c</mi></msub><mo>+</mo><msub><mi>Q</mi><mi>r</mi></msub></mrow></math></div>
                   </div>
                 </article>
 
