@@ -136,3 +136,22 @@ dialog::backdrop { background: rgba(18, 40, 63, .4); }
   transition: opacity 140ms ease, transform 140ms ease;
 }
 .toast.is-shown { opacity: 1; transform: translate(-50%, 0); }
+
+/* ── 카드 — 한 화면 안에서 영역을 나눈다 ────────────
+   모든 것을 감싸지 않는다. 조건·결과·근거·가정처럼
+   읽는 단계가 바뀌는 지점에서만 경계를 친다. */
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.card > header {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border-soft);
+}
+.card > header h2, .card > header h3 {
+  flex: 1; font-size: var(--fs-md); font-weight: var(--fw-semi); color: var(--muted);
+}
+.card-body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-3); }
+.card--planned { border-style: dashed; background: var(--surface-2); }

@@ -11,6 +11,9 @@ import { componentData, componentOrder } from "../assets/js/data/components.js";
 import { CFD_CASES } from "../assets/js/data/cfd-cases.js";
 import { VIEWS, DEFAULT_VIEW } from "../assets/js/data/views.js";
 
+/** status가 "ready"인 화면만 마크업을 갖는다. planned 화면은 router가 자리표시를 그린다. */
+const isReady = id => VIEWS.find(v => v.id === id)?.status === "ready";
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(join(ROOT, "index.html"), "utf8");
 
@@ -56,11 +59,21 @@ describe("마크업 계약 · 자산", () => {
 });
 
 describe("마크업 계약 · id", () => {
-  test("JS가 부르는 id가 전부 존재한다", () => {
+  test("실행되는 JS가 부르는 id가 전부 존재한다", () => {
+    // planned 화면의 뷰 모듈은 main.js가 부르지 않으므로 마크업도 없는 게 맞다.
+    // status를 "ready"로 바꾸는 순간 이 검사가 그 화면의 마크업을 요구한다.
+    const plannedFiles = VIEWS
+      .filter(v => v.status === "planned")
+      .flatMap(v => v.id === "data" ? ["views/data-table.js"]
+                  : v.id === "field-viewer" ? ["views/field-viewer.js", "views/field-renderer.js"]
+                  : [`views/${v.id}.js`]);
+
     const missing = [];
     for (const [file, source] of jsSources) {
+      const rel = file.replace(ROOT + "/", "").replace("assets/js/", "");
+      if (plannedFiles.includes(rel)) continue;
       for (const m of source.matchAll(/\$\("#([A-Za-z0-9_-]+)"/g)) {
-        if (!htmlIds.has(m[1])) missing.push(`${m[1]}  (${file.replace(ROOT + "/", "")})`);
+        if (!htmlIds.has(m[1])) missing.push(`${m[1]}  (${rel})`);
       }
     }
     assert.deepEqual(missing, [], `index.html에 없는 id:\n  ${missing.join("\n  ")}`);
@@ -92,9 +105,23 @@ describe("마크업 계약 · 화면 전환", () => {
 
   test("레지스트리 항목에 빠진 값이 없다", () => {
     for (const view of VIEWS) {
-      for (const key of ["id", "label", "sub", "title"]) {
+      for (const key of ["id", "label", "sub", "title", "status"]) {
         assert.ok(view[key], `VIEWS의 "${view.id}"에 ${key}가 없음`);
       }
+      assert.ok(["ready", "planned"].includes(view.status), `"${view.id}"의 status가 ready도 planned도 아님`);
+      if (view.status === "planned") {
+        assert.ok(view.plan && view.plan.length > 40,
+          `"${view.id}"는 planned인데 무엇이 들어올지 적혀 있지 않다`);
+      }
+    }
+  });
+
+  test("planned 화면은 마크업이 비어 있다", () => {
+    // 내용이 남아 있으면 자리표시가 그 위에 덧그려져 옛 화면이 잠깐 보인다.
+    for (const view of VIEWS.filter(v => v.status === "planned")) {
+      const m = html.match(new RegExp(`<section class="view[^"]*" id="${view.id}">([\\s\\S]*?)</section>`));
+      assert.ok(m, `#${view.id} 화면이 없음`);
+      assert.equal(m[1].trim(), "", `#${view.id}는 planned인데 마크업이 남아 있다`);
     }
   });
 
@@ -116,7 +143,7 @@ describe("마크업 계약 · 화면 전환", () => {
   });
 });
 
-describe("마크업 계약 · 장치 도식", () => {
+describe("마크업 계약 · 장치 도식", { skip: !isReady("apparatus") }, () => {
   test("설명 데이터가 있는 부품이 도식에 전부 그려져 있다", () => {
     const drawn = attrValues("part");
     for (const id of Object.keys(componentData)) {
@@ -156,18 +183,24 @@ describe("마크업 계약 · 입력 요소", () => {
     assert.equal(classCount("sensor-button"), 3);
   });
 
-  test("CFD case 선택지가 메타데이터와 일치한다", () => {
+  test("CFD case 선택지가 메타데이터와 일치한다", { skip: !isReady("field-viewer") }, () => {
     const options = new Set([...html.matchAll(/<option value="([^"]+)"/g)].map(m => m[1]));
     for (const id of Object.keys(CFD_CASES)) {
       assert.ok(options.has(id), `CFD_CASES의 "${id}"를 고를 수 있는 option이 없음`);
     }
   });
 
-  test("빠른 선택 버튼이 존재한다", () => {
+  test("실험 A·B의 빠른 선택 버튼이 존재한다", () => {
     assert.ok(classCount("a-voltage") >= 3, "실험 A 전압 버튼");
     assert.ok(classCount("b-velocity") >= 4, "실험 B 유속 버튼");
-    assert.equal(classCount("dataset-button"), 2, "데이터셋 전환 버튼");
-    assert.equal(classCount("lumped-mode"), 2, "시간 변화 모드 버튼");
+  });
+
+  test("데이터 화면의 전환 버튼", { skip: !isReady("data") }, () => {
+    assert.equal(classCount("dataset-button"), 2);
+  });
+
+  test("시간 변화 화면의 모드 버튼", { skip: !isReady("transient") }, () => {
+    assert.equal(classCount("lumped-mode"), 2);
   });
 });
 

@@ -1,33 +1,37 @@
-// 진입점: 화면 모듈 초기화, 라우터와 리사이즈 연결
+// 진입점. status가 "ready"인 화면만 초기화한다.
+// planned 화면은 마크업이 비어 있으므로 그 뷰 모듈을 부르면 없는 id를 찾다가 멈춘다.
 
 import { initRouter } from "./core/router.js";
 import { initAssumptionDialog } from "./core/ui.js";
-import { initApparatusView } from "./views/apparatus.js";
+import { VIEWS } from "./data/views.js";
 import { initExperimentAView, drawAChart } from "./views/experiment-a.js";
 import { initExperimentBView, drawBChart } from "./views/experiment-b.js";
-import { initTransientView, updateLumped, drawLumpedChart } from "./views/transient.js";
-import { initFieldViewer, resizeFieldCanvas, updateCfdSummary } from "./views/field-viewer.js";
-import { initDataView } from "./views/data-table.js";
+
+const ready = id => VIEWS.find(view => view.id === id)?.status === "ready";
+
+// 화면이 완성되면 여기에 한 줄을 더하고 views.js의 status를 "ready"로 바꾼다.
+const SCREENS = {
+  "experiment-a": { init: initExperimentAView, redraw: drawAChart },
+  "experiment-b": { init: initExperimentBView, redraw: drawBChart }
+};
 
 initAssumptionDialog();
-initApparatusView();
-initExperimentAView();
-initExperimentBView();
-initTransientView();
-initDataView();
-initFieldViewer();
 
-// 숨겨진 동안에는 캔버스 크기를 잴 수 없으므로 표시 직후에 다시 그림
-initRouter({
-  "experiment-a": drawAChart,
-  "experiment-b": drawBChart,
-  transient: updateLumped,
-  "field-viewer": () => { resizeFieldCanvas(); updateCfdSummary(); }
-});
+const activation = {};
+for (const [id, screen] of Object.entries(SCREENS)) {
+  if (!ready(id)) continue;
+  screen.init();
+  if (screen.redraw) activation[id] = screen.redraw;
+}
 
+// 화면이 보이기 전에는 캔버스 크기가 0이므로 표시 직후에 다시 그린다.
+initRouter(activation);
+
+let resizeFrame = null;
 window.addEventListener("resize", () => {
-  drawAChart();
-  drawBChart();
-  drawLumpedChart();
-  resizeFieldCanvas();
+  // 창을 끄는 동안 매 픽셀마다 다시 그리지 않는다.
+  cancelAnimationFrame(resizeFrame);
+  resizeFrame = requestAnimationFrame(() => {
+    Object.values(activation).forEach(redraw => redraw());
+  });
 });

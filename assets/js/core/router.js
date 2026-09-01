@@ -11,8 +11,28 @@ function renderNav() {
   if (!list) return;
   list.innerHTML = VIEWS.map(view => `
     <button class="nav-item" type="button" data-view="${view.id}">
-      <strong>${view.label}</strong><span>${view.sub}</span>
+      <strong>${view.label}${view.status === "planned" ? '<span class="nav-flag">planned</span>' : ""}</strong>
+      <span>${view.sub}</span>
     </button>`).join("");
+}
+
+/**
+ * 아직 만들지 않은 화면은 지어낸 내용 대신 무엇이 들어올지 적는다.
+ * 협업하는 사람이 어디까지 되어 있는지 화면만 보고 알 수 있어야 한다.
+ */
+function renderPlaceholder(view) {
+  const section = document.getElementById(view.id);
+  if (!section || section.dataset.placeholder === "done") return;
+  section.dataset.placeholder = "done";
+  section.innerHTML = `
+    <div class="content">
+      <div class="card card--planned">
+        <header><h2>${view.title}</h2><span class="badge badge--warn">Not built yet</span></header>
+        <div class="card-body">
+          <p class="assumption">${view.plan}</p>
+        </div>
+      </div>
+    </div>`;
 }
 
 export function switchView(viewId, updateHash = true) {
@@ -30,6 +50,7 @@ export function switchView(viewId, updateHash = true) {
   });
 
   $("#pageTitle").textContent = view.title;
+  if (view.status === "planned") renderPlaceholder(view);
   if (updateHash) history.replaceState(null, "", `#${target}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
   // 화면이 보이기 전에는 캔버스 크기가 0이므로 표시 직후에 다시 그림
