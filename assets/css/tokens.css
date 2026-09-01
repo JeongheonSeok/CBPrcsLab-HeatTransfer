@@ -5,7 +5,7 @@
   color-scheme: light;
 
   /* 지면 */
-  --bg: #f4f6f8;
+  --bg: #eceff3;
   --surface: #ffffff;
   --surface-2: #f7f9fa;
   --surface-3: #edf1f4;
@@ -84,6 +84,7 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-pill: 999px;
+  --shadow-card: 0 1px 1px rgba(20, 33, 45, .04), 0 2px 6px rgba(20, 33, 45, .05);
   --shadow-raised: 0 24px 80px rgba(20, 33, 45, 0.22);
 
   /* 치수 */

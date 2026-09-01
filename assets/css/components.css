@@ -144,14 +144,25 @@ dialog::backdrop { background: rgba(18, 40, 63, .4); }
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface);
+  box-shadow: var(--shadow-card);
 }
 .card > header {
-  display: flex; align-items: center; gap: var(--sp-3);
+  display: flex; align-items: baseline; gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4);
-  border-bottom: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 .card > header h2, .card > header h3 {
-  flex: 1; font-size: var(--fs-md); font-weight: var(--fw-semi); color: var(--muted);
+  flex: 1; font-size: var(--fs-md); font-weight: var(--fw-semi); color: var(--text-2);
 }
-.card-body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-3); }
-.card--planned { border-style: dashed; background: var(--surface-2); }
+.card > header .sub { color: var(--muted-2); font-size: var(--fs-xs); }
+.card-body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-4); }
+.card--planned { border-style: dashed; box-shadow: none; background: none; }
+.card--planned > header { background: none; }
+
+/* 카드를 나란히 놓는다. 세로로만 쌓으면 화면이 길어지고 관계가 안 보인다. */
+.card-grid { display: grid; gap: var(--sp-4); }
+.card-grid.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.card-grid.wide-left { grid-template-columns: minmax(0, 1.45fr) minmax(280px, 1fr); }
+@media (max-width: 1080px) { .card-grid.two, .card-grid.wide-left { grid-template-columns: 1fr; } }
