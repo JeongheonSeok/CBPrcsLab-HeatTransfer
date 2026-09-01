@@ -18,6 +18,14 @@
   --accent: #1a6d94;
   --accent-rgb: 26, 109, 148;   /* 알파를 섞어 쓸 때 */
   --accent-hover: #155a7c;
+
+  /* 앱 프레임 — 사이드바를 어둡게 해 화면에 뼈대를 준다.
+     헤더는 밝게 둬서 화면 제목과 배지가 본문의 일부로 읽히게 한다. */
+  --frame: #12283f;
+  --frame-ink: #dbe6ef;
+  --frame-ink-2: #91a7bb;
+  --frame-line: rgba(255, 255, 255, 0.09);
+  --frame-accent: #6fb6d8;
   --accent-ink: #13566f;      /* accent-soft 위에 올리는 글자 */
   --accent-soft: #e4f0f6;
   --accent-line: #a8cfe2;
@@ -78,7 +86,8 @@
   --shadow-raised: 0 24px 80px rgba(20, 33, 45, 0.22);
 
   /* 치수 */
-  --sidebar-w: 236px;
+  --sidebar-w: 232px;
+  --header-h: 52px;
 }
 
 * { box-sizing: border-box; }
