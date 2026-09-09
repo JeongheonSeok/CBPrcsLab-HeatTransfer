@@ -1,0 +1,100 @@
+{
+  "case": "A11_prod_D065_fineVis",
+  "voltage_label": "11 V",
+  "electrical_input_W": 20.77429,
+  "time_count": 361,
+  "time_start_s": 0.0,
+  "time_end_s": 180.0,
+  "planes": {
+    "xz": {
+      "equation": "y = 0 m",
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    "yz": {
+      "equation": "x = 0 m",
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  "plane_sampling": {
+    "OpenFOAM_type": "cuttingPlane",
+    "interpolationScheme": "cellPoint",
+    "temperature_unit": "K",
+    "velocity_unit": "m/s",
+    "coordinate_unit": "m",
+    "note": "The sampled points are mesh-cut points, not a regular Cartesian grid."
+  },
+  "heat_rate_signs": {
+    "normalized_columns": "Positive in the direction stated in each CSV column name.",
+    "OF_raw_columns": "Original OpenFOAM region-outward patch-normal sign.",
+    "radiation": "total minus convective"
+  },
+  "products": [
+    {
+      "file": "xz_air.npz",
+      "region": "air",
+      "plane": "xz",
+      "point_count": 7554,
+      "time_count": 361
+    },
+    {
+      "file": "yz_air.npz",
+      "region": "air",
+      "plane": "yz",
+      "point_count": 5740,
+      "time_count": 361
+    },
+    {
+      "file": "xz_heater.npz",
+      "region": "heater",
+      "plane": "xz",
+      "point_count": 2918,
+      "time_count": 361
+    },
+    {
+      "file": "yz_heater.npz",
+      "region": "heater",
+      "plane": "yz",
+      "point_count": 478,
+      "time_count": 361
+    }
+  ],
+  "source_case_info": [
+    "# A11_prod_D065_fineVis",
+    "",
+    "- Purpose: Experiment-A production data and ParaView animation",
+    "- Voltage label: 11 V",
+    "- Measured electrical power: 20.77429 W",
+    "- Experimental mean T10: 247.286 degC",
+    "- Total duct length: 0.6533333333 m",
+    "- Distance below/above heater center: 0.5033333333 / 0.15 m",
+    "- Heater center: z=1.05 m",
+    "- Background O-grid: core 24x24x98; four ring blocks 24x8x98",
+    "- Heater refinement: surface L3, 6 mm L2, 20 mm L1",
+    "- Heater effective total heat capacity: 7.6716459 J/K",
+    "- Heater k/Cp: 16 W/(m K) / 500 J/(kg K)",
+    "- Heater effective density: 2803.885019 kg/m3",
+    "- Heater and wall emissivity/absorptivity: 0.95",
+    "- Duct wall: fixed 293.15 K",
+    "- Heater ends: adiabatic",
+    "- Initial air/heater temperature: 293.15 K",
+    "- Initial air velocity: zero",
+    "- End time: 180 s",
+    "- ParaView T/U snapshot interval: 0.5 s",
+    "- Full-field checkpoint interval: 10 s; final full time reconstructed",
+    "- Flow/radiation: laminar perfect-gas natural convection / fvDOM 3x4",
+    "- Time step: adaptive, maxCo=0.5, maxDeltaT=0.01 s",
+    "- Parallel run: 24 Scotch subdomains",
+    "",
+    "The 20 degC high-emissivity wall is the selected educational/textbook model,",
+    "not a measured representation of the insulated apparatus wall.  T10 is an",
+    "output of the power-driven transient calculation."
+  ]
+}
