@@ -23,7 +23,7 @@ OUT = ROOT / "assets" / "data" / "cfd"
 Z_LO, Z_HI = 1.02, 1.20          # [m]
 HALF_WIDTH = 0.035               # duct 반폭 [m]
 PX_PER_M = 1000                  # 1 mm/px
-FRAME_STEP = 4                   # 0.5 s 간격 361개 중 4개마다 → 2 s, 91 프레임
+FRAME_STEP = 1                   # 0.5 s 간격 361개를 전부 쓴다. 솎으면 플룸의 흔들림이 끊겨 보인다
 SMOOTH_SIGMA = 1.0               # px. 삼각화 흔적만 지운다. 더 세게 하면 열경계층이 뭉개진다
 
 # 평면마다 가로축이 다르다. yz 평면(x=0)은 y가 가로, xz 평면(y=0)은 x가 가로.
