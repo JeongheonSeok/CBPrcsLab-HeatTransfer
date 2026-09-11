@@ -5,10 +5,10 @@
  "electricalInputW": 4.36875,
  "tile": {
   "w": 70,
-  "h": 250
+  "h": 180
  },
  "roi": {
-  "zLo": 0.95,
+  "zLo": 1.02,
   "zHi": 1.2,
   "halfWidth": 0.035,
   "pxPerM": 1000
