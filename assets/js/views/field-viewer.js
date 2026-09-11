@@ -3,7 +3,7 @@
 import { $, $$, clamp, numberValue } from "../core/dom.js";
 import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
 import { CFD_CASES } from "../data/cfd-cases.js";
-import { loadCase, frameData, physical } from "../core/cfd-loader.js";
+import { loadCase, ensureField, frameData, physical } from "../core/cfd-loader.js";
 
 // 색 램프. 둘 다 밝기가 단조 증가한다. 밝기가 곧 크기라야 색맹인 사람도 읽는다.
 // 온도는 열화상 카메라의 관례(검정→보라→빨강→노랑→흰색)를 따른다. 색상이 함께 바뀌어
@@ -16,7 +16,7 @@ const RAMP = {
 };
 const PLANES = ["yz", "xz"];
 const PLANE_LABEL = { yz: "Side view · x = 0", xz: "Front view · y = 0" };
-const FRAMES_PER_SECOND = 8;      // 프레임 간격이 2 s이므로 실시간의 16배
+const FRAMES_PER_SECOND = 20;     // 프레임 간격이 0.5 s이므로 실시간의 10배. 180 s가 18초에 돈다
 
 let data = null;                  // 현재 case의 산출물
 let field = "temperature";
@@ -226,9 +226,10 @@ export function initFieldViewer() {
   });
 
   select.addEventListener("change", switchCase);
-  $$(".field-type").forEach(button => button.addEventListener("click", () => {
+  $$(".field-type").forEach(button => button.addEventListener("click", async () => {
     field = button.dataset.field;
     $$(".field-type").forEach(item => item.classList.toggle("is-active", item === button));
+    if (data) await ensureField(data, field);
     drawFieldView();
   }));
   const step = delta => { stop(); setFrame(frameIndex + delta); };

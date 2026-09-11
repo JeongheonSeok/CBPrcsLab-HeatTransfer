@@ -20,18 +20,25 @@ export async function loadCase(caseId) {
     const response = await fetch(`${base}/index.json`);
     if (!response.ok) return null;
     const index = await response.json();
+    // 온도만 먼저 받는다. 속력 스프라이트가 더 크고, 안 누르는 사람도 많다.
     const sprites = {};
     for (const [plane, files] of Object.entries(index.planes)) {
-      sprites[plane] = {
-        temperature: await loadImage(`${base}/${files.temperature}`),
-        speed: await loadImage(`${base}/${files.speed}`)
-      };
+      sprites[plane] = { temperature: await loadImage(`${base}/${files.temperature}`) };
     }
     const history = await (await fetch(`${base}/history.json`)).json();
-    return { index, sprites, history };
+    return { base, index, sprites, history };
   })();
   cache.set(caseId, promise);
   return promise;
+}
+
+// 처음 요청되는 장(field)의 스프라이트를 그때 받는다.
+export async function ensureField(data, field) {
+  for (const [plane, files] of Object.entries(data.index.planes)) {
+    if (!data.sprites[plane][field]) {
+      data.sprites[plane][field] = await loadImage(`${data.base}/${files[field]}`);
+    }
+  }
 }
 
 // 스프라이트에서 프레임 하나의 회색조 픽셀을 꺼낸다. 값은 0~255, index의 범위로 되돌린다.
