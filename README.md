@@ -77,6 +77,23 @@ and SciPy; later runs are under a second.
 
 Run both before committing anything under `assets/js/physics/`.
 
+## CFD frames
+
+The raw OpenFOAM cutting planes (`assets/js/data/rawdata/<case>/*.npz`, about 100 MB
+per case) are not what the site loads. `tools/cfd_to_frames.py` crops each plane to the
+25 cm above the heater, resamples the mesh-cut points onto a 1 mm grid, keeps every
+fourth frame (2 s), and writes one 8-bit PNG sprite per plane and field plus an
+`index.json` that records the grid, the physical range of each field, and the frame
+times. A case comes out at about 1.2 MB.
+
+```bash
+uv run tools/cfd_to_frames.py          # every case with a metadata.json
+uv run tools/cfd_to_frames.py A5       # one case
+```
+
+Re-run it whenever a new case lands in `rawdata/`; commit the output under
+`assets/data/cfd/` with a `data:` message.
+
 ## Layout
 
 ```text
@@ -95,8 +112,10 @@ assets/js/
   data/               component copy, CFD case metadata, table schemas
   views/              per-screen input handling and rendering
 assets/svg/           the apparatus diagrams, kept as standalone files
+assets/data/cfd/      CFD frames the browser actually loads: one PNG sprite per plane
+                      and field, plus index.json and the integrated history
 tests/                property tests for the physics models
-tools/                reference export and the SciPy cross-check
+tools/                reference export, the SciPy cross-check, and cfd_to_frames.py
 docs/ROADMAP.md       development roadmap and hosting review
 ```
 

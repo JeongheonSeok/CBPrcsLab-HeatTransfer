@@ -11,10 +11,12 @@ import { initAssumptionDialog } from "./core/ui.js";
 import { VIEWS } from "./data/views.js";
 import { initExperimentAView, drawAChart } from "./views/experiment-a.js";
 import { initExperimentBView, drawBChart } from "./views/experiment-b.js";
+import { initFieldViewer, drawFieldView } from "./views/field-viewer.js";
 
 const SCREENS = {
   "experiment-a": { mount: initExperimentAView, redraw: drawAChart },
-  "experiment-b": { mount: initExperimentBView, redraw: drawBChart }
+  "experiment-b": { mount: initExperimentBView, redraw: drawBChart },
+  "field-viewer": { mount: initFieldViewer, redraw: drawFieldView }
 };
 
 const ready = id => VIEWS.find(view => view.id === id)?.status === "ready";

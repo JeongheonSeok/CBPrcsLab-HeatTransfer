@@ -74,7 +74,6 @@ describe("마크업 계약 · id", () => {
     const plannedFiles = VIEWS
       .filter(v => v.status === "planned")
       .flatMap(v => v.id === "data" ? ["views/data-table.js"]
-                  : v.id === "field-viewer" ? ["views/field-viewer.js", "views/field-renderer.js"]
                   : [`views/${v.id}.js`]);
 
     const missing = [];
@@ -242,7 +241,7 @@ describe("마크업 계약 · 클래스 이름", () => {
 
   // 이벤트를 걸기 위한 표식일 뿐 모양을 담당하지 않는 클래스
   const hooks = new Set([
-    "b-velocity", "sensor-button", "dataset-button", "lumped-mode",
+    "b-velocity", "sensor-button", "field-type", "dataset-button", "lumped-mode",
     "apparatus-mode", "toggle-layer", "selected", "is-hidden", "layer-hidden"
   ]);
 

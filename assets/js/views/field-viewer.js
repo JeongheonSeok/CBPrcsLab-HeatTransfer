@@ -1,123 +1,235 @@
-// 유동장 화면. case 선택, 시간 탐색, 표면 열전달 표시.
-//
-// 실제 CFD 결과는 아직 없다. 값을 지어내는 대신 자리만 두고 "—"를 그린다.
-// cfd-cases.js에 계산 결과가 채워지면 이 화면이 그대로 살아난다.
+// 유동장 화면: 미리 계산한 CFD 단면을 시간에 따라 재생한다.
 
-import { $, clamp, numberValue } from "../core/dom.js";
+import { $, $$, clamp, numberValue } from "../core/dom.js";
+import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
 import { CFD_CASES } from "../data/cfd-cases.js";
-import { fieldSample, PALETTE_CSS } from "../data/synthetic-field.js";
-import { createOffscreen, renderField } from "./field-renderer.js";
+import { loadCase, frameData, physical } from "../core/cfd-loader.js";
 
-const TIME_SCALE = 45;      // fieldSample에 넘길 t = 초 / TIME_SCALE
-const PLAY_SPEED = 0.06;    // 실시간 1 ms 당 늘어나는 모의 시간 [s]
-const MAX_SECONDS = 600;
+// 순차 색 램프. 한 색상으로 밝음→어두움. 밝은 끝은 배경(--well)으로 물러난다.
+// 온도는 표면 온도 계열(--series-surface)의 주황, 속력은 대류 계열(--series-conv)의 파랑이다.
+// 무지개 램프는 쓰지 않는다. 밝기가 곧 크기라야 색맹인 사람도 읽는다.
+const RAMP = {
+  temperature: ["#f7f1ec", "#f3c7a5", "#ec8f5a", "#c8501f", "#6e250a"],
+  speed: ["#eef2f9", "#b9d0f5", "#6f9fee", "#2f6fed", "#10306e"]
+};
+const PLANES = ["yz", "xz"];
+const PLANE_LABEL = { yz: "Side view · x = 0", xz: "Front view · y = 0" };
+const FRAMES_PER_SECOND = 8;      // 프레임 간격이 2 s이므로 실시간의 16배
 
-let canvas = null;
-let ctx = null;
-let offscreen = null;
+let data = null;                  // 현재 case의 산출물
+let field = "temperature";
+let frameIndex = 0;
 let playing = false;
-let frame = null;
-let lastFrameTime = 0;
+let playTimer = null;
+const scratch = document.createElement("canvas");
+const tinted = document.createElement("canvas");
+const lut = {};
 
-const currentCase = () => CFD_CASES[$("#fieldCase").value] || CFD_CASES.A11;
-
-export function resizeFieldCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  if (rect.width < 10) return;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  drawField();
+function hexToRgb(hex) {
+  return [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 }
 
-export function drawField() {
-  const rect = canvas.getBoundingClientRect();
-  if (rect.width < 10) return;
-  renderField(ctx, offscreen, {
-    w: rect.width, h: rect.height,
-    caseId: $("#fieldCase").value,
-    type: $("#fieldType").value,
-    t: numberValue("#fieldTime", 180) / TIME_SCALE
-  });
+// 5개 정지점을 256단계로 편다. sRGB 선형 보간이지만 램프가 단조라 충분하다.
+function buildLut(stops) {
+  const rgb = stops.map(hexToRgb);
+  const table = new Uint8ClampedArray(256 * 3);
+  for (let i = 0; i < 256; i += 1) {
+    const pos = i / 255 * (stops.length - 1);
+    const a = Math.floor(pos), b = Math.min(a + 1, stops.length - 1), u = pos - a;
+    for (let k = 0; k < 3; k += 1) table[i * 3 + k] = rgb[a][k] + (rgb[b][k] - rgb[a][k]) * u;
+  }
+  return table;
+}
+
+function currentCaseId() {
+  return $("#fieldCase").value;
+}
+
+// 각 평면을 세로로 긴 띠로, 두 띠를 나란히 놓는다. 히터 위 25 cm가 한 화면이다.
+function layout(w, h) {
+  const { w: tw, h: th } = data.index.tile;
+  const gap = 18, margin = 8;
+  const stripH = h - 2 * margin - 16;                  // 아래 16px는 평면 이름
+  const stripW = Math.round(stripH * tw / th);
+  const total = PLANES.length * stripW + (PLANES.length - 1) * gap;
+  const left = Math.max(margin, Math.round((w - total) / 2));
+  return PLANES.map((plane, i) => ({ plane, x: left + i * (stripW + gap), y: margin, w: stripW, h: stripH }));
+}
+
+function paintStrip(ctx, strip) {
+  const { index } = data;
+  const image = frameData(data, strip.plane, field, frameIndex, scratch);
+  const table = lut[field];
+  const out = new ImageData(image.width, image.height);
+  for (let i = 0, j = 0; i < image.data.length; i += 4, j += 4) {
+    const v = image.data[i] * 3;
+    out.data[j] = table[v]; out.data[j + 1] = table[v + 1]; out.data[j + 2] = table[v + 2]; out.data[j + 3] = 255;
+  }
+  tinted.width = image.width; tinted.height = image.height;
+  tinted.getContext("2d").putImageData(out, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(tinted, strip.x, strip.y, strip.w, strip.h);
+
+  // 히터 윤곽. 속력장에서는 히터가 0이라 배경과 같은 색이므로 윤곽이 있어야 위치가 읽힌다.
+  const { roi, heater } = index;
+  const scale = strip.h / (roi.zHi - roi.zLo);
+  const cy = strip.y + (roi.zHi - heater.centerZ) * scale;
+  const r = heater.radius * scale;
+  ctx.strokeStyle = CHART_INK.mark; ctx.lineWidth = 1;
+  ctx.beginPath();
+  if (strip.plane === "yz") ctx.arc(strip.x + strip.w / 2, cy, r, 0, Math.PI * 2);
+  else ctx.rect(strip.x, cy - r, strip.w, 2 * r);
+  ctx.stroke();
+
+  ctx.strokeStyle = CHART_INK.grid; ctx.strokeRect(strip.x + 0.5, strip.y + 0.5, strip.w - 1, strip.h - 1);
+  ctx.font = CHART_FONT; ctx.fillStyle = CHART_INK.ink; ctx.textAlign = "center";
+  ctx.fillText(PLANE_LABEL[strip.plane], strip.x + strip.w / 2, strip.y + strip.h + 13);
+  ctx.textAlign = "left";
+}
+
+export function drawFieldView() {
+  const canvas = $("#fieldCanvas");
+  const setup = setupCanvas(canvas);
+  if (!setup || !data) return;
+  const { ctx, w, h } = setup;
+  ctx.clearRect(0, 0, w, h);
+  layout(w, h).forEach(strip => paintStrip(ctx, strip));
+  drawHistory();
   updateLabels();
 }
 
+// T10(t)에 현재 시각을 표시한다. 애니메이션의 어느 순간이 숫자의 어디인지 이어 준다.
+function drawHistory() {
+  const setup = setupCanvas($("#historyChart"));
+  if (!setup) return;
+  const { ctx, w, h } = setup;
+  const { time_s: t, T10_C: T10 } = data.history;
+  const maxT = Math.max(...T10), minT = Math.min(...T10);
+  const pad = (maxT - minT) * 0.1 || 1;
+  const { xMap, yMap } = makeScales(w, h, [0, t[t.length - 1]], [minT - pad, maxT + pad]);
+  const end = t[t.length - 1];
+  drawAxes(ctx, w, h, "t (s)", "T₁₀ (°C)", [0, Math.round(end / 2), end],
+    [+minT.toFixed(0), +((minT + maxT) / 2).toFixed(0), +maxT.toFixed(0)], xMap, yMap);
+  drawLine(ctx, t.map((s, i) => [xMap(s), yMap(T10[i])]), SERIES_COLOR.surface, 2.2);
+  const now = data.index.frames[frameIndex];
+  drawVerticalMarker(ctx, xMap(now), h);
+  ctx.font = CHART_FONT;
+  // 오른쪽 끝에서는 라벨이 잘리므로 선의 왼쪽에 붙인다.
+  const right = xMap(now) + 6 + ctx.measureText("180 s").width < w - 16;
+  labelOnPlot(ctx, `${now.toFixed(0)} s`, xMap(now) + (right ? 6 : -6), 30, CHART_INK.ink, right ? "left" : "right");
+}
+
 function updateLabels() {
-  const meta = currentCase();
-  const isTemperature = $("#fieldType").value === "temperature";
-  $("#viewerStatus").textContent = `${meta.label} · ${isTemperature ? "Temperature" : "Speed"}`;
-
-  const seconds = Math.round(numberValue("#fieldTime", 180));
-  $("#fieldFrame").textContent = `t = ${seconds} s`;
-  $("#fieldTimeValue").textContent = `t = ${seconds} s`;
-
-  $("#colorbarMax").textContent = isTemperature ? "hot" : "fast";
-  $("#colorbarMid").textContent = isTemperature ? "T" : "|U|";
-  $("#colorbarMin").textContent = isTemperature ? "cold" : "slow";
-  $("#colorbarGradient").style.background = isTemperature ? PALETTE_CSS.temperature : PALETTE_CSS.speed;
+  const { index } = data;
+  const now = index.frames[frameIndex];
+  $("#fieldTimeValue").textContent = `t = ${now.toFixed(0)} s`;
+  const range = field === "temperature" ? index.temperatureC : index.speed;
+  const unit = field === "temperature" ? "°C" : "m/s";
+  $("#colorbarMax").textContent = `${range.max.toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
+  $("#colorbarMin").textContent = `${range.min.toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
+  $("#colorbarGradient").style.background = `linear-gradient(to top, ${RAMP[field].join(",")})`;
 }
 
-/** case에 계산 결과가 없는 동안은 자리만 보여 준다. */
-export function updateCfdSummary() {
-  if (!$("#cfdQConv")) return;
-  const meta = currentCase();
-  const pending = meta.status === "pending";
-
-  $("#cfdRadMethod").textContent = pending ? "Awaiting CFD data" : meta.radMethod;
-  $("#cmpTemperatureLabel").textContent = meta.quantity;
-
-  const blanks = ["#cfdQConv", "#cfdQRad", "#cfdQTotal", "#cfdRadFraction",
-                  "#cmpTCfd", "#cmpTLumped", "#cmpDeltaT",
-                  "#cmpConvCfd", "#cmpConvLumped", "#cmpDeltaConv",
-                  "#cmpRadCfd", "#cmpRadLumped", "#cmpDeltaRad"];
-  if (pending) {
-    blanks.forEach(id => { $(id).textContent = "—"; });
-    $("#cfdHeatMethodNote").textContent =
-      `${meta.label} has not been computed yet. These rows list what the case will report once the lab runs it.`;
-  }
-}
-
-function animate(now) {
-  if (!playing) return;
-  const dt = now - lastFrameTime;
-  lastFrameTime = now;
-  let value = numberValue("#fieldTime", 0) + dt * PLAY_SPEED;
-  if (value > MAX_SECONDS) value = 0;
-  $("#fieldTime").value = value;
-  drawField();
-  frame = requestAnimationFrame(animate);
+// 180 s에서 아직 오르는 중이다. 정상상태처럼 읽히지 않게 기울기를 함께 적는다.
+function showSummary() {
+  const { index } = data;
+  const f = index.final;
+  $("#cfdQIn").innerHTML = `${f.qInW.toFixed(2)} <small>W</small>`;
+  $("#cfdQConv").innerHTML = `${f.qConvW.toFixed(2)} <small>W</small>`;
+  $("#cfdQRad").innerHTML = `${f.qRadW.toFixed(2)} <small>W</small>`;
+  $("#cfdT10").innerHTML = `${f.T10C.toFixed(1)} <small>°C</small>`;
+  const stored = f.qInW - f.qConvW - f.qRadW;
+  $("#cfdNote").textContent =
+    `At ${f.timeS.toFixed(0)} s the heater is still warming at ${f.T10SlopeKPerS.toFixed(2)} K/s: ` +
+    `${stored.toFixed(2)} W of the supply is going into the heater's own heat capacity, not into the air. ` +
+    `This is a transient, not a steady state.`;
 }
 
 function handleProbe(event) {
+  const canvas = $("#fieldCanvas");
   const rect = canvas.getBoundingClientRect();
-  const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-  const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-  const sample = fieldSample(x, y, numberValue("#fieldTime", 0) / TIME_SCALE, $("#fieldCase").value);
-  // 합성장이라 물리 단위를 붙이지 않는다. 0~1 상대값으로만 읽는다.
-  const value = $("#fieldType").value === "temperature" ? sample.temp : sample.speed;
+  const px = event.clientX - rect.left, py = event.clientY - rect.top;
+  const strip = layout(rect.width, rect.height).find(s => px >= s.x && px < s.x + s.w && py >= s.y && py < s.y + s.h);
+  if (!strip) { $("#fieldReadout").textContent = "—"; return; }
+  const { index } = data;
+  const image = frameData(data, strip.plane, field, frameIndex, scratch);
+  const col = clamp(Math.floor((px - strip.x) / strip.w * image.width), 0, image.width - 1);
+  const row = clamp(Math.floor((py - strip.y) / strip.h * image.height), 0, image.height - 1);
+  const byte = image.data[(row * image.width + col) * 4];
+  const value = physical(index, field, byte);
+  const z = index.roi.zHi - (row + 0.5) / index.roi.pxPerM;
+  const lateral = (col + 0.5) / index.roi.pxPerM - index.roi.halfWidth;
+  const unit = field === "temperature" ? "°C" : "m/s";
   $("#fieldReadout").textContent =
-    `x ${(x * 100).toFixed(0)}% · y ${(y * 100).toFixed(0)}% · relative ${value.toFixed(2)}`;
+    `${strip.plane} · ${(lateral * 1000).toFixed(0)} mm, z ${z.toFixed(3)} m · ${value.toFixed(field === "temperature" ? 1 : 3)} ${unit}`;
+}
+
+function setFrame(i) {
+  frameIndex = clamp(Math.round(i), 0, data.index.frames.length - 1);
+  $("#fieldTime").value = frameIndex;
+  drawFieldView();
+}
+
+function stop() {
+  playing = false;
+  clearInterval(playTimer);
+  $("#fieldPlay").textContent = "Play";
+}
+
+function play() {
+  playing = true;
+  $("#fieldPlay").textContent = "Pause";
+  if (frameIndex >= data.index.frames.length - 1) setFrame(0);
+  playTimer = setInterval(() => {
+    if (document.hidden) return;             // 숨긴 탭에서는 헛돌지 않는다
+    setFrame((frameIndex + 1) % data.index.frames.length);
+  }, 1000 / FRAMES_PER_SECOND);
+}
+
+async function switchCase() {
+  stop();
+  const caseId = currentCaseId();
+  data = null;
+  $("#fieldPending").hidden = true;
+  $("#fieldReadout").textContent = "—";
+  const loaded = await loadCase(caseId);
+  if (currentCaseId() !== caseId) return;    // 기다리는 동안 다른 case를 골랐다
+  if (!loaded) {
+    $("#fieldPending").hidden = false;
+    $("#fieldPending").textContent = `${CFD_CASES[caseId].label} has not been computed yet. The case is listed so the format is agreed; the frames arrive when the lab runs it.`;
+    const ctx = $("#fieldCanvas").getContext("2d");
+    ctx.clearRect(0, 0, $("#fieldCanvas").width, $("#fieldCanvas").height);
+    return;
+  }
+  data = loaded;
+  $("#fieldTime").max = data.index.frames.length - 1;
+  showSummary();
+  setFrame(data.index.frames.length - 1);
 }
 
 export function initFieldViewer() {
-  canvas = $("#fieldCanvas");
-  if (!canvas) return;
-  ctx = canvas.getContext("2d");
-  offscreen = createOffscreen();
+  lut.temperature = buildLut(RAMP.temperature);
+  lut.speed = buildLut(RAMP.speed);
 
-  $("#fieldCase").addEventListener("change", () => { drawField(); updateCfdSummary(); });
-  $("#fieldType").addEventListener("change", drawField);
-  $("#fieldTime").addEventListener("input", drawField);
-  $("#fieldReset").addEventListener("click", () => { $("#fieldTime").value = 0; drawField(); });
-  $("#fieldPlay").addEventListener("click", () => {
-    playing = !playing;
-    $("#fieldPlay").textContent = playing ? "Pause" : "Play";
-    if (playing) { lastFrameTime = performance.now(); frame = requestAnimationFrame(animate); }
-    else cancelAnimationFrame(frame);
+  // 목록은 합의된 조건 전체다. 산출물이 있는 case만 고를 수 있게 한다.
+  const select = $("#fieldCase");
+  Promise.all(Object.keys(CFD_CASES).map(async id => {
+    const ok = (await fetch(`assets/data/cfd/${id}/index.json`, { method: "HEAD" })).ok;
+    select.querySelector(`option[value="${id}"]`).disabled = !ok;
+    return ok ? id : null;
+  })).then(ids => {
+    const first = ids.find(Boolean);
+    if (first) { select.value = first; switchCase(); }
   });
-  canvas.addEventListener("pointermove", handleProbe);
 
-  resizeFieldCanvas();
-  updateCfdSummary();
+  select.addEventListener("change", switchCase);
+  $$(".field-type").forEach(button => button.addEventListener("click", () => {
+    field = button.dataset.field;
+    $$(".field-type").forEach(item => item.classList.toggle("is-active", item === button));
+    drawFieldView();
+  }));
+  $("#fieldTime").addEventListener("input", () => { stop(); setFrame(numberValue("#fieldTime", 0)); });
+  $("#fieldPlay").addEventListener("click", () => (playing ? stop() : play()));
+  $("#fieldReset").addEventListener("click", () => { stop(); setFrame(0); });
+  $("#fieldCanvas").addEventListener("pointermove", event => { if (data) handleProbe(event); });
 }

@@ -29,7 +29,7 @@ export const VIEWS = [
     plan: "Temperature against time for the cylinder and for each thermocouple bead, integrated from the same models used in Experiments A and B. The model runs, but the effective heat capacity and the extra loss coefficient are not in the course notes and have not been fitted to a recorded run, so the time axis would be misleading. It needs one temperature-versus-time record from the rig."
   },
   {
-    id: "field-viewer", status: "planned",
+    id: "field-viewer", status: "ready",
     label: "Field", sub: "Pre-computed CFD",
     title: "Field · Pre-computed CFD",
     plan: "Temperature and velocity fields for ten representative cases, computed in the lab and shipped as compressed slices, plus the convective and radiative heat transfer integrated over the heated surface. Nothing has been computed yet. The case list and the comparison layout are in place so the format can be agreed before the runs start."
