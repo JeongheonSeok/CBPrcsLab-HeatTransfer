@@ -20,11 +20,12 @@
     </div>
   </div>
   <span class="divider"></span>
-  <div class="input wide"><label for="fieldTime">Time <span class="unit num" id="fieldTimeValue">t = 0 s</span></label>
-    <input id="fieldTime" type="range" min="0" max="90" step="1" value="0"></div>
-  <div class="input free"><label>&nbsp;</label>
-    <div class="btn-row">
-      <button class="btn" id="fieldPlay" type="button">Play</button>
+  <div class="input free transport"><label for="fieldTime">Time <span class="unit num" id="fieldTimeValue">0 / 0 s</span></label>
+    <div class="transport-row">
+      <button class="btn" id="fieldStepBack" type="button" aria-label="Previous frame" title="← one frame">◀</button>
+      <button class="btn btn--primary" id="fieldPlay" type="button" title="Space">Play</button>
+      <button class="btn" id="fieldStepForward" type="button" aria-label="Next frame" title="→ one frame">▶</button>
+      <input id="fieldTime" type="range" min="0" max="90" step="1" value="0" aria-label="Simulation time">
       <button class="btn btn--quiet" id="fieldReset" type="button">Reset</button>
     </div>
   </div>
@@ -36,7 +37,7 @@
 
   <div class="card-grid wide-left">
   <div class="card">
-    <header><h2>The 25 cm above the heater, seen from two sides</h2><span class="badge">OpenFOAM</span></header>
+    <header><h2>The 18 cm around the heater, seen from two sides</h2><span class="badge">OpenFOAM</span></header>
     <div class="card-body">
       <div class="viewer well">
         <canvas id="fieldCanvas"></canvas>
@@ -46,7 +47,6 @@
         </div>
       </div>
       <p class="assumption">Under the pointer: <span class="num" id="fieldReadout">—</span></p>
-      <p class="assumption">Laminar natural convection with fvDOM radiation, power-driven: the measured V·I is applied as a heat flux and the surface temperature is what the calculation returns. The duct wall is held at 20 °C with emissivity 0.95 as a textbook model, not as a measurement of the insulated rig. The 40 cm of duct below this window is still air and is not shown.</p>
     </div>
   </div>
 

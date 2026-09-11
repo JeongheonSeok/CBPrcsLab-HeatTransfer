@@ -6,3 +6,9 @@
 .colorbar { position: absolute; top: 50%; right: var(--sp-3); transform: translateY(-50%); display: flex; gap: var(--sp-2); }
 .colorbar-scale { width: 10px; height: 160px; border: 1px solid var(--border); border-radius: var(--radius-sm); }
 .colorbar-labels { display: flex; flex-direction: column; justify-content: space-between; color: var(--chart-ink); font-family: var(--font-mono); font-size: var(--fs-xs); }
+
+/* 재생 조작부. 슬라이더가 남는 폭을 다 쓴다. */
+.transport { flex: 1 1 320px; }
+.transport-row { display: flex; align-items: center; gap: var(--sp-2); }
+.transport-row input[type="range"] { flex: 1; min-width: 160px; }
+.transport-row .btn { min-width: 34px; }

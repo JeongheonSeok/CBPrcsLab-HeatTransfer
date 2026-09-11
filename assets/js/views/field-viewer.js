@@ -5,12 +5,14 @@ import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, labelO
 import { CFD_CASES } from "../data/cfd-cases.js";
 import { loadCase, frameData, physical } from "../core/cfd-loader.js";
 
-// 순차 색 램프. 한 색상으로 밝음→어두움. 밝은 끝은 배경(--well)으로 물러난다.
-// 온도는 표면 온도 계열(--series-surface)의 주황, 속력은 대류 계열(--series-conv)의 파랑이다.
-// 무지개 램프는 쓰지 않는다. 밝기가 곧 크기라야 색맹인 사람도 읽는다.
+// 색 램프. 둘 다 밝기가 단조 증가한다. 밝기가 곧 크기라야 색맹인 사람도 읽는다.
+// 온도는 열화상 카메라의 관례(검정→보라→빨강→노랑→흰색)를 따른다. 색상이 함께 바뀌어
+// 한 색상 램프보다 작은 온도차가 훨씬 잘 구분된다. 무지개와 달리 밝기 순서는 지킨다.
+// 속력은 어두운 남색에서 흰색으로, 온도와 겹쳐 보이지 않게 찬 색 쪽을 쓴다.
 const RAMP = {
-  temperature: ["#f7f1ec", "#f3c7a5", "#ec8f5a", "#c8501f", "#6e250a"],
-  speed: ["#eef2f9", "#b9d0f5", "#6f9fee", "#2f6fed", "#10306e"]
+  temperature: ["#000004", "#160b39", "#420a68", "#6a176e", "#932667", "#bc3754",
+                "#dd513a", "#f37819", "#fca50a", "#f6d746", "#fcffa4"],
+  speed: ["#0d2035", "#1d4c7f", "#279fc3", "#6bd8c2", "#eefbff"]
 };
 const PLANES = ["yz", "xz"];
 const PLANE_LABEL = { yz: "Side view · x = 0", xz: "Front view · y = 0" };
@@ -75,11 +77,12 @@ function paintStrip(ctx, strip) {
   const scale = strip.h / (roi.zHi - roi.zLo);
   const cy = strip.y + (roi.zHi - heater.centerZ) * scale;
   const r = heater.radius * scale;
-  ctx.strokeStyle = CHART_INK.mark; ctx.lineWidth = 1;
   ctx.beginPath();
   if (strip.plane === "yz") ctx.arc(strip.x + strip.w / 2, cy, r, 0, Math.PI * 2);
   else ctx.rect(strip.x, cy - r, strip.w, 2 * r);
-  ctx.stroke();
+  // 바탕이 검정(찬 공기)일 수도 노랑(히터)일 수도 있어 흰 테두리 위에 검은 선을 얹는다.
+  ctx.strokeStyle = "rgba(255,255,255,.85)"; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.strokeStyle = CHART_INK.mark; ctx.lineWidth = 1; ctx.stroke();
 
   ctx.strokeStyle = CHART_INK.grid; ctx.strokeRect(strip.x + 0.5, strip.y + 0.5, strip.w - 1, strip.h - 1);
   ctx.font = CHART_FONT; ctx.fillStyle = CHART_INK.ink; ctx.textAlign = "center";
@@ -122,7 +125,7 @@ function drawHistory() {
 function updateLabels() {
   const { index } = data;
   const now = index.frames[frameIndex];
-  $("#fieldTimeValue").textContent = `t = ${now.toFixed(0)} s`;
+  $("#fieldTimeValue").textContent = `${now.toFixed(0)} / ${index.frames[index.frames.length - 1].toFixed(0)} s`;
   const range = field === "temperature" ? index.temperatureC : index.speed;
   const unit = field === "temperature" ? "°C" : "m/s";
   $("#colorbarMax").textContent = `${range.max.toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
@@ -228,8 +231,20 @@ export function initFieldViewer() {
     $$(".field-type").forEach(item => item.classList.toggle("is-active", item === button));
     drawFieldView();
   }));
+  const step = delta => { stop(); setFrame(frameIndex + delta); };
   $("#fieldTime").addEventListener("input", () => { stop(); setFrame(numberValue("#fieldTime", 0)); });
   $("#fieldPlay").addEventListener("click", () => (playing ? stop() : play()));
+  $("#fieldStepBack").addEventListener("click", () => step(-1));
+  $("#fieldStepForward").addEventListener("click", () => step(1));
   $("#fieldReset").addEventListener("click", () => { stop(); setFrame(0); });
   $("#fieldCanvas").addEventListener("pointermove", event => { if (data) handleProbe(event); });
+
+  // 이 화면이 보일 때만. 입력 칸에 타이핑하는 중이면 건드리지 않는다.
+  document.addEventListener("keydown", event => {
+    if (!data || !$("#field-viewer").classList.contains("is-active")) return;
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName) && event.target.type !== "range") return;
+    if (event.key === " ") { event.preventDefault(); playing ? stop() : play(); }
+    else if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
+    else if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
+  });
 }
