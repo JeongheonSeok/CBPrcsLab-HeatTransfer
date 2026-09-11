@@ -18,8 +18,9 @@ ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "assets" / "js" / "data" / "rawdata"
 OUT = ROOT / "assets" / "data" / "cfd"
 
-# 히터 아래 40 cm는 정지한 유입 공기다. 위쪽 25 cm에 물리가 전부 들어 있다.
-Z_LO, Z_HI = 0.95, 1.20          # [m]
+# 히터(z = 1.05) 아래는 정지한 유입 공기다. 실린더를 감싸는 열경계층은 5 mm 안에 있으므로
+# 아래로 3 cm, 위로 duct 끝까지 15 cm면 물리가 전부 들어온다.
+Z_LO, Z_HI = 1.02, 1.20          # [m]
 HALF_WIDTH = 0.035               # duct 반폭 [m]
 PX_PER_M = 1000                  # 1 mm/px
 FRAME_STEP = 4                   # 0.5 s 간격 361개 중 4개마다 → 2 s, 91 프레임
