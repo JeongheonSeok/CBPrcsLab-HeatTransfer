@@ -1,7 +1,47 @@
 /* field-viewer 화면 전용. 이 화면을 맡은 사람만 고친다. */
 
 /* 컬러바는 단면과 별도 공간을 써서 좁은 화면에서도 겹치지 않는다. */
-#field-viewer .viewer { display: grid; grid-template-columns: minmax(0, 1fr) 76px; align-items: center; gap: var(--sp-2); padding: var(--sp-2); overflow: hidden; }
+#field-viewer .viewer { display: grid; grid-template-columns: 230px minmax(0, 1fr) 76px; align-items: center; gap: var(--sp-2); padding: var(--sp-2); overflow: hidden; }
+
+/* ── 절개 위치 도식 — CSS 3D transform만 쓴다. 라이브러리 없음 ───
+   1.4 px = 1 mm. duct 창 70 × 70 × 180 mm.
+   물리 x(폭) → CSS x, 물리 z(높이) → CSS −y, 물리 y(깊이) → CSS z. */
+.cutaway { display: flex; flex-direction: column; align-items: center; gap: var(--sp-2); user-select: none; }
+.cutaway-scene { width: 230px; height: 330px; perspective: 900px; cursor: ew-resize; touch-action: pan-y; }
+.cutaway-box {
+  --ry: -34deg;
+  position: relative; width: 0; height: 0; left: 115px; top: 165px;
+  transform-style: preserve-3d; transform: rotateX(-16deg) rotateY(var(--ry));
+}
+.cutaway-box.is-snapping { transition: transform 320ms cubic-bezier(.2, .7, .2, 1); }
+.cutaway-box > * { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.tube, .rod { transform-style: preserve-3d; }
+
+/* duct는 지름 70 mm 원형 관이다 (O-grid 격자). 세로 판 36장을 둘러 유리관으로 만든다.
+   판의 투명도는 JS가 각도별로 준다. 가장자리로 갈수록 진해져 둥글게 읽힌다. */
+.tube { transform: translateZ(0); }
+.stave { position: absolute; left: -4.4px; top: -126px; width: 8.8px; height: 252px; }
+.ring { position: absolute; left: -49px; top: -49px; width: 98px; height: 98px; border-radius: 50%; border: 1.5px solid var(--chart-ink); }
+.ring--top    { transform: rotateX(90deg) translateZ(126px); }
+.ring--bottom { transform: rotateX(90deg) translateZ(-126px); }
+
+/* 히터 원통. 축은 폭 방향(x), z = 1.05 m는 창 중심에서 84 px 아래.
+   24개 판을 축 둘레로 세우고 각도별 밝기를 JS가 준다. */
+.rod { transform: translateY(84px); }
+.facet { position: absolute; left: -49px; top: -1.1px; width: 98px; height: 2.2px; backface-visibility: hidden; }
+.disc { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: var(--chart-mark); }
+
+/* 절단면. 채워 넣지 않고 유리처럼 비친다. */
+.cut {
+  width: 98px; height: 252px; margin: -126px 0 0 -49px;
+  border: 1.5px solid var(--accent); background: rgba(var(--accent-rgb), .16);
+  cursor: pointer; transition: background 140ms ease;
+}
+.cut--xz { transform: translateZ(0); }
+.cut--yz { transform: rotateY(-90deg); }
+.cut:hover, .cut.is-highlighted { background: rgba(var(--accent-rgb), .34); }
+.cutaway-legend .btn.is-highlighted { background: var(--accent-soft); color: var(--accent-ink); }
+@media (max-width: 960px) { #field-viewer .viewer { grid-template-columns: minmax(0, 1fr) 76px; } .cutaway { display: none; } }
 #fieldCanvas { display: block; width: 100%; min-width: 0; height: 460px; }
 .colorbar { display: flex; gap: var(--sp-2); }
 

@@ -24,6 +24,7 @@ let frameIndex = 0;
 let playing = false;
 let playTimer = null;
 let busy = false;
+let highlighted = null;           // 절개 도식에서 가리키는 평면
 let loadVersion = 0;
 const scratch = document.createElement("canvas");
 const tinted = document.createElement("canvas");
@@ -74,6 +75,10 @@ function paintStrip(ctx, strip) {
   tinted.getContext("2d").putImageData(out, 0, 0);
   ctx.imageSmoothingEnabled = true;
   ctx.drawImage(tinted, strip.x, strip.y, strip.w, strip.h);
+  if (highlighted === strip.plane) {
+    ctx.strokeStyle = SERIES_COLOR.marker; ctx.lineWidth = 2.5;
+    ctx.strokeRect(strip.x + 1, strip.y + 1, strip.w - 2, strip.h - 2);
+  }
 
   // 히터 윤곽. 속력장에서는 히터가 0이라 배경과 같은 색이므로 윤곽이 있어야 위치가 읽힌다.
   const { roi, heater } = index;
@@ -207,6 +212,7 @@ function handleProbe(event) {
   const px = event.clientX - rect.left, py = event.clientY - rect.top;
   const strip = layout(rect.width, rect.height).find(s => px >= s.x && px < s.x + s.w && py >= s.y && py < s.y + s.h);
   if (!strip) { hideTip(); return; }
+  setHighlight(strip.plane, false);
   const { index } = data;
   const image = frameData(data, strip.plane, field, frameIndex, scratch);
   const col = clamp(Math.floor((px - strip.x) / strip.w * image.width), 0, image.width - 1);
@@ -235,6 +241,7 @@ function handleProbe(event) {
 
 function hideTip() {
   $("#fieldReadout").textContent = "—";
+  setHighlight(null, false);
   ["#fieldTip", "#fieldCrossH", "#fieldCrossV"].forEach(id => { $(id).hidden = true; });
 }
 
@@ -300,7 +307,96 @@ async function switchCase() {
   }
 }
 
+// 도식의 면과 범례 버튼, 그리고 띠의 강조를 한 번에 맞춘다.
+function setHighlight(plane, redraw = true) {
+  highlighted = plane;
+  $$(".cut, .cut-pick").forEach(el => el.classList.toggle("is-highlighted", el.dataset.plane === plane));
+  if (redraw) drawFieldView();
+}
+
+// 절개 위치 도식. 가로로만 돌고, 면을 누르면 그 면을 정면으로 본다. 다시 누르면 비스듬히 돌아온다.
+function initCutaway() {
+  const scene = $("#cutawayScene"), box = $("#cutawayBox"), rod = $("#cutawayRod"), tube = $("#cutawayTube");
+  if (!scene) return;
+
+  // 원형 관: 판 36장을 세로축 둘레에 세운다. 시선과 비스듬한 판일수록 유리가 두꺼워 보이므로 진하게.
+  const STAVES = 36, R = 49;
+  for (let i = 0; i < STAVES; i += 1) {
+    const stave = document.createElement("i");
+    stave.className = "stave";
+    stave.style.transform = `rotateY(${i * 360 / STAVES}deg) translateZ(${R}px)`;
+    tube.append(stave);
+  }
+  const shadeTube = () => {
+    tube.querySelectorAll(".stave").forEach((stave, i) => {
+      // 현재 회전에서 이 판이 시선을 얼마나 정면으로 받는지
+      const facing = Math.abs(Math.cos((i * 360 / STAVES + ry) * Math.PI / 180));
+      stave.style.background = `rgba(92, 106, 118, ${(0.04 + 0.30 * (1 - facing)).toFixed(3)})`;
+    });
+  };
+  const OBLIQUE = -34, FACING = { yz: 90, xz: 0 };
+  let ry = OBLIQUE, drag = null;
+  const apply = () => { box.style.setProperty("--ry", `${ry}deg`); shadeTube(); };
+
+  // 원통: 24개 판을 축 둘레에 세운다. 밝기는 위·앞에서 오는 빛을 흉내 낸다.
+  const N = 24, r = 7;
+  for (let i = 0; i < N; i += 1) {
+    const facet = document.createElement("i");
+    facet.className = "facet";
+    const angle = i * 360 / N;
+    const light = 0.35 + 0.65 * Math.max(0, Math.cos((angle - 300) * Math.PI / 180));
+    facet.style.background = `rgb(${Math.round(70 + 120 * light)}, ${Math.round(78 + 120 * light)}, ${Math.round(86 + 120 * light)})`;
+    facet.style.transform = `rotateX(${angle}deg) translateZ(${r}px)`;
+    rod.append(facet);
+  }
+  [-49, 49].forEach(x => {
+    const disc = document.createElement("i");
+    disc.className = "disc";
+    disc.style.transform = `translateX(${x}px) rotateY(90deg)`;
+    rod.append(disc);
+  });
+
+  scene.addEventListener("pointerdown", event => {
+    drag = { x: event.clientX, ry, moved: false };
+    scene.setPointerCapture(event.pointerId);
+  });
+  scene.addEventListener("pointermove", event => {
+    if (!drag) return;
+    const dx = event.clientX - drag.x;
+    if (Math.abs(dx) > 4) drag.moved = true;
+    ry = clamp(drag.ry + dx * 0.5, -70, 110);
+    box.classList.remove("is-snapping");
+    apply();
+  });
+  scene.addEventListener("pointerup", event => {
+    const cut = event.target.closest(".cut");
+    if (drag && !drag.moved && cut) face(cut.dataset.plane);
+    drag = null;
+  });
+  scene.addEventListener("pointercancel", () => { drag = null; });
+
+  function face(plane) {
+    ry = ry === FACING[plane] ? OBLIQUE : FACING[plane];
+    box.classList.toggle("is-snapping", !matchMedia("(prefers-reduced-motion: reduce)").matches);
+    apply();
+  }
+
+  $$(".cut").forEach(cut => {
+    cut.addEventListener("pointerenter", () => setHighlight(cut.dataset.plane));
+    cut.addEventListener("pointerleave", () => setHighlight(null));
+  });
+  $$(".cut-pick").forEach(button => {
+    button.addEventListener("click", () => face(button.dataset.plane));
+    button.addEventListener("pointerenter", () => setHighlight(button.dataset.plane));
+    button.addEventListener("focus", () => setHighlight(button.dataset.plane));
+    button.addEventListener("pointerleave", () => setHighlight(null));
+    button.addEventListener("blur", () => setHighlight(null));
+  });
+  apply();
+}
+
 export function initFieldViewer() {
+  initCutaway();
   lut.temperature = buildLut(RAMP.temperature);
   lut.speed = buildLut(RAMP.speed);
 

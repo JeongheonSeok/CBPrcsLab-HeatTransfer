@@ -41,6 +41,21 @@
     <header><h2>Temperature &amp; flow around the heater</h2><span class="badge">OpenFOAM</span></header>
     <div class="card-body">
       <div class="viewer well">
+        <!-- 두 단면이 duct의 어디를 자르는지. 값은 옆의 띠에서 읽고, 여기서는 위치만 본다. -->
+        <div class="cutaway">
+          <div class="cutaway-scene" id="cutawayScene" aria-hidden="true">
+            <div class="cutaway-box" id="cutawayBox">
+              <div class="tube" id="cutawayTube"><i class="ring ring--top"></i><i class="ring ring--bottom"></i></div>
+              <div class="rod" id="cutawayRod"></div>
+              <div class="cut cut--yz" data-plane="yz"></div>
+              <div class="cut cut--xz" data-plane="xz"></div>
+            </div>
+          </div>
+          <div class="btn-row cutaway-legend">
+            <button class="btn btn--quiet cut-pick" data-plane="yz" type="button">Side view · x = 0</button>
+            <button class="btn btn--quiet cut-pick" data-plane="xz" type="button">Front view · y = 0</button>
+          </div>
+        </div>
         <div class="viewer-stage">
           <canvas id="fieldCanvas" role="img" aria-label="Two CFD slices around the heater; approximate point values are available with the pointer."></canvas>
           <div class="viewer-cross viewer-cross--h" id="fieldCrossH" hidden></div>
