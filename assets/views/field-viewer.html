@@ -41,7 +41,12 @@
     <header><h2>Temperature &amp; flow around the heater</h2><span class="badge">OpenFOAM</span></header>
     <div class="card-body">
       <div class="viewer well">
-        <canvas id="fieldCanvas" role="img" aria-label="Two CFD slices around the heater; approximate point values are available with the pointer."></canvas>
+        <div class="viewer-stage">
+          <canvas id="fieldCanvas" role="img" aria-label="Two CFD slices around the heater; approximate point values are available with the pointer."></canvas>
+          <div class="viewer-cross viewer-cross--h" id="fieldCrossH" hidden></div>
+          <div class="viewer-cross viewer-cross--v" id="fieldCrossV" hidden></div>
+          <div class="viewer-tip num" id="fieldTip" hidden></div>
+        </div>
         <div class="colorbar">
           <div class="colorbar-scale" id="colorbarGradient"></div>
           <div class="colorbar-labels"><span id="colorbarMax">—</span><span id="colorbarMid">—</span><span id="colorbarMin">—</span></div>
@@ -62,8 +67,15 @@
         <div><span class="k">Surface T10</span><span class="v" id="cfdT10">—</span></div>
       </div>
       <p class="assumption" id="cfdNote">Values follow the selected time.</p>
-      <div class="chart-frame well well--flush"><canvas class="chart" id="historyChart"></canvas></div>
-      <p class="assumption">The marker and the values above follow the same moment. The heater is still warming at 180 s; this run has not reached steady state.</p>
+      <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="powerChart"></canvas></div>
+      <div class="legend">
+        <span><i class="conv"></i>Convection</span>
+        <span><i class="rad"></i>Radiation</span>
+        <span><i class="residual"></i>Stored in heater</span>
+      </div>
+      <p class="assumption">Where the supplied power goes, second by second. Whatever has not yet left as convection or radiation is warming the heater itself.</p>
+      <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="historyChart"></canvas></div>
+      <p class="assumption">The markers and the values above follow the same moment. The heater is still warming at 180 s; this run has not reached steady state.</p>
     </div>
   </div>
   </div>

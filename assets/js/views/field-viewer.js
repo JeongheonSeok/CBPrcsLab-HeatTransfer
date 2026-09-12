@@ -1,7 +1,7 @@
 // 유동장 화면: 미리 계산한 CFD 단면을 시간에 따라 재생한다.
 
 import { $, $$, clamp, numberValue } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, makeScales, drawVerticalMarker, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, drawArea, makeScales, drawVerticalMarker, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
 import { CFD_CASES } from "../data/cfd-cases.js";
 import { loadCase, ensureField, frameData, physical } from "../core/cfd-loader.js";
 
@@ -100,10 +100,54 @@ export function drawFieldView() {
   const { ctx, w, h } = setup;
   ctx.clearRect(0, 0, w, h);
   layout(w, h).forEach(strip => paintStrip(ctx, strip));
+  drawPower();
   drawHistory();
   updateLabels();
   showSummary();
-  $("#fieldReadout").textContent = "—";
+  describeFrame(canvas);
+  hideTip();
+}
+
+// 보이지 않는 사람에게 이 프레임이 무엇인지 말한다. 히터와 플룸의 온도로 요약한다.
+function describeFrame(canvas) {
+  const { index } = data;
+  const now = index.frames[frameIndex];
+  if (field !== "temperature") {
+    canvas.setAttribute("aria-label", `Air speed around the heater at ${now.toFixed(1)} s, up to ${index.speed.max.toFixed(2)} m/s.`);
+    return;
+  }
+  const image = frameData(data, "yz", "temperature", frameIndex, scratch);
+  const heaterTopRow = Math.floor((index.roi.zHi - index.heater.centerZ - index.heater.radius) * index.roi.pxPerM);
+  let heater = 0, plume = 0;
+  for (let row = 0; row < image.height; row += 1) {
+    for (let col = 0; col < image.width; col += 1) {
+      const byte = image.data[(row * image.width + col) * 4];
+      if (row < heaterTopRow) plume = Math.max(plume, byte); else heater = Math.max(heater, byte);
+    }
+  }
+  canvas.setAttribute("aria-label",
+    `Temperature around the heater at ${now.toFixed(1)} s. Heater surface about ${physical(index, "temperature", heater).toFixed(0)} °C; ` +
+    `warmest air in the plume about ${physical(index, "temperature", plume).toFixed(0)} °C; inlet air ${index.temperatureC.min.toFixed(0)} °C.`);
+}
+
+// 공급 전력이 매 순간 어디로 가는지. 실험 A의 누적 막대를 시간축으로 편 것이다.
+// 대류와 복사로 아직 나가지 못한 몫은 히터 자체를 데우고 있다. CFD에서는 그 정체를 안다.
+function drawPower() {
+  const setup = setupCanvas($("#powerChart"));
+  if (!setup) return;
+  const { ctx, w, h } = setup;
+  const { time_s: t, Q_in_W: qIn, Q_heater_to_air_conv_W: conv, Q_heater_to_air_rad_W: rad } = data.history;
+  const end = t[t.length - 1], top = Math.max(...qIn) * 1.08;
+  const { xMap, yMap } = makeScales(w, h, [0, end], [0, top]);
+  drawAxes(ctx, w, h, "t (s)", "Q (W)", [0, Math.round(end / 2), end], [0, +(top / 2).toFixed(1), +top.toFixed(1)], xMap, yMap);
+  const base = t.map(s => [xMap(s), yMap(0)]);
+  const convTop = t.map((s, i) => [xMap(s), yMap(conv[i])]);
+  const radTop = t.map((s, i) => [xMap(s), yMap(conv[i] + rad[i])]);
+  const inTop = t.map((s, i) => [xMap(s), yMap(qIn[i])]);
+  drawArea(ctx, convTop, base, SERIES_COLOR.conv);
+  drawArea(ctx, radTop, convTop, SERIES_COLOR.rad);
+  drawArea(ctx, inTop, radTop, SERIES_COLOR.residual);
+  drawVerticalMarker(ctx, xMap(data.index.frames[frameIndex]), h);
 }
 
 // T10(t)에 현재 시각을 표시한다. 애니메이션의 어느 순간이 숫자의 어디인지 이어 준다.
@@ -162,7 +206,7 @@ function handleProbe(event) {
   const rect = canvas.getBoundingClientRect();
   const px = event.clientX - rect.left, py = event.clientY - rect.top;
   const strip = layout(rect.width, rect.height).find(s => px >= s.x && px < s.x + s.w && py >= s.y && py < s.y + s.h);
-  if (!strip) { $("#fieldReadout").textContent = "—"; return; }
+  if (!strip) { hideTip(); return; }
   const { index } = data;
   const image = frameData(data, strip.plane, field, frameIndex, scratch);
   const col = clamp(Math.floor((px - strip.x) / strip.w * image.width), 0, image.width - 1);
@@ -172,8 +216,26 @@ function handleProbe(event) {
   const z = index.roi.zHi - (row + 0.5) / index.roi.pxPerM;
   const lateral = (col + 0.5) / index.roi.pxPerM - index.roi.halfWidth;
   const unit = field === "temperature" ? "°C" : "m/s";
+  const reading = `${value.toFixed(field === "temperature" ? 1 : 3)} ${unit}`;
   $("#fieldReadout").textContent =
-    `${strip.plane} · ${(lateral * 1000).toFixed(0)} mm, z ${z.toFixed(3)} m · ${value.toFixed(field === "temperature" ? 1 : 3)} ${unit}`;
+    `${strip.plane} · ${(lateral * 1000).toFixed(0)} mm, z ${z.toFixed(3)} m · ${reading}`;
+
+  // 값은 커서 옆에, 십자선은 띠 안에서만. 그림이 아니라 데이터라는 것이 손끝에서 느껴져야 한다.
+  const tip = $("#fieldTip");
+  tip.hidden = false;
+  tip.textContent = reading;
+  const flip = px > rect.width - 90;
+  tip.style.left = `${px}px`; tip.style.top = `${py}px`;
+  tip.style.transform = flip ? "translate(calc(-100% - 10px), -50%)" : "translate(10px, -50%)";
+  const crossH = $("#fieldCrossH"), crossV = $("#fieldCrossV");
+  crossH.hidden = crossV.hidden = false;
+  crossH.style.top = `${py}px`; crossH.style.left = `${strip.x}px`; crossH.style.right = `${rect.width - strip.x - strip.w}px`;
+  crossV.style.left = `${px}px`; crossV.style.top = `${strip.y}px`; crossV.style.bottom = `${rect.height - strip.y - strip.h}px`;
+}
+
+function hideTip() {
+  $("#fieldReadout").textContent = "—";
+  ["#fieldTip", "#fieldCrossH", "#fieldCrossV"].forEach(id => { $(id).hidden = true; });
 }
 
 function setFrame(i) {
@@ -194,8 +256,10 @@ function play() {
   playing = true;
   $("#fieldPlay").textContent = "Pause";
   if (frameIndex >= data.index.frames.length - 1) setFrame(0);
+  const noLoop = matchMedia("(prefers-reduced-motion: reduce)").matches;
   playTimer = setInterval(() => {
     if (document.hidden || !$("#field-viewer").classList.contains("is-active")) { stop(); return; }
+    if (noLoop && frameIndex >= data.index.frames.length - 1) { stop(); return; }
     setFrame((frameIndex + 1) % data.index.frames.length);
   }, 1000 / FRAMES_PER_SECOND);
 }
@@ -284,7 +348,7 @@ export function initFieldViewer() {
   $("#fieldStepForward").addEventListener("click", () => step(1));
   $("#fieldReset").addEventListener("click", () => { stop(); setFrame(0); });
   $("#fieldCanvas").addEventListener("pointermove", event => { if (data && !busy) handleProbe(event); });
-  $("#fieldCanvas").addEventListener("pointerleave", () => { $("#fieldReadout").textContent = "—"; });
+  $("#fieldCanvas").addEventListener("pointerleave", hideTip);
 
   // 이 화면이 보일 때만. 입력 칸에 타이핑하는 중이면 건드리지 않는다.
   document.addEventListener("keydown", event => {

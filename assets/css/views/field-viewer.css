@@ -4,6 +4,19 @@
 #field-viewer .viewer { display: grid; grid-template-columns: minmax(0, 1fr) 76px; align-items: center; gap: var(--sp-2); padding: var(--sp-2); overflow: hidden; }
 #fieldCanvas { display: block; width: 100%; min-width: 0; height: 460px; }
 .colorbar { display: flex; gap: var(--sp-2); }
+
+/* 포인터를 따라다니는 판독값. 캔버스 위에 얹히므로 캔버스와 같은 상자 안에 둔다. */
+.viewer-stage { position: relative; min-width: 0; }
+.viewer-cross { position: absolute; pointer-events: none; background: rgba(255, 255, 255, .55); }
+.viewer-cross--h { left: 0; right: 0; height: 1px; }
+.viewer-cross--v { top: 0; bottom: 0; width: 1px; }
+.viewer-tip {
+  position: absolute; pointer-events: none; transform: translate(10px, -50%);
+  padding: 2px var(--sp-2); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  box-shadow: var(--shadow-card); font-size: var(--fs-xs); white-space: nowrap;
+}
+canvas.chart--short { height: 150px; }
 .colorbar-scale { width: 10px; height: 160px; border: 1px solid var(--border); border-radius: var(--radius-sm); }
 .colorbar-labels { display: flex; flex-direction: column; justify-content: space-between; color: var(--chart-ink); font-family: var(--font-mono); font-size: var(--fs-xs); }
 

@@ -6,7 +6,8 @@ export const SERIES_COLOR = {
   conv: "#2f6fed",
   rad: "#d94f5c",
   surface: "#e66b37",
-  marker: "#ad7b14"     // 학생이 입력한 조건을 가리키는 선. 측정값이 아니다
+  marker: "#ad7b14",    // 학생이 입력한 조건을 가리키는 선. 측정값이 아니다
+  residual: "#7d8b98"   // 모델 밖 열량, 또는 히터에 쌓이는 열. 오류가 아니므로 중립색
 };
 
 // 그래프 크롬. 데이터가 아니라 눈금과 표시다.
@@ -141,6 +142,17 @@ export function labelEnds(ctx, items) {
     lastY = y;
     labelOnPlot(ctx, item.name, item.x - 3, y, item.color, "right");
   });
+}
+
+// 두 곡선 사이를 채운다. 누적 면적 그래프는 아래 곡선 위에 다음 곡선을 쌓는 식으로 그린다.
+export function drawArea(ctx, upper, lower, fill) {
+  if (!upper.length) return;
+  ctx.beginPath();
+  upper.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+  for (let i = lower.length - 1; i >= 0; i -= 1) ctx.lineTo(lower[i][0], lower[i][1]);
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
 }
 
 export function drawVerticalMarker(ctx, x, h, stroke = SERIES_COLOR.marker) {

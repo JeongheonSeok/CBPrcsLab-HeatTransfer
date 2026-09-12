@@ -101,6 +101,7 @@ canvas.chart { display: block; width: 100%; height: 220px; }
 .legend i.conv { border-color: var(--series-conv); }
 .legend i.rad { border-color: var(--series-rad); }
 .legend i.marker { border-color: var(--series-marker); }
+.legend i.residual { border-color: var(--series-residual); }
 /* 센서 견본은 굵기까지 보여준다. 그래프에서 굵기가 비드 지름을 뜻하기 때문이다. */
 .legend i.grey-body { border-color: var(--sensor-grey); }
 .legend i.black-body { border-color: var(--sensor-black); }
