@@ -1,0 +1,57 @@
+<div class="conditions">
+  <div class="input free"><label>Heater voltage</label>
+    <div class="btn-row">
+      <button class="btn case-pick" data-case="A5" type="button">5 V</button>
+      <button class="btn case-pick" data-case="A11" type="button">11 V</button>
+      <button class="btn case-pick" data-case="A17" type="button">17 V</button>
+    </div>
+  </div>
+  <span class="divider"></span>
+  <div class="input wide transport"><label for="historyTime">Time <span class="unit num" id="historyTimeValue">— s</span></label>
+    <input id="historyTime" type="range" min="0" max="360" step="1" value="360" aria-label="Time along the run"></div>
+</div>
+
+<div class="content">
+
+  <p class="caution" id="historyPending" role="status" hidden></p>
+
+  <div class="card-grid two">
+  <div class="card">
+    <header><h2>Where the supplied power goes, second by second</h2><span class="badge">OpenFOAM</span></header>
+    <div class="card-body">
+      <div class="chart-frame well well--flush"><canvas class="chart" id="powerChart"></canvas></div>
+      <div class="legend">
+        <span><i class="conv"></i>Convection to air</span>
+        <span><i class="rad"></i>Radiation to duct</span>
+        <span><i class="residual"></i>Warming the heater</span>
+      </div>
+      <div class="values">
+        <div><span class="k">Convection</span><span class="v conv" id="historyQConv">—</span></div>
+        <div><span class="k">Radiation</span><span class="v rad" id="historyQRad">—</span></div>
+        <div><span class="k">Warming the heater</span><span class="v" id="historyStored">—</span></div>
+      </div>
+      <p class="assumption">Whatever has not yet left as convection or radiation is going into the heater's own heat capacity. At steady state this band would be gone; at 180 s it is not, so this run has not reached steady state.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <header><h2>Surface temperature climbing from 20 °C</h2></header>
+    <div class="card-body">
+      <div class="chart-frame well well--flush"><canvas class="chart" id="historyChart"></canvas></div>
+      <div class="values">
+        <div><span class="k">Surface T10</span><span class="v" id="historyT10">—</span></div>
+        <div><span class="k">Still rising at</span><span class="v" id="historySlope">—</span></div>
+      </div>
+      <p class="assumption">Compare with the T10 you measured at this voltage on the Calculate screen. The calculation applies the measured V·I as a heat flux, so its surface temperature is a prediction, not an input.</p>
+    </div>
+  </div>
+  </div>
+
+  <div class="card">
+    <header><h2>What this assumed</h2><span class="sub">read before trusting the numbers</span></header>
+    <div class="card-body">
+      <p class="assumption">Laminar natural convection with fvDOM radiation, power-driven. The duct wall is held at 20 °C with emissivity 0.95 as a textbook model, not as a measurement of the insulated rig. The lumped-parameter model that will sit next to these curves needs the heater heat capacity, which this run provides (7.67 J/K).</p>
+    </div>
+  </div>
+
+</div>

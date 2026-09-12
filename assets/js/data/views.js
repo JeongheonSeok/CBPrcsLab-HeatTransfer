@@ -1,5 +1,8 @@
 // 화면 목록. 사이드바 메뉴와 상단 제목이 모두 여기서 나온다.
 //
+// 실험을 먼저 나누고 그 안에서 화면을 나눈다. 학생의 동선이 한 실험 안에서
+// 계산 → 관찰 → 시간 순으로 흐르고, A와 B는 보는 물리량이 달라 화면을 섞지 않는다.
+//
 // status는 협업하는 사람에게 무엇이 실제로 동작하는지 알린다.
 //   "ready"   — 계산과 화면이 모두 검증되어 그대로 쓸 수 있다
 //   "planned" — 자리만 잡혀 있다. placeholder를 그리고 무엇이 들어올지 적는다
@@ -7,32 +10,42 @@
 
 export const VIEWS = [
   {
-    id: "experiment-a", status: "ready",
-    label: "Experiment A", sub: "Convection and radiation",
+    id: "experiment-a", group: "Experiment A", status: "ready",
+    label: "Calculate", sub: "Where the supplied power goes",
     title: "Experiment A · Combined convection and radiation"
   },
   {
-    id: "experiment-b", status: "ready",
-    label: "Experiment B", sub: "Thermocouple error",
+    id: "a-field", group: "Experiment A", status: "ready",
+    label: "Watch the flow", sub: "CFD around the cylinder",
+    title: "Experiment A · The plume above the heated cylinder"
+  },
+  {
+    id: "a-transient", group: "Experiment A", status: "ready",
+    label: "Over time", sub: "Warming up from 20 °C",
+    title: "Experiment A · How the cylinder warms up"
+  },
+  {
+    id: "experiment-b", group: "Experiment B", status: "ready",
+    label: "Calculate", sub: "Thermocouple error",
     title: "Experiment B · Radiation error in temperature measurement"
+  },
+  {
+    id: "b-field", group: "Experiment B", status: "planned",
+    label: "Watch the flow", sub: "CFD around the beads",
+    title: "Experiment B · Air around the thermocouple beads",
+    plan: "Temperature and velocity around the three beads in the heated tube, for the fan-off and the four fan-speed conditions. The lab has not run these cases yet. The frames arrive in the same format as Experiment A and the screen will read the local air temperature and velocity at each bead position."
+  },
+  {
+    id: "b-transient", group: "Experiment B", status: "planned",
+    label: "Over time", sub: "Bead response",
+    title: "Experiment B · How each bead responds",
+    plan: "Temperature against time for each thermocouple bead, integrated from the same balance used on the Calculate screen. The model runs, but the bead heat capacity is not in the course notes and has not been fitted to a recorded run, so the time axis would be misleading. It needs one temperature-versus-time record from the rig or the CFD history for Experiment B."
   },
   {
     id: "apparatus", status: "planned",
     label: "Apparatus", sub: "Sensors and heat paths",
     title: "Apparatus",
     plan: "An interactive schematic of both rigs. Click a sensor or component to read what it measures, where it sits, and what it does. Air flow, convection and radiation paths can be toggled. The diagram is drawn and the descriptions are written; it needs the measured sensor coordinates before it goes live."
-  },
-  {
-    id: "transient", status: "planned",
-    label: "Transient", sub: "Lumped-parameter model",
-    title: "Transient · Lumped-parameter model",
-    plan: "Temperature against time for the cylinder and for each thermocouple bead, integrated from the same models used in Experiments A and B. The model runs, but the effective heat capacity and the extra loss coefficient are not in the course notes and have not been fitted to a recorded run, so the time axis would be misleading. It needs one temperature-versus-time record from the rig."
-  },
-  {
-    id: "field-viewer", status: "ready",
-    label: "Field", sub: "Pre-computed CFD",
-    title: "Field · Pre-computed CFD",
-    plan: "Temperature and velocity fields for ten representative cases, computed in the lab and shipped as compressed slices, plus the convective and radiative heat transfer integrated over the heated surface. Nothing has been computed yet. The case list and the comparison layout are in place so the format can be agreed before the runs start."
   },
   {
     id: "data", status: "planned",

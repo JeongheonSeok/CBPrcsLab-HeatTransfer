@@ -92,6 +92,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .chart-frame { position: relative; }
 .chart-frame.well { padding: 0; }
 canvas.chart { display: block; width: 100%; height: 220px; }
+canvas.chart--short { height: 150px; }   /* 한 화면에 그래프가 둘일 때 */
 .legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); color: var(--muted); font-size: var(--fs-sm); }
 .legend > span { display: inline-flex; align-items: center; gap: var(--sp-1); }
 /* 색만으로 계열을 구분하지 않는다. 선 종류를 함께 보여준다. */

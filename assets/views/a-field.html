@@ -1,0 +1,70 @@
+<div class="conditions">
+  <div class="input free"><label>Heater voltage</label>
+    <div class="btn-row">
+      <button class="btn case-pick" data-case="A5" type="button">5 V</button>
+      <button class="btn case-pick" data-case="A11" type="button">11 V</button>
+      <button class="btn case-pick" data-case="A17" type="button">17 V</button>
+    </div>
+  </div>
+  <span class="divider"></span>
+  <div class="input free"><label>Field</label>
+    <div class="btn-row">
+      <button class="btn field-type is-active" data-field="temperature" type="button" aria-pressed="true">Temperature</button>
+      <button class="btn field-type" data-field="speed" type="button" aria-pressed="false">Speed</button>
+    </div>
+  </div>
+  <span class="divider"></span>
+  <div class="input free transport"><label for="fieldTime">Time <span class="unit num" id="fieldTimeValue">0 / 0 s</span></label>
+    <div class="transport-row">
+      <button class="btn btn--primary" id="fieldPlay" type="button" title="Space">Play</button>
+      <input id="fieldTime" type="range" min="0" max="360" step="1" value="0" aria-label="Simulation time">
+    </div>
+    <span class="assumption">10× playback · ← / → one frame · Space to play</span>
+  </div>
+</div>
+
+<div class="content">
+
+  <p class="caution" id="fieldPending" role="status" hidden></p>
+
+  <div class="card">
+    <header><h2>The 18 cm around the heater, cut along two planes</h2><span class="badge">OpenFOAM</span></header>
+    <div class="card-body">
+      <div class="viewer well">
+        <!-- 두 단면이 관의 어디를 자르는지. 값은 옆의 띠에서 읽고, 여기서는 위치만 본다. -->
+        <div class="cutaway">
+          <div class="cutaway-scene" id="cutawayScene" aria-hidden="true">
+            <div class="cutaway-box" id="cutawayBox">
+              <div class="tube" id="cutawayTube"><i class="ring ring--top"></i><i class="ring ring--bottom"></i></div>
+              <div class="rod" id="cutawayRod"></div>
+              <div class="cut cut--yz" data-plane="yz"></div>
+              <div class="cut cut--xz" data-plane="xz"></div>
+            </div>
+          </div>
+          <p class="cutaway-hint">Drag to turn · click a plane to face it</p>
+        </div>
+        <div class="viewer-stage">
+          <canvas id="fieldCanvas" role="img" aria-label="Two CFD slices around the heater; approximate point values are available with the pointer."></canvas>
+          <div class="viewer-cross viewer-cross--h" id="fieldCrossH" hidden></div>
+          <div class="viewer-cross viewer-cross--v" id="fieldCrossV" hidden></div>
+          <div class="viewer-tip num" id="fieldTip" hidden></div>
+        </div>
+        <div class="colorbar">
+          <div class="colorbar-scale" id="colorbarGradient"></div>
+          <div class="colorbar-labels"><span id="colorbarMax">—</span><span id="colorbarMid">—</span><span id="colorbarMin">—</span></div>
+        </div>
+      </div>
+
+      <!-- 이 순간의 열수지. 대류와 복사로 아직 나가지 못한 몫은 히터 자체를 데우고 있다. -->
+      <div class="values">
+        <div><span class="k">Supplied</span><span class="v" id="cfdQIn">—</span></div>
+        <div><span class="k">Convection to air</span><span class="v conv" id="cfdQConv">—</span></div>
+        <div><span class="k">Radiation to duct</span><span class="v rad" id="cfdQRad">—</span></div>
+        <div><span class="k">Warming the heater</span><span class="v" id="cfdStored">—</span></div>
+        <div><span class="k">Surface T10</span><span class="v" id="cfdT10">—</span></div>
+      </div>
+      <p class="assumption">Under the pointer: <span class="num" id="fieldReadout">—</span> · 1 mm grid, 8-bit values, so point readings are approximate. The numbers above come from the run's own integrated history.</p>
+    </div>
+  </div>
+
+</div>

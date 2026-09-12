@@ -42,6 +42,31 @@ export async function loadCase(caseId) {
   }
 }
 
+// 이력과 index만. 시간 화면은 스프라이트가 필요 없다.
+const historyCache = new Map();
+export async function loadHistory(caseId) {
+  if (historyCache.has(caseId)) return historyCache.get(caseId);
+  const base = `assets/data/cfd/${caseId}`;
+  const promise = (async () => {
+    const response = await fetch(`${base}/index.json`);
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Could not load ${caseId} (HTTP ${response.status})`);
+    const index = await response.json();
+    const historyResponse = await fetch(`${base}/history.json`);
+    if (!historyResponse.ok) throw new Error(`Could not load ${caseId} history`);
+    return { index, history: await historyResponse.json() };
+  })();
+  historyCache.set(caseId, promise);
+  try {
+    const result = await promise;
+    if (!result) historyCache.delete(caseId);
+    return result;
+  } catch (error) {
+    historyCache.delete(caseId);
+    throw error;
+  }
+}
+
 // 처음 요청되는 장(field)의 스프라이트를 그때 받는다.
 export async function ensureField(data, field) {
   for (const [plane, files] of Object.entries(data.index.planes)) {

@@ -35,6 +35,11 @@
   color: var(--frame-ink-2); font-family: var(--font-mono); font-size: 9.5px; font-weight: 400;
 }
 .nav-item span { display: block; margin-top: 1px; font-size: var(--fs-xs); opacity: .8; }
+/* 실험별 묶음. 머리글은 누르는 것이 아니라 읽는 것이다. */
+.nav-group { margin: var(--sp-3) var(--sp-3) 2px; color: var(--frame-ink); font-size: var(--fs-xs); font-weight: var(--fw-semi); letter-spacing: 0; }
+.nav-group:first-child { margin-top: 0; }
+.nav-item--sub { padding-left: var(--sp-5); }
+.nav-item--sub > span { display: none; }   /* 하위 항목은 이름 한 줄이면 충분하다. planned 표지는 남는다 */
 
 .sidebar-foot {
   margin-top: auto; padding: var(--sp-3) var(--sp-2) 0;
@@ -104,7 +109,8 @@
   .sidebar { position: static; height: auto; }
   .nav { flex-direction: row; overflow-x: auto; }
   .nav-item { width: auto; white-space: nowrap; }
-  .nav-item span, .sidebar-foot { display: none; }
+  .nav-item span, .nav-group, .sidebar-foot { display: none; }
+  .nav-item--sub { padding-left: var(--sp-3); }
   .conditions { padding: var(--sp-3); gap: var(--sp-3); }
   .content { padding: var(--sp-4) var(--sp-3) var(--sp-6); }
 }

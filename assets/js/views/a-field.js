@@ -1,7 +1,7 @@
-// 유동장 화면: 미리 계산한 CFD 단면을 시간에 따라 재생한다.
+// 실험 A 관찰 화면: 가열 실린더 주위의 CFD 단면을 시간에 따라 재생한다.
 
 import { $, $$, clamp, numberValue } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, drawArea, makeScales, drawVerticalMarker, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
+import { setupCanvas, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
 import { CFD_CASES } from "../data/cfd-cases.js";
 import { loadCase, ensureField, frameData, physical } from "../core/cfd-loader.js";
 
@@ -24,8 +24,8 @@ let frameIndex = 0;
 let playing = false;
 let playTimer = null;
 let busy = false;
-let highlighted = null;           // 절개 도식에서 가리키는 평면
 let loadVersion = 0;
+let highlighted = null;           // 절개 도식에서 가리키는 평면
 const scratch = document.createElement("canvas");
 const tinted = document.createElement("canvas");
 const lut = {};
@@ -34,7 +34,7 @@ function hexToRgb(hex) {
   return [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 }
 
-// 5개 정지점을 256단계로 편다. sRGB 선형 보간이지만 램프가 단조라 충분하다.
+// 정지점을 256단계로 편다. sRGB 선형 보간이지만 램프가 단조라 충분하다.
 function buildLut(stops) {
   const rgb = stops.map(hexToRgb);
   const table = new Uint8ClampedArray(256 * 3);
@@ -44,10 +44,6 @@ function buildLut(stops) {
     for (let k = 0; k < 3; k += 1) table[i * 3 + k] = rgb[a][k] + (rgb[b][k] - rgb[a][k]) * u;
   }
   return table;
-}
-
-function currentCaseId() {
-  return $("#fieldCase").value;
 }
 
 // 단면 비율을 유지하면서 캔버스의 폭과 높이 모두에 맞춘다.
@@ -105,10 +101,8 @@ export function drawFieldView() {
   const { ctx, w, h } = setup;
   ctx.clearRect(0, 0, w, h);
   layout(w, h).forEach(strip => paintStrip(ctx, strip));
-  drawPower();
-  drawHistory();
   updateLabels();
-  showSummary();
+  showBalance();
   describeFrame(canvas);
   hideTip();
 }
@@ -135,48 +129,6 @@ function describeFrame(canvas) {
     `warmest air in the plume about ${physical(index, "temperature", plume).toFixed(0)} °C; inlet air ${index.temperatureC.min.toFixed(0)} °C.`);
 }
 
-// 공급 전력이 매 순간 어디로 가는지. 실험 A의 누적 막대를 시간축으로 편 것이다.
-// 대류와 복사로 아직 나가지 못한 몫은 히터 자체를 데우고 있다. CFD에서는 그 정체를 안다.
-function drawPower() {
-  const setup = setupCanvas($("#powerChart"));
-  if (!setup) return;
-  const { ctx, w, h } = setup;
-  const { time_s: t, Q_in_W: qIn, Q_heater_to_air_conv_W: conv, Q_heater_to_air_rad_W: rad } = data.history;
-  const end = t[t.length - 1], top = Math.max(...qIn) * 1.08;
-  const { xMap, yMap } = makeScales(w, h, [0, end], [0, top]);
-  drawAxes(ctx, w, h, "t (s)", "Q (W)", [0, Math.round(end / 2), end], [0, +(top / 2).toFixed(1), +top.toFixed(1)], xMap, yMap);
-  const base = t.map(s => [xMap(s), yMap(0)]);
-  const convTop = t.map((s, i) => [xMap(s), yMap(conv[i])]);
-  const radTop = t.map((s, i) => [xMap(s), yMap(conv[i] + rad[i])]);
-  const inTop = t.map((s, i) => [xMap(s), yMap(qIn[i])]);
-  drawArea(ctx, convTop, base, SERIES_COLOR.conv);
-  drawArea(ctx, radTop, convTop, SERIES_COLOR.rad);
-  drawArea(ctx, inTop, radTop, SERIES_COLOR.residual);
-  drawVerticalMarker(ctx, xMap(data.index.frames[frameIndex]), h);
-}
-
-// T10(t)에 현재 시각을 표시한다. 애니메이션의 어느 순간이 숫자의 어디인지 이어 준다.
-function drawHistory() {
-  const setup = setupCanvas($("#historyChart"));
-  if (!setup) return;
-  const { ctx, w, h } = setup;
-  const { time_s: t, T10_C: T10 } = data.history;
-  const maxT = Math.max(...T10), minT = Math.min(...T10);
-  const pad = (maxT - minT) * 0.1 || 1;
-  const { xMap, yMap } = makeScales(w, h, [0, t[t.length - 1]], [minT - pad, maxT + pad]);
-  const end = t[t.length - 1];
-  drawAxes(ctx, w, h, "t (s)", "T₁₀ (°C)", [0, Math.round(end / 2), end],
-    [+minT.toFixed(0), +((minT + maxT) / 2).toFixed(0), +maxT.toFixed(0)], xMap, yMap);
-  drawLine(ctx, t.map((s, i) => [xMap(s), yMap(T10[i])]), SERIES_COLOR.surface, 2.2);
-  const now = data.index.frames[frameIndex];
-  drawVerticalMarker(ctx, xMap(now), h);
-  ctx.font = CHART_FONT;
-  // 오른쪽 끝에서는 라벨이 잘리므로 선의 왼쪽에 붙인다.
-  const label = `${now.toFixed(1)} s`;
-  const right = xMap(now) + 6 + ctx.measureText(label).width < w - 16;
-  labelOnPlot(ctx, label, xMap(now) + (right ? 6 : -6), 30, CHART_INK.ink, right ? "left" : "right");
-}
-
 function updateLabels() {
   const { index } = data;
   const now = index.frames[frameIndex];
@@ -184,26 +136,27 @@ function updateLabels() {
   $("#fieldTime").setAttribute("aria-valuetext", `${now.toFixed(1)} seconds`);
   const range = field === "temperature" ? index.temperatureC : index.speed;
   const unit = field === "temperature" ? "°C" : "m/s";
-  $("#colorbarMax").textContent = `${range.max.toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
-  $("#colorbarMin").textContent = `${range.min.toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
-  $("#colorbarMid").textContent = `${((range.min + range.max) / 2).toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
+  const digits = field === "temperature" ? 0 : 2;
+  $("#colorbarMax").textContent = `${range.max.toFixed(digits)} ${unit}`;
+  $("#colorbarMid").textContent = `${((range.min + range.max) / 2).toFixed(digits)} ${unit}`;
+  $("#colorbarMin").textContent = `${range.min.toFixed(digits)} ${unit}`;
   $("#colorbarGradient").style.background = `linear-gradient(to top, ${RAMP[field].join(",")})`;
   $("#fieldPlay").textContent = playing ? "Pause" : frameIndex === index.frames.length - 1 ? "Replay" : "Play";
 }
 
-// 표시용 픽셀 대신 원본 시계열에서 선택 시점의 수치를 읽는다.
-function showSummary() {
+// 이 순간의 열수지. 표시용 픽셀이 아니라 원본 시계열에서 읽는다.
+// 대류·복사로 아직 나가지 못한 몫은 히터를 데우고 있다. CFD에서는 그 정체를 안다.
+function showBalance() {
   const { index, history } = data;
   const now = index.frames[frameIndex];
   const i = history.time_s.findIndex(t => t >= now);
   if (i < 0) return;
   const qIn = history.Q_in_W[i], qConv = history.Q_heater_to_air_conv_W[i], qRad = history.Q_heater_to_air_rad_W[i];
-  $("#cfdSummaryTime").textContent = `${now.toFixed(1)} s`;
   $("#cfdQIn").innerHTML = `${qIn.toFixed(2)} <small>W</small>`;
   $("#cfdQConv").innerHTML = `${qConv.toFixed(2)} <small>W</small>`;
   $("#cfdQRad").innerHTML = `${qRad.toFixed(2)} <small>W</small>`;
+  $("#cfdStored").innerHTML = `${(qIn - qConv - qRad).toFixed(2)} <small>W</small>`;
   $("#cfdT10").innerHTML = `${history.T10_C[i].toFixed(1)} <small>°C</small>`;
-  $("#cfdNote").textContent = `Supply − convection − radiation = ${(qIn - qConv - qRad).toFixed(2)} W at this time.`;
 }
 
 function handleProbe(event) {
@@ -223,16 +176,14 @@ function handleProbe(event) {
   const lateral = (col + 0.5) / index.roi.pxPerM - index.roi.halfWidth;
   const unit = field === "temperature" ? "°C" : "m/s";
   const reading = `${value.toFixed(field === "temperature" ? 1 : 3)} ${unit}`;
-  $("#fieldReadout").textContent =
-    `${strip.plane} · ${(lateral * 1000).toFixed(0)} mm, z ${z.toFixed(3)} m · ${reading}`;
+  $("#fieldReadout").textContent = `${strip.plane} · ${(lateral * 1000).toFixed(0)} mm, z ${z.toFixed(3)} m · ${reading}`;
 
   // 값은 커서 옆에, 십자선은 띠 안에서만. 그림이 아니라 데이터라는 것이 손끝에서 느껴져야 한다.
   const tip = $("#fieldTip");
   tip.hidden = false;
   tip.textContent = reading;
-  const flip = px > rect.width - 90;
   tip.style.left = `${px}px`; tip.style.top = `${py}px`;
-  tip.style.transform = flip ? "translate(calc(-100% - 10px), -50%)" : "translate(10px, -50%)";
+  tip.style.transform = px > rect.width - 90 ? "translate(calc(-100% - 10px), -50%)" : "translate(10px, -50%)";
   const crossH = $("#fieldCrossH"), crossV = $("#fieldCrossV");
   crossH.hidden = crossV.hidden = false;
   crossH.style.top = `${py}px`; crossH.style.left = `${strip.x}px`; crossH.style.right = `${rect.width - strip.x - strip.w}px`;
@@ -265,7 +216,7 @@ function play() {
   if (frameIndex >= data.index.frames.length - 1) setFrame(0);
   const noLoop = matchMedia("(prefers-reduced-motion: reduce)").matches;
   playTimer = setInterval(() => {
-    if (document.hidden || !$("#field-viewer").classList.contains("is-active")) { stop(); return; }
+    if (document.hidden || !$("#a-field").classList.contains("is-active")) { stop(); return; }
     if (noLoop && frameIndex >= data.index.frames.length - 1) { stop(); return; }
     setFrame((frameIndex + 1) % data.index.frames.length);
   }, 1000 / FRAMES_PER_SECOND);
@@ -275,23 +226,20 @@ function setLoading(value, message = "") {
   busy = value;
   $("#fieldPending").hidden = !message;
   $("#fieldPending").textContent = message;
-  $("#field-viewer").setAttribute("aria-busy", String(value));
-  $$("#field-viewer .transport-row button, #fieldTime, #field-viewer .field-type")
-    .forEach(control => { control.disabled = value || !data; });
+  $("#a-field").setAttribute("aria-busy", String(value));
+  $$("#fieldPlay, #fieldTime, #a-field .field-type").forEach(control => { control.disabled = value || !data; });
 }
 
-async function switchCase() {
+async function switchCase(caseId) {
   stop();
   const version = ++loadVersion;
-  const caseId = currentCaseId();
   data = null;
+  $$(".case-pick").forEach(b => b.classList.toggle("is-active", b.dataset.case === caseId));
   setLoading(true, `Loading ${CFD_CASES[caseId].label}…`);
-  ["fieldReadout", "cfdSummaryTime", "cfdQIn", "cfdQConv", "cfdQRad", "cfdT10", "cfdNote", "fieldTimeValue", "colorbarMax", "colorbarMid", "colorbarMin"]
+  ["fieldReadout", "cfdQIn", "cfdQConv", "cfdQRad", "cfdStored", "cfdT10", "fieldTimeValue", "colorbarMax", "colorbarMid", "colorbarMin"]
     .forEach(id => { $(`#${id}`).textContent = "—"; });
-  ["fieldCanvas", "historyChart"].forEach(id => {
-    const canvas = $(`#${id}`);
-    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-  });
+  const canvas = $("#fieldCanvas");
+  canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
   try {
     const loaded = await loadCase(caseId);
     if (version !== loadVersion) return;
@@ -301,23 +249,26 @@ async function switchCase() {
     data = loaded;
     $("#fieldTime").max = data.index.frames.length - 1;
     setLoading(false);
-    setFrame(data.index.frames.length - 1);
+    setFrame(data.index.frames.length - 1);     // 처음엔 다 자란 플룸부터. Play는 0부터 다시 돈다
   } catch (error) {
-    if (version === loadVersion) setLoading(false, "Could not load this case. Select another case or reload to retry.");
+    if (version === loadVersion) setLoading(false, "Could not load this case. Pick another voltage or reload to retry.");
   }
 }
 
-// 도식의 면과 범례 버튼, 그리고 띠의 강조를 한 번에 맞춘다.
+// 도식의 면과 띠의 강조를 한 번에 맞춘다.
 function setHighlight(plane, redraw = true) {
   highlighted = plane;
-  $$(".cut, .cut-pick").forEach(el => el.classList.toggle("is-highlighted", el.dataset.plane === plane));
+  $$(".cut").forEach(el => el.classList.toggle("is-highlighted", el.dataset.plane === plane));
   if (redraw) drawFieldView();
 }
 
 // 절개 위치 도식. 가로로만 돌고, 면을 누르면 그 면을 정면으로 본다. 다시 누르면 비스듬히 돌아온다.
+// 값을 읽는 곳이 아니라 위치를 보는 곳이라 aria-hidden이다. 키보드 사용자는 띠의 이름표로 안다.
 function initCutaway() {
   const scene = $("#cutawayScene"), box = $("#cutawayBox"), rod = $("#cutawayRod"), tube = $("#cutawayTube");
   if (!scene) return;
+  const OBLIQUE = -34, FACING = { yz: 90, xz: 0 };
+  let ry = OBLIQUE, drag = null;
 
   // 원형 관: 판 36장을 세로축 둘레에 세운다. 시선과 비스듬한 판일수록 유리가 두꺼워 보이므로 진하게.
   const STAVES = 36, R = 49;
@@ -329,16 +280,13 @@ function initCutaway() {
   }
   const shadeTube = () => {
     tube.querySelectorAll(".stave").forEach((stave, i) => {
-      // 현재 회전에서 이 판이 시선을 얼마나 정면으로 받는지
       const facing = Math.abs(Math.cos((i * 360 / STAVES + ry) * Math.PI / 180));
       stave.style.background = `rgba(92, 106, 118, ${(0.04 + 0.30 * (1 - facing)).toFixed(3)})`;
     });
   };
-  const OBLIQUE = -34, FACING = { yz: 90, xz: 0 };
-  let ry = OBLIQUE, drag = null;
   const apply = () => { box.style.setProperty("--ry", `${ry}deg`); shadeTube(); };
 
-  // 원통: 24개 판을 축 둘레에 세운다. 밝기는 위·앞에서 오는 빛을 흉내 낸다.
+  // 히터 원통: 24개 판을 축 둘레에 세운다. 밝기는 위·앞에서 오는 빛을 흉내 낸다.
   const N = 24, r = 7;
   for (let i = 0; i < N; i += 1) {
     const facet = document.createElement("i");
@@ -370,53 +318,42 @@ function initCutaway() {
   });
   scene.addEventListener("pointerup", event => {
     const cut = event.target.closest(".cut");
-    if (drag && !drag.moved && cut) face(cut.dataset.plane);
+    if (drag && !drag.moved && cut) {
+      const plane = cut.dataset.plane;
+      ry = ry === FACING[plane] ? OBLIQUE : FACING[plane];
+      box.classList.toggle("is-snapping", !matchMedia("(prefers-reduced-motion: reduce)").matches);
+      apply();
+    }
     drag = null;
   });
   scene.addEventListener("pointercancel", () => { drag = null; });
-
-  function face(plane) {
-    ry = ry === FACING[plane] ? OBLIQUE : FACING[plane];
-    box.classList.toggle("is-snapping", !matchMedia("(prefers-reduced-motion: reduce)").matches);
-    apply();
-  }
-
   $$(".cut").forEach(cut => {
     cut.addEventListener("pointerenter", () => setHighlight(cut.dataset.plane));
     cut.addEventListener("pointerleave", () => setHighlight(null));
-  });
-  $$(".cut-pick").forEach(button => {
-    button.addEventListener("click", () => face(button.dataset.plane));
-    button.addEventListener("pointerenter", () => setHighlight(button.dataset.plane));
-    button.addEventListener("focus", () => setHighlight(button.dataset.plane));
-    button.addEventListener("pointerleave", () => setHighlight(null));
-    button.addEventListener("blur", () => setHighlight(null));
   });
   apply();
 }
 
 export function initFieldViewer() {
-  initCutaway();
   lut.temperature = buildLut(RAMP.temperature);
   lut.speed = buildLut(RAMP.speed);
+  initCutaway();
 
-  // 목록은 합의된 조건 전체다. 산출물이 있는 case만 고를 수 있게 한다.
-  const select = $("#fieldCase");
-  select.disabled = true;
-  setLoading(true, "Checking available cases…");
-  Promise.all(Object.keys(CFD_CASES).map(async id => {
+  // 산출물이 있는 전압만 누를 수 있다. 처음 것을 바로 연다.
+  const picks = $$(".case-pick");
+  picks.forEach(b => { b.disabled = true; });
+  Promise.all(picks.map(async button => {
     let ok = false;
-    try { ok = (await fetch(`assets/data/cfd/${id}/index.json`, { method: "HEAD" })).ok; } catch { /* 연결 실패도 선택 불가로 표시 */ }
-    select.querySelector(`option[value="${id}"]`).disabled = !ok;
-    return ok ? id : null;
+    try { ok = (await fetch(`assets/data/cfd/${button.dataset.case}/index.json`, { method: "HEAD" })).ok; } catch { /* 연결 실패도 선택 불가 */ }
+    button.disabled = !ok;
+    return ok ? button.dataset.case : null;
   })).then(ids => {
-    select.disabled = false;
     const first = ids.find(Boolean);
-    if (first) { select.value = first; switchCase(); }
-    else setLoading(false, "No cases could be loaded. Reload to retry.");
+    if (first) switchCase(first);
+    else setLoading(false, "No computed case could be loaded. Reload to retry.");
   });
+  picks.forEach(button => button.addEventListener("click", () => switchCase(button.dataset.case)));
 
-  select.addEventListener("change", switchCase);
   $$(".field-type").forEach(button => button.addEventListener("click", async () => {
     if (!data || busy) return;
     stop();
@@ -437,20 +374,18 @@ export function initFieldViewer() {
       if (version === loadVersion) setLoading(false, "Could not load this field. Select it again to retry.");
     }
   }));
+
   const step = delta => { stop(); setFrame(frameIndex + delta); };
   $("#fieldTime").addEventListener("input", () => { stop(); setFrame(numberValue("#fieldTime", 0)); });
   $("#fieldPlay").addEventListener("click", () => (playing ? stop() : play()));
-  $("#fieldStepBack").addEventListener("click", () => step(-1));
-  $("#fieldStepForward").addEventListener("click", () => step(1));
-  $("#fieldReset").addEventListener("click", () => { stop(); setFrame(0); });
   $("#fieldCanvas").addEventListener("pointermove", event => { if (data && !busy) handleProbe(event); });
   $("#fieldCanvas").addEventListener("pointerleave", hideTip);
 
   // 이 화면이 보일 때만. 입력 칸에 타이핑하는 중이면 건드리지 않는다.
   document.addEventListener("keydown", event => {
-    if (!data || busy || document.querySelector("dialog[open]") || !$("#field-viewer").classList.contains("is-active")) return;
-    if (event.target.closest("button, summary, [contenteditable]")) return;
+    if (!data || busy || document.querySelector("dialog[open]") || !$("#a-field").classList.contains("is-active")) return;
     if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName) && event.target.type !== "range") return;
+    if (event.target.closest("button, summary, [contenteditable]")) return;
     if (event.key === " ") { event.preventDefault(); playing ? stop() : play(); }
     else if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
     else if (event.key === "ArrowRight") { event.preventDefault(); step(1); }

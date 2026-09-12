@@ -9,14 +9,20 @@ import { VIEWS, DEFAULT_VIEW } from "../data/views.js";
 let onActivate = {};
 const loaded = new Set();
 
+// 같은 group의 화면은 한 머리글 아래 묶인다. group이 없으면 그냥 놓는다.
 function renderNav() {
   const list = $("#navList");
   if (!list) return;
-  list.innerHTML = VIEWS.map(view => `
-    <button class="nav-item" type="button" data-view="${view.id}">
+  let lastGroup = null;
+  list.innerHTML = VIEWS.map(view => {
+    const head = view.group && view.group !== lastGroup ? `<h2 class="nav-group">${view.group}</h2>` : "";
+    lastGroup = view.group ?? null;
+    return `${head}
+    <button class="nav-item${view.group ? " nav-item--sub" : ""}" type="button" data-view="${view.id}">
       <strong>${view.label}${view.status === "planned" ? '<span class="nav-flag">planned</span>' : ""}</strong>
       <span>${view.sub}</span>
-    </button>`).join("");
+    </button>`;
+  }).join("");
 }
 
 /**
