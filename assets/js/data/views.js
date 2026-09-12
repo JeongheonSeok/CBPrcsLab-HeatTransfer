@@ -20,12 +20,6 @@ export const VIEWS = [
     title: "Experiment A · The plume above the heated cylinder"
   },
   {
-    id: "a-transient", group: "Experiment A", status: "planned",
-    label: "Over time", sub: "Lumped model vs CFD",
-    title: "Experiment A · The lumped-parameter model against the CFD warm-up",
-    plan: "The one-node model of the cylinder integrated from 20 °C, drawn over the CFD surface-temperature history that Watch the flow already shows. The model runs, but its effective heat capacity and loss coefficient have not been fitted; the CFD run gives the heat capacity (7.67 J/K) and a full T10(t) to fit against."
-  },
-  {
     id: "experiment-b", group: "Experiment B", status: "ready",
     label: "Calculate", sub: "Thermocouple error",
     title: "Experiment B · Radiation error in temperature measurement"
@@ -35,12 +29,6 @@ export const VIEWS = [
     label: "Watch the flow", sub: "CFD around the beads",
     title: "Experiment B · Air around the thermocouple beads",
     plan: "Temperature and velocity around the three beads in the heated tube, for the fan-off and the four fan-speed conditions. The lab has not run these cases yet. The frames arrive in the same format as Experiment A and the screen will read the local air temperature and velocity at each bead position."
-  },
-  {
-    id: "b-transient", group: "Experiment B", status: "planned",
-    label: "Over time", sub: "Bead response",
-    title: "Experiment B · How each bead responds",
-    plan: "Temperature against time for each thermocouple bead, integrated from the same balance used on the Calculate screen. The model runs, but the bead heat capacity is not in the course notes and has not been fitted to a recorded run, so the time axis would be misleading. It needs one temperature-versus-time record from the rig or the CFD history for Experiment B."
   },
   {
     id: "apparatus", status: "planned",

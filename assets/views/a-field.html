@@ -16,10 +16,9 @@
   <span class="divider"></span>
   <div class="input free transport"><label for="fieldTime">Time <span class="unit num" id="fieldTimeValue">0 / 0 s</span></label>
     <div class="transport-row">
-      <button class="btn btn--primary" id="fieldPlay" type="button" title="Space">Play</button>
-      <input id="fieldTime" type="range" min="0" max="360" step="1" value="0" aria-label="Simulation time">
+      <button class="btn btn--primary" id="fieldPlay" type="button" title="Space · plays at 10× real time">Play</button>
+      <input id="fieldTime" type="range" min="0" max="360" step="1" value="0" aria-label="Simulation time" title="← / → one frame">
     </div>
-    <span class="assumption">10× playback · ← / → one frame · Space to play</span>
   </div>
 </div>
 
@@ -27,6 +26,8 @@
 
   <p class="caution" id="fieldPending" role="status" hidden></p>
 
+  <!-- 애니메이션과 두 그래프가 한 화면에 들어와야 같은 시각을 따라간다는 것이 보인다. -->
+  <div class="card-grid wide-left">
   <div class="card">
     <header><h2>The 18 cm around the heater, cut along two planes</h2><span class="badge">OpenFOAM</span></header>
     <div class="card-body">
@@ -67,10 +68,9 @@
     </div>
   </div>
 
-  <!-- 같은 시각을 두 그래프가 따라간다. 애니메이션의 어느 순간이 숫자의 어디인지 이어 준다. -->
-  <div class="card-grid two">
+  <div class="card-stack">
   <div class="card">
-    <header><h2>Where the supplied power goes, second by second</h2></header>
+    <header><h2>Where the supplied power goes</h2></header>
     <div class="card-body">
       <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="powerChart"></canvas></div>
       <div class="legend">
@@ -78,16 +78,17 @@
         <span><i class="rad"></i>Radiation to duct</span>
         <span><i class="residual"></i>Warming the heater</span>
       </div>
-      <p class="assumption">Whatever has not yet left as convection or radiation is going into the heater's own heat capacity. At steady state this band would be gone; at 180 s it is not, so this run has not reached steady state.</p>
+      <p class="assumption">What has not yet left as convection or radiation is warming the heater itself. At steady state that band would be gone.</p>
     </div>
   </div>
 
   <div class="card">
-    <header><h2>Surface temperature climbing from 20 °C</h2></header>
+    <header><h2>Surface temperature from 20 °C</h2></header>
     <div class="card-body">
       <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="historyChart"></canvas></div>
-      <p class="assumption">Still rising at <span class="num" id="cfdSlope">—</span> at this moment. Compare with the T10 you measured at this voltage on the Calculate screen: the calculation applies the measured V·I as a heat flux, so its surface temperature is a prediction, not an input.</p>
+      <p class="assumption">Still rising at <span class="num" id="cfdSlope">—</span>. The measured V·I is applied as a heat flux, so this temperature is a prediction; compare it with the T10 you measured at this voltage.</p>
     </div>
+  </div>
   </div>
   </div>
 

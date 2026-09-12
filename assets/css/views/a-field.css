@@ -1,16 +1,16 @@
 /* a-field 화면 전용. 이 화면을 맡은 사람만 고친다. */
 
 /* 컬러바는 단면과 별도 공간을 써서 좁은 화면에서도 겹치지 않는다. */
-#a-field .viewer { display: grid; grid-template-columns: 230px minmax(0, 1fr) 76px; align-items: center; gap: var(--sp-2); padding: var(--sp-2); overflow: hidden; }
+#a-field .viewer { display: grid; grid-template-columns: 190px minmax(0, 1fr) 72px; align-items: center; gap: var(--sp-2); padding: var(--sp-2); overflow: hidden; }
 
 /* ── 절개 위치 도식 — CSS 3D transform만 쓴다. 라이브러리 없음 ───
    1.4 px = 1 mm. duct 창 70 × 70 × 180 mm.
    물리 x(폭) → CSS x, 물리 z(높이) → CSS −y, 물리 y(깊이) → CSS z. */
 .cutaway { display: flex; flex-direction: column; align-items: center; gap: var(--sp-2); user-select: none; }
-.cutaway-scene { width: 230px; height: 330px; perspective: 900px; cursor: ew-resize; touch-action: pan-y; }
+.cutaway-scene { width: 190px; height: 330px; perspective: 900px; cursor: ew-resize; touch-action: pan-y; }
 .cutaway-box {
   --ry: -34deg;
-  position: relative; width: 0; height: 0; left: 115px; top: 165px;
+  position: relative; width: 0; height: 0; left: 95px; top: 165px;
   transform-style: preserve-3d; transform: rotateX(-16deg) rotateY(var(--ry));
 }
 .cutaway-box.is-snapping { transition: transform 320ms cubic-bezier(.2, .7, .2, 1); }
@@ -42,7 +42,7 @@
 .cut:hover, .cut.is-highlighted { background: rgba(var(--accent-rgb), .34); }
 .cutaway-hint { color: var(--muted-2); font-size: var(--fs-xs); text-align: center; }
 @media (max-width: 960px) { #a-field .viewer { grid-template-columns: minmax(0, 1fr) 76px; } .cutaway { display: none; } }
-#fieldCanvas { display: block; width: 100%; min-width: 0; height: 460px; }
+#fieldCanvas { display: block; width: 100%; min-width: 0; height: 440px; }
 .colorbar { display: flex; gap: var(--sp-2); }
 
 /* 포인터를 따라다니는 판독값. 캔버스 위에 얹히므로 캔버스와 같은 상자 안에 둔다. */

@@ -72,7 +72,7 @@ describe("마크업 계약 · id", () => {
     // planned 화면의 뷰 모듈은 main.js가 부르지 않으므로 마크업도 없는 게 맞다.
     // status를 "ready"로 바꾸는 순간 이 검사가 그 화면의 마크업을 요구한다.
     // 화면 id와 파일 이름이 다른 것만 여기 적는다. 나머지는 views/<id>.js다.
-    const moduleOf = { data: "views/data-table.js", "a-transient": "views/transient.js", "b-transient": "views/transient.js" };
+    const moduleOf = { data: "views/data-table.js" };
     const plannedFiles = VIEWS
       .filter(v => v.status === "planned")
       .map(v => moduleOf[v.id] ?? `views/${v.id}.js`);
@@ -205,7 +205,7 @@ describe("마크업 계약 · 입력 요소", () => {
   });
 
   // 실험별 관찰 화면은 자기 실험의 case만 고르게 한다. A 화면에 B 조건이 섞이면 안 된다.
-  for (const [viewId, kind] of [["a-field", "A"], ["b-field", "B"], ["a-transient", "A"], ["b-transient", "B"]]) {
+  for (const [viewId, kind] of [["a-field", "A"], ["b-field", "B"]]) {
     test(`${viewId} 화면이 ${kind} 실험의 CFD case를 전부 고를 수 있다`, { skip: !isReady(viewId) }, () => {
       const markup = viewMarkup[viewId] ?? "";
       const offered = new Set([...markup.matchAll(/data-case="([^"]+)"/g)].map(m => m[1]));
@@ -225,9 +225,6 @@ describe("마크업 계약 · 입력 요소", () => {
     assert.equal(classCount("dataset-button"), 2);
   });
 
-  test("실험 B 시간 화면의 모드 버튼", { skip: !isReady("b-transient") }, () => {
-    assert.equal(classCount("lumped-mode"), 2);
-  });
 });
 
 describe("마크업 계약 · 클래스 이름", () => {
@@ -246,7 +243,7 @@ describe("마크업 계약 · 클래스 이름", () => {
 
   // 이벤트를 걸기 위한 표식일 뿐 모양을 담당하지 않는 클래스
   const hooks = new Set([
-    "b-velocity", "sensor-button", "field-type", "case-pick", "dataset-button", "lumped-mode",
+    "b-velocity", "sensor-button", "field-type", "case-pick", "dataset-button",
     "apparatus-mode", "toggle-layer", "selected", "is-hidden", "layer-hidden"
   ]);
 

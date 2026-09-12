@@ -352,7 +352,8 @@ function initCutaway() {
   });
 
   scene.addEventListener("pointerdown", event => {
-    drag = { x: event.clientX, ry, moved: false };
+    // 캡처를 걸면 pointerup의 target이 scene이 되므로 누른 면은 여기서 기억한다.
+    drag = { x: event.clientX, ry, moved: false, cut: event.target.closest(".cut") };
     scene.setPointerCapture(event.pointerId);
   });
   scene.addEventListener("pointermove", event => {
@@ -363,10 +364,9 @@ function initCutaway() {
     box.classList.remove("is-snapping");
     apply();
   });
-  scene.addEventListener("pointerup", event => {
-    const cut = event.target.closest(".cut");
-    if (drag && !drag.moved && cut) {
-      const plane = cut.dataset.plane;
+  scene.addEventListener("pointerup", () => {
+    if (drag && !drag.moved && drag.cut) {
+      const plane = drag.cut.dataset.plane;
       ry = ry === FACING[plane] ? OBLIQUE : FACING[plane];
       box.classList.toggle("is-snapping", !matchMedia("(prefers-reduced-motion: reduce)").matches);
       apply();
@@ -431,10 +431,15 @@ export function initFieldViewer() {
   // 이 화면이 보일 때만. 입력 칸에 타이핑하는 중이면 건드리지 않는다.
   document.addEventListener("keydown", event => {
     if (!data || busy || document.querySelector("dialog[open]") || !$("#a-field").classList.contains("is-active")) return;
-    if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName) && event.target.type !== "range") return;
-    if (event.target.closest("button, summary, [contenteditable]")) return;
-    if (event.key === " ") { event.preventDefault(); playing ? stop() : play(); }
-    else if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
+    const target = event.target;
+    const typing = (target.tagName === "INPUT" && target.type !== "range")
+      || target.tagName === "SELECT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+    if (typing) return;
+    // Space는 focus된 버튼이 있으면 그 버튼의 것이다. 화살표는 어디에 focus가 있든 프레임을 옮긴다.
+    if (event.key === " ") {
+      if (target.tagName === "BUTTON") return;
+      event.preventDefault(); playing ? stop() : play();
+    } else if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
     else if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
   });
 }
