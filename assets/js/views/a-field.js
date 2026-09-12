@@ -1,7 +1,7 @@
 // 실험 A 관찰 화면: 가열 실린더 주위의 CFD 단면을 시간에 따라 재생한다.
 
 import { $, $$, clamp, numberValue } from "../core/dom.js";
-import { setupCanvas, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, drawArea, makeScales, drawVerticalMarker, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
 import { CFD_CASES } from "../data/cfd-cases.js";
 import { loadCase, ensureField, frameData, physical } from "../core/cfd-loader.js";
 
@@ -101,10 +101,51 @@ export function drawFieldView() {
   const { ctx, w, h } = setup;
   ctx.clearRect(0, 0, w, h);
   layout(w, h).forEach(strip => paintStrip(ctx, strip));
+  drawPower();
+  drawTemperature();
   updateLabels();
   showBalance();
   describeFrame(canvas);
   hideTip();
+}
+
+// 공급 전력이 매 순간 어디로 가는지. Calculate 화면의 누적 막대를 시간축으로 편 것이다.
+function drawPower() {
+  const setup = setupCanvas($("#powerChart"));
+  if (!setup) return;
+  const { ctx, w, h } = setup;
+  const { time_s: t, Q_in_W: qIn, Q_heater_to_air_conv_W: conv, Q_heater_to_air_rad_W: rad } = data.history;
+  const end = t[t.length - 1], top = Math.max(...qIn) * 1.08;
+  const { xMap, yMap } = makeScales(w, h, [0, end], [0, top]);
+  drawAxes(ctx, w, h, "t (s)", "Q (W)", [0, Math.round(end / 2), end], [0, +(top / 2).toFixed(1), +top.toFixed(1)], xMap, yMap);
+  const base = t.map(s => [xMap(s), yMap(0)]);
+  const convTop = t.map((s, i) => [xMap(s), yMap(conv[i])]);
+  const radTop = t.map((s, i) => [xMap(s), yMap(conv[i] + rad[i])]);
+  const inTop = t.map((s, i) => [xMap(s), yMap(qIn[i])]);
+  drawArea(ctx, convTop, base, SERIES_COLOR.conv);
+  drawArea(ctx, radTop, convTop, SERIES_COLOR.rad);
+  drawArea(ctx, inTop, radTop, SERIES_COLOR.residual);
+  drawVerticalMarker(ctx, xMap(data.index.frames[frameIndex]), h);
+}
+
+function drawTemperature() {
+  const setup = setupCanvas($("#historyChart"));
+  if (!setup) return;
+  const { ctx, w, h } = setup;
+  const { time_s: t, T10_C: T10 } = data.history;
+  const maxT = Math.max(...T10), minT = Math.min(...T10);
+  const pad = (maxT - minT) * 0.1 || 1;
+  const end = t[t.length - 1];
+  const { xMap, yMap } = makeScales(w, h, [0, end], [minT - pad, maxT + pad]);
+  drawAxes(ctx, w, h, "t (s)", "T₁₀ (°C)", [0, Math.round(end / 2), end],
+    [+minT.toFixed(0), +((minT + maxT) / 2).toFixed(0), +maxT.toFixed(0)], xMap, yMap);
+  drawLine(ctx, t.map((s, i) => [xMap(s), yMap(T10[i])]), SERIES_COLOR.surface, 2.2);
+  const now = data.index.frames[frameIndex];
+  drawVerticalMarker(ctx, xMap(now), h);
+  ctx.font = CHART_FONT;
+  const label = `${now.toFixed(1)} s`;
+  const right = xMap(now) + 6 + ctx.measureText(label).width < w - 16;
+  labelOnPlot(ctx, label, xMap(now) + (right ? 6 : -6), 30, CHART_INK.ink, right ? "left" : "right");
 }
 
 // 보이지 않는 사람에게 이 프레임이 무엇인지 말한다. 히터와 플룸의 온도로 요약한다.
@@ -157,6 +198,10 @@ function showBalance() {
   $("#cfdQRad").innerHTML = `${qRad.toFixed(2)} <small>W</small>`;
   $("#cfdStored").innerHTML = `${(qIn - qConv - qRad).toFixed(2)} <small>W</small>`;
   $("#cfdT10").innerHTML = `${history.T10_C[i].toFixed(1)} <small>°C</small>`;
+  // 기울기는 앞뒤 10 s 차분. 정상상태라면 0에 가깝다.
+  const lo = Math.max(0, i - 10), hi = Math.min(history.time_s.length - 1, i + 10);
+  const slope = hi > lo ? (history.T10_C[hi] - history.T10_C[lo]) / (history.time_s[hi] - history.time_s[lo]) : 0;
+  $("#cfdSlope").textContent = `${slope.toFixed(2)} K/s`;
 }
 
 function handleProbe(event) {
@@ -236,10 +281,12 @@ async function switchCase(caseId) {
   data = null;
   $$(".case-pick").forEach(b => b.classList.toggle("is-active", b.dataset.case === caseId));
   setLoading(true, `Loading ${CFD_CASES[caseId].label}…`);
-  ["fieldReadout", "cfdQIn", "cfdQConv", "cfdQRad", "cfdStored", "cfdT10", "fieldTimeValue", "colorbarMax", "colorbarMid", "colorbarMin"]
+  ["fieldReadout", "cfdQIn", "cfdQConv", "cfdQRad", "cfdStored", "cfdT10", "cfdSlope", "fieldTimeValue", "colorbarMax", "colorbarMid", "colorbarMin"]
     .forEach(id => { $(`#${id}`).textContent = "—"; });
-  const canvas = $("#fieldCanvas");
-  canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+  ["fieldCanvas", "powerChart", "historyChart"].forEach(id => {
+    const canvas = $(`#${id}`);
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+  });
   try {
     const loaded = await loadCase(caseId);
     if (version !== loadVersion) return;

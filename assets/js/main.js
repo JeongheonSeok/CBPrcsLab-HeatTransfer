@@ -12,12 +12,10 @@ import { VIEWS } from "./data/views.js";
 import { initExperimentAView, drawAChart } from "./views/experiment-a.js";
 import { initExperimentBView, drawBChart } from "./views/experiment-b.js";
 import { initFieldViewer, drawFieldView } from "./views/a-field.js";
-import { initTransientView, drawTransientView } from "./views/a-transient.js";
 
 const SCREENS = {
   "experiment-a": { mount: initExperimentAView, redraw: drawAChart },
   "a-field": { mount: initFieldViewer, redraw: drawFieldView },
-  "a-transient": { mount: initTransientView, redraw: drawTransientView },
   "experiment-b": { mount: initExperimentBView, redraw: drawBChart }
 };
 

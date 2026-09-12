@@ -72,7 +72,7 @@ describe("마크업 계약 · id", () => {
     // planned 화면의 뷰 모듈은 main.js가 부르지 않으므로 마크업도 없는 게 맞다.
     // status를 "ready"로 바꾸는 순간 이 검사가 그 화면의 마크업을 요구한다.
     // 화면 id와 파일 이름이 다른 것만 여기 적는다. 나머지는 views/<id>.js다.
-    const moduleOf = { data: "views/data-table.js", "b-transient": "views/transient.js" };
+    const moduleOf = { data: "views/data-table.js", "a-transient": "views/transient.js", "b-transient": "views/transient.js" };
     const plannedFiles = VIEWS
       .filter(v => v.status === "planned")
       .map(v => moduleOf[v.id] ?? `views/${v.id}.js`);

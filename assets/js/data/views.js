@@ -20,9 +20,10 @@ export const VIEWS = [
     title: "Experiment A · The plume above the heated cylinder"
   },
   {
-    id: "a-transient", group: "Experiment A", status: "ready",
-    label: "Over time", sub: "Warming up from 20 °C",
-    title: "Experiment A · How the cylinder warms up"
+    id: "a-transient", group: "Experiment A", status: "planned",
+    label: "Over time", sub: "Lumped model vs CFD",
+    title: "Experiment A · The lumped-parameter model against the CFD warm-up",
+    plan: "The one-node model of the cylinder integrated from 20 °C, drawn over the CFD surface-temperature history that Watch the flow already shows. The model runs, but its effective heat capacity and loss coefficient have not been fitted; the CFD run gives the heat capacity (7.67 J/K) and a full T10(t) to fit against."
   },
   {
     id: "experiment-b", group: "Experiment B", status: "ready",

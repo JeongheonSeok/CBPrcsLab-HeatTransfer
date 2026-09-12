@@ -67,4 +67,28 @@
     </div>
   </div>
 
+  <!-- 같은 시각을 두 그래프가 따라간다. 애니메이션의 어느 순간이 숫자의 어디인지 이어 준다. -->
+  <div class="card-grid two">
+  <div class="card">
+    <header><h2>Where the supplied power goes, second by second</h2></header>
+    <div class="card-body">
+      <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="powerChart"></canvas></div>
+      <div class="legend">
+        <span><i class="conv"></i>Convection to air</span>
+        <span><i class="rad"></i>Radiation to duct</span>
+        <span><i class="residual"></i>Warming the heater</span>
+      </div>
+      <p class="assumption">Whatever has not yet left as convection or radiation is going into the heater's own heat capacity. At steady state this band would be gone; at 180 s it is not, so this run has not reached steady state.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <header><h2>Surface temperature climbing from 20 °C</h2></header>
+    <div class="card-body">
+      <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="historyChart"></canvas></div>
+      <p class="assumption">Still rising at <span class="num" id="cfdSlope">—</span> at this moment. Compare with the T10 you measured at this voltage on the Calculate screen: the calculation applies the measured V·I as a heat flux, so its surface temperature is a prediction, not an input.</p>
+    </div>
+  </div>
+  </div>
+
 </div>
