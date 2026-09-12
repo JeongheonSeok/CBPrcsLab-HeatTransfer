@@ -125,7 +125,11 @@ function drawPower() {
   drawArea(ctx, convTop, base, SERIES_COLOR.conv);
   drawArea(ctx, radTop, convTop, SERIES_COLOR.rad);
   drawArea(ctx, inTop, radTop, SERIES_COLOR.residual);
-  drawVerticalMarker(ctx, xMap(data.index.frames[frameIndex]), h);
+  // 채운 면 위에서 점선은 묻힌다. 흰 실선을 먼저 깔고 그 위에 긋는다.
+  const x = xMap(data.index.frames[frameIndex]);
+  ctx.strokeStyle = CHART_INK.plate; ctx.lineWidth = 3.5; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x, yMap(top)); ctx.lineTo(x, yMap(0)); ctx.stroke();
+  drawVerticalMarker(ctx, x, h);
 }
 
 function drawTemperature() {
@@ -201,7 +205,7 @@ function showBalance() {
   // 기울기는 앞뒤 10 s 차분. 정상상태라면 0에 가깝다.
   const lo = Math.max(0, i - 10), hi = Math.min(history.time_s.length - 1, i + 10);
   const slope = hi > lo ? (history.T10_C[hi] - history.T10_C[lo]) / (history.time_s[hi] - history.time_s[lo]) : 0;
-  $("#cfdSlope").textContent = `${slope.toFixed(2)} K/s`;
+  $("#cfdSlope").innerHTML = `${slope.toFixed(2)} <small>K/s</small>`;
 }
 
 function handleProbe(event) {

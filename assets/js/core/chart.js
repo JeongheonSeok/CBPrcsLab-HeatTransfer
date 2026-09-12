@@ -12,8 +12,8 @@ export const SERIES_COLOR = {
 
 // 그래프 크롬. 데이터가 아니라 눈금과 표시다.
 // assets/css/tokens.css의 --chart-* 와 값이 같아야 하며 테스트가 검사한다.
-// plate는 캔버스 뒤에 비치는 --well 과 같아야 한다. 글자를 곡선 위에 얹을 때 깔개로 쓴다.
-export const CHART_INK = { ink: "#5c6a76", grid: "#dbe2e8", mark: "#46525e", plate: "#f4f7f9" };
+// plate는 캔버스 뒤에 비치는 --surface 와 같아야 한다. 글자를 곡선 위에 얹을 때 깔개로 쓴다.
+export const CHART_INK = { ink: "#5c6a76", grid: "#dbe2e8", mark: "#46525e", plate: "#ffffff" };
 
 // 그래프 안에서 서체를 섞지 않는다. 축 숫자와 계열 이름이 달라 보이면 안 된다.
 export const CHART_FONT = "11px 'IBM Plex Sans KR', system-ui, sans-serif";

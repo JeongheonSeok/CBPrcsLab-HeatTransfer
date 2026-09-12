@@ -53,7 +53,7 @@ describe("디자인 토큰 · 데이터 색의 단일 출처", () => {
     });
   }
 
-  // plate는 자기 토큰이 없다. 캔버스 뒤에 비치는 --well 과 같아야 하며
+  // plate는 자기 토큰이 없다. 캔버스 뒤에 비치는 --surface 와 같아야 하며
   // 아래의 "글자 깔개가 그래프 배경과 같다"가 그것을 본다.
   for (const jsKey of Object.keys(CHART_INK).filter(key => key !== "plate")) {
     test(`--chart-${jsKey} 와 CHART_INK.${jsKey} 가 같다`, () => {
@@ -123,7 +123,7 @@ describe("디자인 토큰 · 대비", () => {
 
   test("글자 깔개가 그래프 배경과 같다", () => {
     // 다르면 곡선 위 글자 뒤에 색이 다른 사각형이 보인다.
-    assert.equal(CHART_INK.plate.toLowerCase(), token("well").toLowerCase());
+    assert.equal(CHART_INK.plate.toLowerCase(), token("surface").toLowerCase());
   });
 
   test("격자는 보이되 곡선을 가리지 않는다", () => {

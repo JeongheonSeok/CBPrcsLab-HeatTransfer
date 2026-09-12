@@ -56,15 +56,7 @@
         </div>
       </div>
 
-      <!-- 이 순간의 열수지. 대류와 복사로 아직 나가지 못한 몫은 히터 자체를 데우고 있다. -->
-      <div class="values">
-        <div><span class="k">Supplied</span><span class="v" id="cfdQIn">—</span></div>
-        <div><span class="k">Convection to air</span><span class="v conv" id="cfdQConv">—</span></div>
-        <div><span class="k">Radiation to duct</span><span class="v rad" id="cfdQRad">—</span></div>
-        <div><span class="k">Warming the heater</span><span class="v" id="cfdStored">—</span></div>
-        <div><span class="k">Surface T10</span><span class="v" id="cfdT10">—</span></div>
-      </div>
-      <p class="assumption">Under the pointer: <span class="num" id="fieldReadout">—</span> · 1 mm grid, 8-bit values, so point readings are approximate. The numbers above come from the run's own integrated history.</p>
+      <p class="assumption">Under the pointer: <span class="num" id="fieldReadout">—</span> · 1 mm grid, 8-bit values, so point readings are approximate.</p>
     </div>
   </div>
 
@@ -72,7 +64,14 @@
   <div class="card">
     <header><h2>Where the supplied power goes</h2></header>
     <div class="card-body">
-      <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="powerChart"></canvas></div>
+      <!-- 이 순간의 열수지. 대류와 복사로 아직 나가지 못한 몫은 히터 자체를 데우고 있다. -->
+      <div class="values">
+        <div><span class="k">Supplied</span><span class="v" id="cfdQIn">—</span></div>
+        <div><span class="k">Convection</span><span class="v conv" id="cfdQConv">—</span></div>
+        <div><span class="k">Radiation</span><span class="v rad" id="cfdQRad">—</span></div>
+        <div><span class="k">Warming the heater</span><span class="v" id="cfdStored">—</span></div>
+      </div>
+      <div class="chart-frame"><canvas class="chart chart--short" id="powerChart"></canvas></div>
       <div class="legend">
         <span><i class="conv"></i>Convection to air</span>
         <span><i class="rad"></i>Radiation to duct</span>
@@ -85,8 +84,12 @@
   <div class="card">
     <header><h2>Surface temperature from 20 °C</h2></header>
     <div class="card-body">
-      <div class="chart-frame well well--flush"><canvas class="chart chart--short" id="historyChart"></canvas></div>
-      <p class="assumption">Still rising at <span class="num" id="cfdSlope">—</span>. The measured V·I is applied as a heat flux, so this temperature is a prediction; compare it with the T10 you measured at this voltage.</p>
+      <div class="values">
+        <div><span class="k">Surface T10</span><span class="v" id="cfdT10">—</span></div>
+        <div><span class="k">Still rising at</span><span class="v" id="cfdSlope">—</span></div>
+      </div>
+      <div class="chart-frame"><canvas class="chart chart--short" id="historyChart"></canvas></div>
+      <p class="assumption">The measured V·I is applied as a heat flux, so this temperature is a prediction; compare it with the T10 you measured at this voltage.</p>
     </div>
   </div>
   </div>

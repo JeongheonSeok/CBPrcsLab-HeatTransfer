@@ -89,8 +89,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .keys .note-inline { color: var(--muted-2); font-size: var(--fs-xs); font-family: var(--font-mono); }
 
 /* ── 그래프 ───────────────────────────────────── */
-.chart-frame { position: relative; }
-.chart-frame.well { padding: 0; }
+.chart-frame { position: relative; }   /* 그래프는 카드 바탕 그대로. 틀을 하나 더 두면 층이 늘어 산만하다 */
 canvas.chart { display: block; width: 100%; height: 220px; }
 canvas.chart--short { height: 150px; }   /* 한 화면에 그래프가 둘일 때 */
 .legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); color: var(--muted); font-size: var(--fs-sm); }
