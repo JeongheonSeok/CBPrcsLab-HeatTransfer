@@ -1,7 +1,7 @@
 // 실험 A 관찰 화면: 가열 실린더 주위의 CFD 단면을 시간에 따라 재생한다.
 
 import { $, $$, clamp, numberValue } from "../core/dom.js";
-import { setupCanvas, drawAxes, drawLine, drawArea, makeScales, drawVerticalMarker, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
+import { setupCanvas, drawAxes, drawLine, drawArea, makeScales, labelOnPlot, CHART_INK, CHART_FONT, SERIES_COLOR } from "../core/chart.js";
 import { CFD_CASES } from "../data/cfd-cases.js";
 import { loadCase, ensureField, frameData, physical } from "../core/cfd-loader.js";
 
@@ -122,14 +122,19 @@ function drawPower() {
   const convTop = t.map((s, i) => [xMap(s), yMap(conv[i])]);
   const radTop = t.map((s, i) => [xMap(s), yMap(conv[i] + rad[i])]);
   const inTop = t.map((s, i) => [xMap(s), yMap(qIn[i])]);
-  drawArea(ctx, convTop, base, SERIES_COLOR.conv);
-  drawArea(ctx, radTop, convTop, SERIES_COLOR.rad);
-  drawArea(ctx, inTop, radTop, SERIES_COLOR.residual);
-  // 채운 면 위에서 점선은 묻힌다. 흰 실선을 먼저 깔고 그 위에 긋는다.
-  const x = xMap(data.index.frames[frameIndex]);
-  ctx.strokeStyle = CHART_INK.plate; ctx.lineWidth = 3.5; ctx.setLineDash([]);
-  ctx.beginPath(); ctx.moveTo(x, yMap(top)); ctx.lineTo(x, yMap(0)); ctx.stroke();
-  drawVerticalMarker(ctx, x, h);
+  const paint = () => {
+    drawArea(ctx, convTop, base, SERIES_COLOR.conv);
+    drawArea(ctx, radTop, convTop, SERIES_COLOR.rad);
+    drawArea(ctx, inTop, radTop, SERIES_COLOR.residual);
+  };
+  // 지난 시간은 진하게, 아직 오지 않은 시간은 옅게. 그 경계가 곧 지금이라 선을 따로 긋지 않는다.
+  paintUpTo(ctx, xMap(data.index.frames[frameIndex]), h, paint);
+}
+
+// 현재 시각까지는 진하게, 그 뒤는 옅게 그린다. 재생 중 어디까지 왔는지가 면의 경계로 읽힌다.
+function paintUpTo(ctx, x, h, paint) {
+  ctx.save(); ctx.globalAlpha = 0.28; paint(); ctx.restore();
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, x, h); ctx.clip(); paint(); ctx.restore();
 }
 
 function drawTemperature() {
@@ -143,9 +148,8 @@ function drawTemperature() {
   const { xMap, yMap } = makeScales(w, h, [0, end], [minT - pad, maxT + pad]);
   drawAxes(ctx, w, h, "t (s)", "T₁₀ (°C)", [0, Math.round(end / 2), end],
     [+minT.toFixed(0), +((minT + maxT) / 2).toFixed(0), +maxT.toFixed(0)], xMap, yMap);
-  drawLine(ctx, t.map((s, i) => [xMap(s), yMap(T10[i])]), SERIES_COLOR.surface, 2.2);
   const now = data.index.frames[frameIndex];
-  drawVerticalMarker(ctx, xMap(now), h);
+  paintUpTo(ctx, xMap(now), h, () => drawLine(ctx, t.map((s, i) => [xMap(s), yMap(T10[i])]), SERIES_COLOR.surface, 2.2));
   ctx.font = CHART_FONT;
   const label = `${now.toFixed(1)} s`;
   const right = xMap(now) + 6 + ctx.measureText(label).width < w - 16;
@@ -225,7 +229,6 @@ function handleProbe(event) {
   const lateral = (col + 0.5) / index.roi.pxPerM - index.roi.halfWidth;
   const unit = field === "temperature" ? "°C" : "m/s";
   const reading = `${value.toFixed(field === "temperature" ? 1 : 3)} ${unit}`;
-  $("#fieldReadout").textContent = `${strip.plane} · ${(lateral * 1000).toFixed(0)} mm, z ${z.toFixed(3)} m · ${reading}`;
 
   // 값은 커서 옆에, 십자선은 띠 안에서만. 그림이 아니라 데이터라는 것이 손끝에서 느껴져야 한다.
   const tip = $("#fieldTip");
@@ -240,7 +243,6 @@ function handleProbe(event) {
 }
 
 function hideTip() {
-  $("#fieldReadout").textContent = "—";
   setHighlight(null, false);
   ["#fieldTip", "#fieldCrossH", "#fieldCrossV"].forEach(id => { $(id).hidden = true; });
 }
@@ -285,7 +287,7 @@ async function switchCase(caseId) {
   data = null;
   $$(".case-pick").forEach(b => b.classList.toggle("is-active", b.dataset.case === caseId));
   setLoading(true, `Loading ${CFD_CASES[caseId].label}…`);
-  ["fieldReadout", "cfdQIn", "cfdQConv", "cfdQRad", "cfdStored", "cfdT10", "cfdSlope", "fieldTimeValue", "colorbarMax", "colorbarMid", "colorbarMin"]
+  ["cfdQIn", "cfdQConv", "cfdQRad", "cfdStored", "cfdT10", "cfdSlope", "fieldTimeValue", "colorbarMax", "colorbarMid", "colorbarMin"]
     .forEach(id => { $(`#${id}`).textContent = "—"; });
   ["fieldCanvas", "powerChart", "historyChart"].forEach(id => {
     const canvas = $(`#${id}`);
