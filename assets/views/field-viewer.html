@@ -15,8 +15,8 @@
   <span class="divider"></span>
   <div class="input free"><label>Field</label>
     <div class="btn-row">
-      <button class="btn field-type is-active" data-field="temperature" type="button">Temperature</button>
-      <button class="btn field-type" data-field="speed" type="button">Speed</button>
+      <button class="btn field-type is-active" data-field="temperature" type="button" aria-pressed="true">Temperature</button>
+      <button class="btn field-type" data-field="speed" type="button" aria-pressed="false">Speed</button>
     </div>
   </div>
   <span class="divider"></span>
@@ -28,30 +28,32 @@
       <input id="fieldTime" type="range" min="0" max="90" step="1" value="0" aria-label="Simulation time">
       <button class="btn btn--quiet" id="fieldReset" type="button">Reset</button>
     </div>
+    <span class="assumption">10× playback · ← / → one frame · Space to play</span>
   </div>
 </div>
 
-<div class="content">
+<div class="field-content">
 
   <p class="caution" id="fieldPending" role="status" hidden></p>
 
   <div class="card-grid wide-left">
   <div class="card">
-    <header><h2>The 18 cm around the heater, seen from two sides</h2><span class="badge">OpenFOAM</span></header>
+    <header><h2>Temperature &amp; flow around the heater</h2><span class="badge">OpenFOAM</span></header>
     <div class="card-body">
       <div class="viewer well">
-        <canvas id="fieldCanvas"></canvas>
+        <canvas id="fieldCanvas" role="img" aria-label="Two CFD slices around the heater; approximate point values are available with the pointer."></canvas>
         <div class="colorbar">
           <div class="colorbar-scale" id="colorbarGradient"></div>
-          <div class="colorbar-labels"><span id="colorbarMax">—</span><span id="colorbarMin">—</span></div>
+          <div class="colorbar-labels"><span id="colorbarMax">—</span><span id="colorbarMid">—</span><span id="colorbarMin">—</span></div>
         </div>
       </div>
-      <p class="assumption">Under the pointer: <span class="num" id="fieldReadout">—</span></p>
+      <p class="assumption">18 cm window · 3 cm below / 15 cm above the heater. Colour range is fixed within each case.</p>
+      <p class="assumption">Approximate point value: <span class="num" id="fieldReadout">—</span></p>
     </div>
   </div>
 
   <div class="card">
-    <header><h2>What the calculation reports at the last frame</h2></header>
+    <header><h2>At the selected time</h2><span class="badge num" id="cfdSummaryTime">—</span></header>
     <div class="card-body">
       <div class="values">
         <div><span class="k">Supplied</span><span class="v" id="cfdQIn">—</span></div>
@@ -59,11 +61,13 @@
         <div><span class="k">Radiation to duct</span><span class="v rad" id="cfdQRad">—</span></div>
         <div><span class="k">Surface T10</span><span class="v" id="cfdT10">—</span></div>
       </div>
-      <p class="caution" id="cfdNote" role="status">—</p>
+      <p class="assumption" id="cfdNote">Values follow the selected time.</p>
       <div class="chart-frame well well--flush"><canvas class="chart" id="historyChart"></canvas></div>
-      <p class="assumption">The marker follows the animation. Compare the surface temperature here with the value you measured in Experiment A at the same voltage.</p>
+      <p class="assumption">The marker and the values above follow the same moment. The heater is still warming at 180 s; this run has not reached steady state.</p>
     </div>
   </div>
   </div>
+
+  <details class="field-assumptions"><summary>Model &amp; display assumptions</summary><p class="assumption">Power-driven, laminar natural convection with fvDOM radiation. The duct wall is held at 20 °C with emissivity 0.95; this is a model assumption, not a measured wall condition. The display uses a 1 mm grid and 8-bit values. Point readings are approximate; the summary and temperature history use the separate numerical data.</p></details>
 
 </div>

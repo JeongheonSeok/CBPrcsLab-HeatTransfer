@@ -18,18 +18,28 @@ export async function loadCase(caseId) {
   const base = `assets/data/cfd/${caseId}`;
   const promise = (async () => {
     const response = await fetch(`${base}/index.json`);
-    if (!response.ok) return null;
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Could not load ${caseId} (HTTP ${response.status})`);
     const index = await response.json();
     // 온도만 먼저 받는다. 속력 스프라이트가 더 크고, 안 누르는 사람도 많다.
     const sprites = {};
     for (const [plane, files] of Object.entries(index.planes)) {
       sprites[plane] = { temperature: await loadImage(`${base}/${files.temperature}`) };
     }
-    const history = await (await fetch(`${base}/history.json`)).json();
+    const historyResponse = await fetch(`${base}/history.json`);
+    if (!historyResponse.ok) throw new Error(`Could not load ${caseId} history`);
+    const history = await historyResponse.json();
     return { base, index, sprites, history };
   })();
   cache.set(caseId, promise);
-  return promise;
+  try {
+    const result = await promise;
+    if (!result) cache.delete(caseId);
+    return result;
+  } catch (error) {
+    cache.delete(caseId);
+    throw error;
+  }
 }
 
 // 처음 요청되는 장(field)의 스프라이트를 그때 받는다.

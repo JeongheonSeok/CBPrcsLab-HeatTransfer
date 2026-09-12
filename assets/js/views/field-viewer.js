@@ -23,6 +23,8 @@ let field = "temperature";
 let frameIndex = 0;
 let playing = false;
 let playTimer = null;
+let busy = false;
+let loadVersion = 0;
 const scratch = document.createElement("canvas");
 const tinted = document.createElement("canvas");
 const lut = {};
@@ -47,15 +49,16 @@ function currentCaseId() {
   return $("#fieldCase").value;
 }
 
-// 각 평면을 세로로 긴 띠로, 두 띠를 나란히 놓는다. 히터 위 25 cm가 한 화면이다.
+// 단면 비율을 유지하면서 캔버스의 폭과 높이 모두에 맞춘다.
 function layout(w, h) {
   const { w: tw, h: th } = data.index.tile;
   const gap = 18, margin = 8;
-  const stripH = h - 2 * margin - 16;                  // 아래 16px는 평면 이름
-  const stripW = Math.round(stripH * tw / th);
+  const stripH = Math.max(1, Math.min(h - 2 * margin - 20, (w - 2 * margin - gap) / PLANES.length * th / tw));
+  const stripW = stripH * tw / th;
   const total = PLANES.length * stripW + (PLANES.length - 1) * gap;
   const left = Math.max(margin, Math.round((w - total) / 2));
-  return PLANES.map((plane, i) => ({ plane, x: left + i * (stripW + gap), y: margin, w: stripW, h: stripH }));
+  const top = Math.max(margin, (h - stripH - 20) / 2);
+  return PLANES.map((plane, i) => ({ plane, x: left + i * (stripW + gap), y: top, w: stripW, h: stripH }));
 }
 
 function paintStrip(ctx, strip) {
@@ -86,19 +89,21 @@ function paintStrip(ctx, strip) {
 
   ctx.strokeStyle = CHART_INK.grid; ctx.strokeRect(strip.x + 0.5, strip.y + 0.5, strip.w - 1, strip.h - 1);
   ctx.font = CHART_FONT; ctx.fillStyle = CHART_INK.ink; ctx.textAlign = "center";
-  ctx.fillText(PLANE_LABEL[strip.plane], strip.x + strip.w / 2, strip.y + strip.h + 13);
+  ctx.fillText(strip.w < 135 ? `${strip.plane} plane` : PLANE_LABEL[strip.plane], strip.x + strip.w / 2, strip.y + strip.h + 13);
   ctx.textAlign = "left";
 }
 
 export function drawFieldView() {
   const canvas = $("#fieldCanvas");
   const setup = setupCanvas(canvas);
-  if (!setup || !data) return;
+  if (!setup || !data || busy) return;
   const { ctx, w, h } = setup;
   ctx.clearRect(0, 0, w, h);
   layout(w, h).forEach(strip => paintStrip(ctx, strip));
   drawHistory();
   updateLabels();
+  showSummary();
+  $("#fieldReadout").textContent = "—";
 }
 
 // T10(t)에 현재 시각을 표시한다. 애니메이션의 어느 순간이 숫자의 어디인지 이어 준다.
@@ -118,34 +123,38 @@ function drawHistory() {
   drawVerticalMarker(ctx, xMap(now), h);
   ctx.font = CHART_FONT;
   // 오른쪽 끝에서는 라벨이 잘리므로 선의 왼쪽에 붙인다.
-  const right = xMap(now) + 6 + ctx.measureText("180 s").width < w - 16;
-  labelOnPlot(ctx, `${now.toFixed(0)} s`, xMap(now) + (right ? 6 : -6), 30, CHART_INK.ink, right ? "left" : "right");
+  const label = `${now.toFixed(1)} s`;
+  const right = xMap(now) + 6 + ctx.measureText(label).width < w - 16;
+  labelOnPlot(ctx, label, xMap(now) + (right ? 6 : -6), 30, CHART_INK.ink, right ? "left" : "right");
 }
 
 function updateLabels() {
   const { index } = data;
   const now = index.frames[frameIndex];
-  $("#fieldTimeValue").textContent = `${now.toFixed(0)} / ${index.frames[index.frames.length - 1].toFixed(0)} s`;
+  $("#fieldTimeValue").textContent = `${now.toFixed(1)} / ${index.frames[index.frames.length - 1].toFixed(0)} s`;
+  $("#fieldTime").setAttribute("aria-valuetext", `${now.toFixed(1)} seconds`);
   const range = field === "temperature" ? index.temperatureC : index.speed;
   const unit = field === "temperature" ? "°C" : "m/s";
   $("#colorbarMax").textContent = `${range.max.toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
   $("#colorbarMin").textContent = `${range.min.toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
+  $("#colorbarMid").textContent = `${((range.min + range.max) / 2).toFixed(field === "temperature" ? 0 : 2)} ${unit}`;
   $("#colorbarGradient").style.background = `linear-gradient(to top, ${RAMP[field].join(",")})`;
+  $("#fieldPlay").textContent = playing ? "Pause" : frameIndex === index.frames.length - 1 ? "Replay" : "Play";
 }
 
-// 180 s에서 아직 오르는 중이다. 정상상태처럼 읽히지 않게 기울기를 함께 적는다.
+// 표시용 픽셀 대신 원본 시계열에서 선택 시점의 수치를 읽는다.
 function showSummary() {
-  const { index } = data;
-  const f = index.final;
-  $("#cfdQIn").innerHTML = `${f.qInW.toFixed(2)} <small>W</small>`;
-  $("#cfdQConv").innerHTML = `${f.qConvW.toFixed(2)} <small>W</small>`;
-  $("#cfdQRad").innerHTML = `${f.qRadW.toFixed(2)} <small>W</small>`;
-  $("#cfdT10").innerHTML = `${f.T10C.toFixed(1)} <small>°C</small>`;
-  const stored = f.qInW - f.qConvW - f.qRadW;
-  $("#cfdNote").textContent =
-    `At ${f.timeS.toFixed(0)} s the heater is still warming at ${f.T10SlopeKPerS.toFixed(2)} K/s: ` +
-    `${stored.toFixed(2)} W of the supply is going into the heater's own heat capacity, not into the air. ` +
-    `This is a transient, not a steady state.`;
+  const { index, history } = data;
+  const now = index.frames[frameIndex];
+  const i = history.time_s.findIndex(t => t >= now);
+  if (i < 0) return;
+  const qIn = history.Q_in_W[i], qConv = history.Q_heater_to_air_conv_W[i], qRad = history.Q_heater_to_air_rad_W[i];
+  $("#cfdSummaryTime").textContent = `${now.toFixed(1)} s`;
+  $("#cfdQIn").innerHTML = `${qIn.toFixed(2)} <small>W</small>`;
+  $("#cfdQConv").innerHTML = `${qConv.toFixed(2)} <small>W</small>`;
+  $("#cfdQRad").innerHTML = `${qRad.toFixed(2)} <small>W</small>`;
+  $("#cfdT10").innerHTML = `${history.T10_C[i].toFixed(1)} <small>°C</small>`;
+  $("#cfdNote").textContent = `Supply − convection − radiation = ${(qIn - qConv - qRad).toFixed(2)} W at this time.`;
 }
 
 function handleProbe(event) {
@@ -168,6 +177,7 @@ function handleProbe(event) {
 }
 
 function setFrame(i) {
+  if (!data || busy) return;
   frameIndex = clamp(Math.round(i), 0, data.index.frames.length - 1);
   $("#fieldTime").value = frameIndex;
   drawFieldView();
@@ -180,34 +190,50 @@ function stop() {
 }
 
 function play() {
+  if (!data || busy) return;
   playing = true;
   $("#fieldPlay").textContent = "Pause";
   if (frameIndex >= data.index.frames.length - 1) setFrame(0);
   playTimer = setInterval(() => {
-    if (document.hidden) return;             // 숨긴 탭에서는 헛돌지 않는다
+    if (document.hidden || !$("#field-viewer").classList.contains("is-active")) { stop(); return; }
     setFrame((frameIndex + 1) % data.index.frames.length);
   }, 1000 / FRAMES_PER_SECOND);
 }
 
+function setLoading(value, message = "") {
+  busy = value;
+  $("#fieldPending").hidden = !message;
+  $("#fieldPending").textContent = message;
+  $("#field-viewer").setAttribute("aria-busy", String(value));
+  $$("#field-viewer .transport-row button, #fieldTime, #field-viewer .field-type")
+    .forEach(control => { control.disabled = value || !data; });
+}
+
 async function switchCase() {
   stop();
+  const version = ++loadVersion;
   const caseId = currentCaseId();
   data = null;
-  $("#fieldPending").hidden = true;
-  $("#fieldReadout").textContent = "—";
-  const loaded = await loadCase(caseId);
-  if (currentCaseId() !== caseId) return;    // 기다리는 동안 다른 case를 골랐다
-  if (!loaded) {
-    $("#fieldPending").hidden = false;
-    $("#fieldPending").textContent = `${CFD_CASES[caseId].label} has not been computed yet. The case is listed so the format is agreed; the frames arrive when the lab runs it.`;
-    const ctx = $("#fieldCanvas").getContext("2d");
-    ctx.clearRect(0, 0, $("#fieldCanvas").width, $("#fieldCanvas").height);
-    return;
+  setLoading(true, `Loading ${CFD_CASES[caseId].label}…`);
+  ["fieldReadout", "cfdSummaryTime", "cfdQIn", "cfdQConv", "cfdQRad", "cfdT10", "cfdNote", "fieldTimeValue", "colorbarMax", "colorbarMid", "colorbarMin"]
+    .forEach(id => { $(`#${id}`).textContent = "—"; });
+  ["fieldCanvas", "historyChart"].forEach(id => {
+    const canvas = $(`#${id}`);
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+  });
+  try {
+    const loaded = await loadCase(caseId);
+    if (version !== loadVersion) return;
+    if (!loaded) { setLoading(false, `${CFD_CASES[caseId].label} is not available yet.`); return; }
+    await ensureField(loaded, field);
+    if (version !== loadVersion) return;
+    data = loaded;
+    $("#fieldTime").max = data.index.frames.length - 1;
+    setLoading(false);
+    setFrame(data.index.frames.length - 1);
+  } catch (error) {
+    if (version === loadVersion) setLoading(false, "Could not load this case. Select another case or reload to retry.");
   }
-  data = loaded;
-  $("#fieldTime").max = data.index.frames.length - 1;
-  showSummary();
-  setFrame(data.index.frames.length - 1);
 }
 
 export function initFieldViewer() {
@@ -216,21 +242,40 @@ export function initFieldViewer() {
 
   // 목록은 합의된 조건 전체다. 산출물이 있는 case만 고를 수 있게 한다.
   const select = $("#fieldCase");
+  select.disabled = true;
+  setLoading(true, "Checking available cases…");
   Promise.all(Object.keys(CFD_CASES).map(async id => {
-    const ok = (await fetch(`assets/data/cfd/${id}/index.json`, { method: "HEAD" })).ok;
+    let ok = false;
+    try { ok = (await fetch(`assets/data/cfd/${id}/index.json`, { method: "HEAD" })).ok; } catch { /* 연결 실패도 선택 불가로 표시 */ }
     select.querySelector(`option[value="${id}"]`).disabled = !ok;
     return ok ? id : null;
   })).then(ids => {
+    select.disabled = false;
     const first = ids.find(Boolean);
     if (first) { select.value = first; switchCase(); }
+    else setLoading(false, "No cases could be loaded. Reload to retry.");
   });
 
   select.addEventListener("change", switchCase);
   $$(".field-type").forEach(button => button.addEventListener("click", async () => {
-    field = button.dataset.field;
-    $$(".field-type").forEach(item => item.classList.toggle("is-active", item === button));
-    if (data) await ensureField(data, field);
-    drawFieldView();
+    if (!data || busy) return;
+    stop();
+    const version = ++loadVersion;
+    const nextField = button.dataset.field;
+    setLoading(true, `Loading ${button.textContent.toLowerCase()}…`);
+    try {
+      await ensureField(data, nextField);
+      if (version !== loadVersion) return;
+      field = nextField;
+      $$(".field-type").forEach(item => {
+        item.classList.toggle("is-active", item === button);
+        item.setAttribute("aria-pressed", String(item === button));
+      });
+      setLoading(false);
+      drawFieldView();
+    } catch (error) {
+      if (version === loadVersion) setLoading(false, "Could not load this field. Select it again to retry.");
+    }
   }));
   const step = delta => { stop(); setFrame(frameIndex + delta); };
   $("#fieldTime").addEventListener("input", () => { stop(); setFrame(numberValue("#fieldTime", 0)); });
@@ -238,11 +283,13 @@ export function initFieldViewer() {
   $("#fieldStepBack").addEventListener("click", () => step(-1));
   $("#fieldStepForward").addEventListener("click", () => step(1));
   $("#fieldReset").addEventListener("click", () => { stop(); setFrame(0); });
-  $("#fieldCanvas").addEventListener("pointermove", event => { if (data) handleProbe(event); });
+  $("#fieldCanvas").addEventListener("pointermove", event => { if (data && !busy) handleProbe(event); });
+  $("#fieldCanvas").addEventListener("pointerleave", () => { $("#fieldReadout").textContent = "—"; });
 
   // 이 화면이 보일 때만. 입력 칸에 타이핑하는 중이면 건드리지 않는다.
   document.addEventListener("keydown", event => {
-    if (!data || !$("#field-viewer").classList.contains("is-active")) return;
+    if (!data || busy || document.querySelector("dialog[open]") || !$("#field-viewer").classList.contains("is-active")) return;
+    if (event.target.closest("button, summary, [contenteditable]")) return;
     if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName) && event.target.type !== "range") return;
     if (event.key === " ") { event.preventDefault(); playing ? stop() : play(); }
     else if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
