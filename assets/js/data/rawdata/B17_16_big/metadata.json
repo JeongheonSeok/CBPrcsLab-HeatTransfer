@@ -1,0 +1,95 @@
+{
+  "case": "B16_P02_G01_Co050_heatStart30s",
+  "source_case": "/home/bestjh200102/project/2026_08_HT/openfoam/experiment_B/production_cases/B16_P02_G01_Co050_heatStart30s",
+  "source_case_info": {
+    "start": 0,
+    "end": 30,
+    "duration": 30,
+    "ranks": 48,
+    "maxCo": 0.5,
+    "air_cells": 670080,
+    "frame_interval": 0.1,
+    "ambient_K": 296.775,
+    "jacket_K": 402.9,
+    "established_flow_source": "/home/bestjh200102/project/2026_08_HT/openfoam/experiment_B/wake_grid_audit_cases/B16_WG01_G01_Co030/attempt01/1.2",
+    "uniform_thermal_start": true,
+    "flow_starts_from_rest": false,
+    "elapsed_time": "OpenFOAM time is heating elapsed time",
+    "inlet": "Original velocity/k/omega profile; T and incoming radiation reset to ambient",
+    "prior_case_preserved": "/home/bestjh200102/project/2026_08_HT/openfoam/experiment_B/production_cases/B16_P01_G01_Co050_30s",
+    "prior_job_cancelled": 16639
+  },
+  "time_count": 301,
+  "time_start_s": 0.0,
+  "time_end_s": 30.0,
+  "subset": false,
+  "planes": {
+    "xz": {
+      "equation": "y = 0 m",
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    "yz": {
+      "equation": "x = 0 m",
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  "plane_sampling": {
+    "OpenFOAM_type": "cuttingPlane",
+    "interpolationScheme": "cellPoint",
+    "temperature_unit": "K",
+    "velocity_unit": "m/s",
+    "coordinate_unit": "m",
+    "note": "Native mesh cut points, not a regular Cartesian grid"
+  },
+  "time_definition": "time_s is original OpenFOAM time; elapsed_s subtracts case start (P03:30 s)",
+  "temperature_definition": "Bead center/volume average, not an Experiment A T10 or heater temperature",
+  "heat_rate_signs": {
+    "normalized_columns": "Positive in named direction",
+    "bead": "Q_air_to_bead=-OF_Q_bead; negative raw means net bead heating",
+    "jacket": "Q_jacket_to_air=OF_Q_jacket",
+    "radiation": "total minus convection",
+    "radiation_direction": "Names describe transfer across air-side interfaces, not absorption entirely by air or emission entirely from air",
+    "raw": "Original air-region wallHeatFlux integral, NOT renamed Fourier outward flux"
+  },
+  "electrical_input": "Not exported: jacket temperature is prescribed, not electrical power input",
+  "history_policy": "Restart tails clipped at next run start; linear interpolation only within each attempt; no extrapolation or interpolation across restart gaps. NaN denotes unavailable data. Initial uniform bead temperature is known; no initial heat rate is invented.",
+  "products": [
+    {
+      "file": "xz_air.npz",
+      "region": "air",
+      "plane": "xz",
+      "point_count": 17717,
+      "time_count": 301
+    },
+    {
+      "file": "yz_air.npz",
+      "region": "air",
+      "plane": "yz",
+      "point_count": 17477,
+      "time_count": 301
+    },
+    {
+      "file": "xz_bead.npz",
+      "region": "bead",
+      "plane": "xz",
+      "point_count": 646,
+      "time_count": 301
+    },
+    {
+      "file": "yz_bead.npz",
+      "region": "bead",
+      "plane": "yz",
+      "point_count": 647,
+      "time_count": 301
+    }
+  ],
+  "single_process": true
+}
